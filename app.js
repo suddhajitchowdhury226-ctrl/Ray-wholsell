@@ -28,7 +28,7 @@ uploadDirs.forEach(dir => {
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: ["https://user-wholesaler.netlify.app", "https://admin-wholesaler.netlify.app", "http://localhost:5173", "http://localhost:5176", "http://localhost:5174", "http://localhost:5175", "https://retailer-wholesaler-website.netlify.app", "http://rayonesystem.com", "https://rayshealthyliving.com", "https://workspace.rayonewholesale.com", "https://rayonewholesale.com", "https://wholseal.vercel.app", "https://ray-retailll.vercel.app"],
+    origin: ["https://user-wholesaler.netlify.app", "https://admin-wholesaler.netlify.app", "http://localhost:5173", "http://localhost:5176", "http://localhost:5174", "http://localhost:5175", "https://retailer-wholesaler-website.netlify.app", "http://rayonesystem.com", "https://rayshealthyliving.com", "https://workspace.rayonewholesale.com", "https://rayonewholesale.com", "https://wholseal.vercel.app", "https://ray-retailll.vercel.app", "https://ray-retaill.vercel.app"],
     methods: ["GET", "POST"]
   },
   pingTimeout: 60000,
@@ -54,7 +54,7 @@ paypal.configure({
 
 // ✅ CORS Configuration (before all other routes)
 const allowedOrigins = [
-  "https://admin-wholesaler.netlify.app", "http://localhost:5173", "http://localhost:5174", "http://localhost:5175", "http://localhost:5176", "https://retailer-wholesaler-website.netlify.app", "http://rayonesystem.com", "https://rayshealthyliving.com", "https://workspace.rayonewholesale.com", "https://rayonewholesale.com", "https://wholseal.vercel.app", "https://ray-retailll.vercel.app"
+  "https://admin-wholesaler.netlify.app", "http://localhost:5173", "http://localhost:5174", "http://localhost:5175", "http://localhost:5176", "https://retailer-wholesaler-website.netlify.app", "http://rayonesystem.com", "https://rayshealthyliving.com", "https://workspace.rayonewholesale.com", "https://rayonewholesale.com", "https://wholseal.vercel.app", "https://ray-retailll.vercel.app", "https://ray-retaill.vercel.app"
 ];
 
 
