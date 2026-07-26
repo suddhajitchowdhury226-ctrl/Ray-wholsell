@@ -1,6 +1,6 @@
-
 const express = require("express");
 const app = express();
+app.set('trust proxy', 1); // ✅ Fix: Required on Render (behind reverse proxy) - fixes ERR_ERL_UNEXPECTED_X_FORWARDED_FOR
 const http = require('http');
 const socketIo = require('socket.io');
 const cors = require("cors");
@@ -28,7 +28,23 @@ uploadDirs.forEach(dir => {
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: ["https://user-wholesaler.netlify.app","https://ray-wholsell.vercel.app/" ,"https://admin-wholesaler.netlify.app", "http://localhost:5173", "http://localhost:5176", "http://localhost:5174", "http://localhost:5175", "https://retailer-wholesaler-website.netlify.app", "http://rayonesystem.com", "https://rayshealthyliving.com", "https://workspace.rayonewholesale.com", "https://rayonewholesale.com", "https://wholseal.vercel.app", "https://ray-retailll.vercel.app", "https://ray-retaill.vercel.app"],
+    origin: [
+      "https://user-wholesaler.netlify.app",
+      "https://ray-wholsell.vercel.app", // ✅ Fix: removed trailing slash
+      "https://admin-wholesaler.netlify.app",
+      "http://localhost:5173",
+      "http://localhost:5176",
+      "http://localhost:5174",
+      "http://localhost:5175",
+      "https://retailer-wholesaler-website.netlify.app",
+      "http://rayonesystem.com",
+      "https://rayshealthyliving.com",
+      "https://workspace.rayonewholesale.com",
+      "https://rayonewholesale.com",
+      "https://wholseal.vercel.app",
+      "https://ray-retailll.vercel.app",
+      "https://ray-retaill.vercel.app"
+    ],
     methods: ["GET", "POST"]
   },
   pingTimeout: 60000,
@@ -36,12 +52,9 @@ const io = socketIo(server, {
   transports: ['websocket', 'polling']
 });
 
-
 // ✅ Stripe webhook must be registered BEFORE express.json()
 const webhookRouter = require("./Routes/webhookRoute");
 app.use("/webhook", webhookRouter);
-
-
 
 // PayPal configuration
 paypal.configure({
@@ -50,24 +63,32 @@ paypal.configure({
   client_secret: process.env.PAYPAL_CLIENT_SECRET
 });
 
-
-
 // ✅ CORS Configuration (before all other routes)
 const allowedOrigins = [
-  "https://admin-wholesaler.netlify.app", "http://localhost:5173", "http://localhost:5174", "http://localhost:5175", "http://localhost:5176", "https://retailer-wholesaler-website.netlify.app", "http://rayonesystem.com", "https://rayshealthyliving.com", "https://workspace.rayonewholesale.com", "https://rayonewholesale.com", "https://wholseal.vercel.app", "https://ray-retailll.vercel.app", "https://ray-retaill.vercel.app","https://ray-retail.vercel.app"
+  "https://admin-wholesaler.netlify.app",
+  "https://user-wholesaler.netlify.app",    // ✅ Fix: was missing
+  "https://ray-wholsell.vercel.app",        // ✅ Fix: was missing + had trailing slash
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "http://localhost:5175",
+  "http://localhost:5176",
+  "https://retailer-wholesaler-website.netlify.app",
+  "http://rayonesystem.com",
+  "https://rayshealthyliving.com",
+  "https://workspace.rayonewholesale.com",
+  "https://rayonewholesale.com",
+  "https://wholseal.vercel.app",
+  "https://ray-retailll.vercel.app",
+  "https://ray-retaill.vercel.app",
+  "https://ray-retail.vercel.app"
 ];
-
-
-
 
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
     if (allowedOrigins.includes(origin)) {
       return callback(null, true);
     }
-    // Reject unknown origins — prevents hanging forever
     return callback(new Error('Not allowed by CORS'));
   },
   credentials: true
@@ -121,9 +142,7 @@ app.use('/api/auth/forgot-password', rateLimit({
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
 
-// ✅ MongoDB injection protection — sanitizes body and params only.
-// Express 5 made req.query and req.headers read-only getters, so we
-// restrict sanitization to the mutable fields to avoid a TypeError crash.
+// ✅ MongoDB injection protection
 app.use((req, res, next) => {
   ['body', 'params'].forEach((key) => {
     if (req[key]) {
@@ -132,7 +151,6 @@ app.use((req, res, next) => {
   });
   next();
 });
-
 
 // ✅ Cache middleware
 const { cacheMiddleware } = require('./Middleware/cacheMiddleware');
@@ -156,7 +174,6 @@ app.use("/api/wholesaler", require("./Routes/wholesalerRoute"));
 app.use("/api/retailer", require("./Routes/retailorRoute"));
 app.use("/api/user", require("./Routes/userRoute"));
 app.use("/api/reviews", require("./Routes/reviewRoute"));
-
 app.use('/api/bookings', require("./Routes/bookingRoutes"));
 app.use('/api/payments', require('./Routes/paymentRoute'));
 app.use("/api/bulk", require("./Routes/bulkRoute"));
@@ -166,7 +183,6 @@ app.use("/api/chat", require("./Routes/chatRoute"));
 // ✅ Shipment Tracking Endpoint
 const trackShipment = async (carrierCode, trackingNumber) => {
   const url = `https://api.shipengine.com/v1/tracking?carrier_code=${carrierCode}&tracking_number=${trackingNumber}`;
-
   try {
     const response = await axios.get(url, {
       headers: {
@@ -182,11 +198,9 @@ const trackShipment = async (carrierCode, trackingNumber) => {
 
 app.get("/track", async (req, res) => {
   const { carrierCode, trackingNumber } = req.query;
-
   if (!carrierCode || !trackingNumber) {
     return res.status(400).json({ error: "Carrier code and tracking number are required." });
   }
-
   try {
     const trackingData = await trackShipment(carrierCode, trackingNumber);
     res.json(trackingData);
@@ -201,14 +215,9 @@ app.delete('/api/delete-wholesaler-products', async (req, res) => {
   try {
     const User = require('./Models/user');
     const Product = require('./Models/productModel');
-
-    // Find all wholesaler users
     const wholesalers = await User.find({ role: 'wholesaler' }).select('_id');
     const wholesalerIds = wholesalers.map(w => w._id);
-
-    // Delete all products created by wholesalers
     const result = await Product.deleteMany({ createdBy: { $in: wholesalerIds } });
-
     res.status(200).json({
       message: `Successfully deleted ${result.deletedCount} wholesaler products`,
       deletedCount: result.deletedCount
@@ -241,33 +250,24 @@ io.on('connection', (socket) => {
   });
 
   socket.on('send-message', async (data) => {
-    // Extract string IDs from any format (string, ObjectId, or populated object)
     const getSenderId = data.senderId?._id || (typeof data.senderId === 'string' ? data.senderId : null);
     const getReceiverId = data.receiverId?._id || (typeof data.receiverId === 'string' ? data.receiverId : null);
 
-    // Support string 'admin' or ObjectId for receiver
     const User = require('./Models/user');
     const adminUser = await User.findOne({ role: 'admin' });
     const isReceiverAdmin = getReceiverId === 'admin' || (adminUser && String(getReceiverId) === String(adminUser._id));
-
     const actualReceiverId = isReceiverAdmin && adminUser ? String(adminUser._id) : String(getReceiverId);
 
-    // Send to the specific receiver's room
     io.to(actualReceiverId).emit('receive-message', data);
-    // Send to admin room (so all admin panel instances get it)
     io.to('admin').emit('receive-message', data);
 
-    // Auto-reply when a user sends a message to admin
     if (isReceiverAdmin) {
       try {
         const { Message, Conversation } = require('./Models/chatModel');
-
         if (adminUser) {
-          // Simulate slight delay for realism
           setTimeout(async () => {
             const replyText = "Thank you for reaching out! We'll get back to you shortly. 😊";
             const senderIdForReply = typeof data.senderId === 'object' ? data.senderId._id : data.senderId;
-
             const autoReplyMsg = new Message({
               senderId: adminUser._id,
               receiverId: senderIdForReply,
@@ -279,7 +279,6 @@ io.on('connection', (socket) => {
             let conversation = await Conversation.findOne({
               participants: { $all: [data.senderId, adminUser._id] }
             });
-
             if (conversation) {
               conversation.lastMessage = autoReplyMsg._id;
               conversation.updatedAt = new Date();
@@ -293,7 +292,6 @@ io.on('connection', (socket) => {
               timestamp: autoReplyMsg.timestamp,
               _id: autoReplyMsg._id
             };
-
             io.to(senderIdForReply.toString()).emit('receive-message', replyData);
           }, 1000);
         }
