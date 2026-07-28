@@ -848,22 +848,22 @@ const getRetailerProductsByCategory = async (req, res) => {
 //     const skip = (page - 1) * limit;
 //     const limitNumber = parseInt(limit);
 
-//     // Fetch users with role 'wholesaler'
-//     const wholesalerUsers = await user.find({ role: 'wholesaler' }).select('_id');
+//         const bulkCount = await bulkOrderModel.find({});
+    const bulkOrderNumber = bulkCount[0]?.bulkOrderNumber || 1;
 
-//     // Extract user IDs
-//     const wholesalerUserIds = wholesalerUsers.map(user => user._id);
+    // Fetch ALL products (admin-imported products included)
+    const products = await productModel
+      .find({})
+      .populate('category', 'name')
+      .populate('subcategory', 'name')
+      .populate('createdBy', 'name role')
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limitNum)
+      .lean();
 
-//     // Fetch products created by wholesaler users with pagination
-//     const products = await productModel
-//       .find({ createdBy: { $in: wholesalerUserIds } })
-//       .populate('category', 'name')
-//       .populate('createdBy', 'name role')
-//       .skip(skip)
-//       .limit(limitNumber);
-
-//     // Get total count for pagination metadata
-//     const totalProducts = await productModel.countDocuments({ createdBy: { $in: wholesalerUserIds } });
+    // Get total count for pagination metadata
+    const totalProducts = await productModel.countDocuments({});
 
 //     res.status(200).json({
 //       products,
@@ -891,82 +891,16 @@ const getWholesalerProducts = async (req, res) => {
     const limitNum = parseInt(limit);
     const skip = (pageNum - 1) * limitNum;
 
-    // Fetch users with role 'wholesaler'
-    const wholesalerUsers = await user.find({ role: 'wholesaler' }).select('_id');
-    const bulkCount = await bulkOrderModel.find({});
-    const bulkOrderNumber = bulkCount[0]?.bulkOrderNumber || 1;
-
-    // Extract user IDs
-    const wholesalerUserIds = wholesalerUsers.map(user => user._id);
-
-    // Fetch products created by wholesaler users with pagination
+        // Fetch ALL products filtered by category
     const products = await productModel
-      .find({ createdBy: { $in: wholesalerUserIds } })
-      .populate('category', 'name')
-      .populate('subcategory', 'name')
-      .populate('createdBy', 'name role')
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limitNum)
-      .lean();
-
-    // Get total count for pagination metadata
-    const totalProducts = await productModel.countDocuments({ createdBy: { $in: wholesalerUserIds } });
-
-    res.status(200).json({
-      products,
-      currentPage: pageNum,
-      totalPages: Math.ceil(totalProducts / limitNum),
-      totalProducts,
-      bulkOrderNumber
-    });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-
-
-const getWholesalerProductsByCategory = async (req, res) => {
-  try {
-    const { role, categoryId, page = 1, limit = 10 } = req.query;
-
-    // Validate role
-    if (role !== 'wholesaler') {
-      return res.status(400).json({ message: 'Invalid role. Must be wholesaler.' });
-    }
-
-    // Validate categoryId
-    if (!categoryId) {
-      return res.status(400).json({ message: 'Category ID is required.' });
-    }
-
-    // Calculate pagination
-    const skip = (page - 1) * limit;
-    const limitNumber = parseInt(limit);
-
-    // Fetch users with role 'wholesaler'
-    const wholesalerUsers = await user.find({ role: 'wholesaler' }).select('_id');
-
-    // Extract user IDs
-    const wholesalerUserIds = wholesalerUsers.map(user => user._id);
-
-    // Fetch products created by wholesaler users with category filter and pagination
-    const products = await productModel
-      .find({ 
-        createdBy: { $in: wholesalerUserIds },
-        category: categoryId 
-      })
+      .find({ category: categoryId })
       .populate('category', 'name')
       .populate('createdBy', 'name role')
       .skip(skip)
       .limit(limitNumber);
 
     // Get total count for pagination metadata
-    const totalProducts = await productModel.countDocuments({ 
-      createdBy: { $in: wholesalerUserIds },
-      category: categoryId 
-    });
+    const totalProducts = await productModel.countDocuments({ category: categoryId });
 
     res.status(200).json({
       products,
