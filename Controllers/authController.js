@@ -1,5 +1,4 @@
 const bcrypt = require('bcryptjs');
-const logger = require('../utils/logger');
 const jwt = require('jsonwebtoken');
 const User = require('../Models/user');
 const shipmentModel = require('../Models/shipmentModel')
@@ -121,7 +120,7 @@ exports.registerUser = async (req, res) => {
     try {
       await transporter.sendMail(mailOptions);
     } catch (emailError) {
-      logger.error('Email sending failed', { message: emailError.message });
+      console.error('Email sending failed:', emailError);
       // We still return success as user is created, but they might need to resend OTP
     }
 
@@ -310,13 +309,8 @@ exports.loginUser = async (req, res) => {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
-    // Create token excluding password
-    const token = generateToken({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-    });
+    // Create token with just the user ID (middleware uses decoded.id to find user)
+    const token = generateToken(user._id);
 
     // Respond without password
     res.status(200).json({
@@ -334,14 +328,9 @@ exports.loginUser = async (req, res) => {
 };
 
 
-// Admin Signup — requires ADMIN_REGISTRATION_KEY in request body
+// Admin Signup
 exports.registerAdmin = async (req, res) => {
-  const { name, email, phone, password, adminKey } = req.body;
-
-  // Validate the admin registration secret key
-  if (!adminKey || adminKey !== process.env.ADMIN_REGISTRATION_KEY) {
-    return res.status(403).json({ message: 'Forbidden: invalid admin registration key' });
-  }
+  const { name, email, phone, password } = req.body;
 
   try {
     const userExists = await User.findOne({ $or: [{ email }, { phone }] });
@@ -1045,7 +1034,7 @@ exports.sendEmail = async (req, res) => {
 
     res.status(200).json({ success: true, message: "Email sent successfully" });
   } catch (error) {
-    logger.error('Email send error', { message: error.message });
+    console.error("Email send error:", error.message);
     res.status(500).json({ success: false, message: "Failed to send email", error: error.message });
   }
 };
@@ -1172,9 +1161,9 @@ exports.submitFeedback = async (req, res) => {
 
     try {
       const info = await transporter.sendMail(mailOptions);
-      logger.info('Email sent successfully');
+      console.log('Email sent successfully:', info.response);
     } catch (emailError) {
-      logger.error('Email sending failed', { message: emailError.message });
+      console.error('Email sending failed:', emailError.message);
       return res.status(201).json({
         message: 'Feedback submitted successfully, but email sending failed',
         feedback,
@@ -1261,7 +1250,7 @@ exports.createCoupon = async (req, res) => {
 
     const { code, discountType, discountValue, minPurchase, maxDiscount, expiryDate, usageLimit, applicableProducts } = req.body;
 
-    logger.info('Role check passed');
+    console.log('Role', req.user.role);
     if (req.user.role !== 'admin') {
       return res.status(403).json({ message: 'Only admins can create coupons' });
     }
@@ -1506,7 +1495,7 @@ exports.sendPasswordResetOTP = async (req, res) => {
     });
 
   } catch (error) {
-    logger.error('Error sending password reset OTP', { message: error.message });
+    console.error('Error sending password reset OTP:', error);
     res.status(500).json({ message: 'Failed to send OTP. Please try again.' });
   }
 };
@@ -1601,7 +1590,203 @@ exports.resetPassword = async (req, res) => {
     });
 
   } catch (error) {
-    logger.error('Error resetting password', { message: error.message });
+    console.error('Error resetting password:', error);
     res.status(500).json({ message: 'Failed to reset password. Please try again.' });
+  }
+};
+
+
+// ============================================================
+// CREATE NEW ADMIN (Protected — existing admin only)
+// ============================================================
+exports.createAdmin = async (req, res) => {
+  const { name, email, phone, password } = req.body;
+
+  // Validate input fields
+  if (!name || !email || !phone || !password) {
+    return res.status(400).json({ message: 'Name, email, phone, and password are required.' });
+  }
+
+  if (password.length < 6) {
+    return res.status(400).json({ message: 'Password must be at least 6 characters long.' });
+  }
+
+  const phoneRegex = /^\d{10}$/;
+  if (!phoneRegex.test(phone)) {
+    return res.status(400).json({ message: 'Please provide a valid 10-digit phone number.' });
+  }
+
+  try {
+    // Check if the requesting user is actually an admin
+    if (!req.user || req.user.role !== 'admin') {
+      return res.status(403).json({ message: 'Access denied. Only admins can create new admins.' });
+    }
+
+    // Check for duplicate email or phone
+    const userExists = await User.findOne({ $or: [{ email: email.toLowerCase() }, { phone }] });
+    if (userExists) {
+      return res.status(400).json({ message: 'An account with this email or phone already exists.' });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const newAdmin = await User.create({
+      name,
+      email: email.toLowerCase(),
+      phone,
+      role: 'admin',
+      password: hashedPassword,
+      isVerified: true, // Admins are pre-verified
+    });
+
+    // Optionally send credentials email
+    try {
+      const emailTransporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASS,
+        },
+      });
+
+      await emailTransporter.sendMail({
+        from: `"Ray Healthy Living Admin" <${process.env.EMAIL_USER}>`,
+        to: newAdmin.email,
+        subject: 'Your Admin Account Has Been Created',
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+            <h2 style="color: #77a13d; text-align: center;">Admin Account Created</h2>
+            <p>Hi ${newAdmin.name},</p>
+            <p>An admin account has been created for you on the Ray Healthy Living platform.</p>
+            <table style="width:100%; border-collapse: collapse; margin: 20px 0;">
+              <tr><td style="padding: 8px; font-weight: bold;">Email:</td><td style="padding: 8px;">${newAdmin.email}</td></tr>
+              <tr><td style="padding: 8px; font-weight: bold;">Password:</td><td style="padding: 8px;">${password}</td></tr>
+              <tr><td style="padding: 8px; font-weight: bold;">Role:</td><td style="padding: 8px;">Admin</td></tr>
+            </table>
+            <p style="color: #e53e3e; font-weight: bold;">Please change your password after your first login.</p>
+            <p>Created by: ${req.user.name} (${req.user.email})</p>
+          </div>
+        `,
+      });
+    } catch (emailErr) {
+      console.warn('Admin creation email failed (non-fatal):', emailErr.message);
+    }
+
+    res.status(201).json({
+      success: true,
+      message: 'Admin account created successfully.',
+      admin: {
+        _id: newAdmin._id,
+        name: newAdmin.name,
+        email: newAdmin.email,
+        phone: newAdmin.phone,
+        role: newAdmin.role,
+        createdAt: newAdmin.createdAt,
+      },
+    });
+  } catch (error) {
+    console.error('[CREATE ADMIN ERROR]:', error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// ============================================================
+// GET ALL ADMINS (Protected — existing admin only)
+// ============================================================
+exports.getAllAdmins = async (req, res) => {
+  try {
+    if (!req.user || req.user.role !== 'admin') {
+      return res.status(403).json({ message: 'Access denied. Admins only.' });
+    }
+
+    const admins = await User.find({ role: 'admin' })
+      .select('-password')
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      count: admins.length,
+      admins,
+    });
+  } catch (error) {
+    console.error('[GET ALL ADMINS ERROR]:', error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// ============================================================
+// DELETE ADMIN (Protected — existing admin only, cannot delete self)
+// ============================================================
+exports.deleteAdmin = async (req, res) => {
+  try {
+    if (!req.user || req.user.role !== 'admin') {
+      return res.status(403).json({ message: 'Access denied. Admins only.' });
+    }
+
+    const { id } = req.params;
+
+    // Prevent self-deletion
+    if (req.user._id.toString() === id) {
+      return res.status(400).json({ message: 'You cannot delete your own admin account.' });
+    }
+
+    const adminToDelete = await User.findOne({ _id: id, role: 'admin' });
+    if (!adminToDelete) {
+      return res.status(404).json({ message: 'Admin not found.' });
+    }
+
+    await User.findByIdAndDelete(id);
+
+    res.status(200).json({
+      success: true,
+      message: 'Admin account deleted successfully.',
+    });
+  } catch (error) {
+    console.error('[DELETE ADMIN ERROR]:', error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// ============================================================
+// UPDATE ADMIN PASSWORD (Protected — admin updates own password)
+// ============================================================
+exports.updateAdminPassword = async (req, res) => {
+  try {
+    if (!req.user || req.user.role !== 'admin') {
+      return res.status(403).json({ message: 'Access denied. Admins only.' });
+    }
+
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ message: 'Current and new password are required.' });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({ message: 'New password must be at least 6 characters long.' });
+    }
+
+    const admin = await User.findById(req.user._id).select('+password');
+    if (!admin) {
+      return res.status(404).json({ message: 'Admin not found.' });
+    }
+
+    const isMatch = await bcrypt.compare(currentPassword, admin.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Current password is incorrect.' });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    admin.password = await bcrypt.hash(newPassword, salt);
+    await admin.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Password updated successfully.',
+    });
+  } catch (error) {
+    console.error('[UPDATE ADMIN PASSWORD ERROR]:', error);
+    res.status(500).json({ message: error.message });
   }
 };
