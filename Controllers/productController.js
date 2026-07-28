@@ -893,6 +893,42 @@ const getWholesalerProducts = async (req, res) => {
 
 
 
+
+const getWholesalerProductsByCategory = async (req, res) => {
+  try {
+    const { role, categoryId, page = 1, limit = 10 } = req.query;
+
+    if (role !== 'wholesaler') {
+      return res.status(400).json({ message: 'Invalid role. Must be wholesaler.' });
+    }
+    if (!categoryId) {
+      return res.status(400).json({ message: 'Category ID is required.' });
+    }
+
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+    const limitNumber = parseInt(limit);
+
+    const products = await productModel
+      .find({ category: categoryId })
+      .populate('category', 'name')
+      .populate('createdBy', 'name role')
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limitNumber);
+
+    const totalProducts = await productModel.countDocuments({ category: categoryId });
+
+    res.status(200).json({
+      products,
+      currentPage: parseInt(page),
+      totalPages: Math.ceil(totalProducts / limitNumber),
+      totalProducts,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 const getProductss = async (req, res) => {
   try {
     const { role, page = 1, limit = 100, category, minPrice, maxPrice, sortBy } = req.query;
