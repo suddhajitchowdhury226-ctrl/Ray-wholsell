@@ -848,10 +848,23 @@ const getRetailerProductsByCategory = async (req, res) => {
 //     const skip = (page - 1) * limit;
 //     const limitNumber = parseInt(limit);
 
-//         const bulkCount = await bulkOrderModel.find({});
+
+const getWholesalerProducts = async (req, res) => {
+  try {
+    const { role, page = 1, limit = 7 } = req.query;
+
+    if (role !== 'wholesaler') {
+      return res.status(400).json({ message: 'Invalid role. Must be wholesaler.' });
+    }
+
+    const pageNum = parseInt(page);
+    const limitNum = parseInt(limit);
+    const skip = (pageNum - 1) * limitNum;
+
+    const bulkCount = await bulkOrderModel.find({});
     const bulkOrderNumber = bulkCount[0]?.bulkOrderNumber || 1;
 
-    // Fetch ALL products (admin-imported products included)
+    // Fetch ALL products (admin-imported included)
     const products = await productModel
       .find({})
       .populate('category', 'name')
@@ -862,51 +875,14 @@ const getRetailerProductsByCategory = async (req, res) => {
       .limit(limitNum)
       .lean();
 
-    // Get total count for pagination metadata
     const totalProducts = await productModel.countDocuments({});
-
-//     res.status(200).json({
-//       products,
-//       currentPage: parseInt(page),
-//       totalPages: Math.ceil(totalProducts / limitNumber),
-//       totalProducts,
-//     });
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
-
-
-const getWholesalerProducts = async (req, res) => {
-  try {
-    const { role, page = 1, limit = 7 } = req.query;
-
-    // Validate role
-    if (role !== 'wholesaler') {
-      return res.status(400).json({ message: 'Invalid role. Must be wholesaler.' });
-    }
-
-    // Calculate pagination
-    const pageNum = parseInt(page);
-    const limitNum = parseInt(limit);
-    const skip = (pageNum - 1) * limitNum;
-
-        // Fetch ALL products filtered by category
-    const products = await productModel
-      .find({ category: categoryId })
-      .populate('category', 'name')
-      .populate('createdBy', 'name role')
-      .skip(skip)
-      .limit(limitNumber);
-
-    // Get total count for pagination metadata
-    const totalProducts = await productModel.countDocuments({ category: categoryId });
 
     res.status(200).json({
       products,
-      currentPage: parseInt(page),
-      totalPages: Math.ceil(totalProducts / limitNumber),
+      currentPage: pageNum,
+      totalPages: Math.ceil(totalProducts / limitNum),
       totalProducts,
+      bulkOrderNumber
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
