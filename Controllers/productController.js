@@ -640,7 +640,7 @@ const getProductsByWholesalerRetailor = async (req, res) => {
       .populate('subcategory', 'name')
       .populate('brand', 'name')
       .populate('createdBy', 'name role')
-      .sort({ createdAt: -1 })
+      .sort({ item_number_int: 1 })
       .skip(skip)
       .limit(limitNum)
       .lean();
@@ -700,7 +700,7 @@ const getProductsByRetailer = async (req, res) => {
         options: { strictPopulate: false }
       })
       .populate('createdBy', 'name role')
-      .sort({ createdAt: -1 })
+      .sort({ item_number_int: 1 })
       .skip(skip)
       .limit(limitNum)
       .lean();
@@ -759,7 +759,7 @@ const getRetailerProducts = async (req, res) => {
         options: { strictPopulate: false }
       })
       .populate('createdBy', 'name role')
-      .sort({ createdAt: -1 })
+      .sort({ item_number_int: 1 })
       .skip(skip)
       .limit(limitNumber)
       .lean();
@@ -870,7 +870,7 @@ const getWholesalerProducts = async (req, res) => {
       .populate('category', 'name')
       .populate('subcategory', 'name')
       .populate('createdBy', 'name role')
-      .sort({ createdAt: -1 })
+      .sort({ item_number_int: 1 })
       .skip(skip)
       .limit(limitNum)
       .lean();
@@ -912,7 +912,7 @@ const getWholesalerProductsByCategory = async (req, res) => {
       .find({ category: categoryId })
       .populate('category', 'name')
       .populate('createdBy', 'name role')
-      .sort({ createdAt: -1 })
+      .sort({ item_number_int: 1 })
       .skip(skip)
       .limit(limitNumber);
 
