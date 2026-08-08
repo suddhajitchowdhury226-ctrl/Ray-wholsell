@@ -108,7 +108,13 @@ app.use(compression({
 }));
 
 // ✅ Security headers via Helmet (before all routes)
-app.use(helmet());
+app.use(helmet({
+  // Allow images/static files to be loaded cross-origin (browser on
+  // rayonewholesale.com fetching product images from the Render server).
+  crossOriginResourcePolicy: { policy: 'cross-origin' },
+  // Keep all other security headers at their secure defaults
+  contentSecurityPolicy: false,  // managed per-route if needed
+}));
 
 // ✅ Rate limiting
 // General: 100 requests per 15 minutes per IP across all /api/ routes
@@ -160,8 +166,12 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads"), {
   maxAge: '1y',
   etag: true,
   lastModified: true,
-  setHeaders: (res, path) => {
-    if (path.endsWith('.jpg') || path.endsWith('.jpeg') || path.endsWith('.png') || path.endsWith('.webp')) {
+  setHeaders: (res, filePath) => {
+    // Allow browsers on any origin to load product images
+    res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    if (filePath.endsWith('.jpg') || filePath.endsWith('.jpeg') ||
+        filePath.endsWith('.png') || filePath.endsWith('.webp')) {
       res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
     }
   }
@@ -179,6 +189,7 @@ app.use('/api/payments', require('./Routes/paymentRoute'));
 app.use("/api/bulk", require("./Routes/bulkRoute"));
 app.use("/api/wholesaler-form", require("./Routes/wholesalerFormRoute"));
 app.use("/api/chat", require("./Routes/chatRoute"));
+app.use("/api/supplier-orders", require("./Routes/supplierOrderRoute"));
 
 // ✅ Shipment Tracking Endpoint
 const trackShipment = async (carrierCode, trackingNumber) => {

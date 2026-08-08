@@ -1,10 +1,10 @@
 const express = require('express');
-const { createProduct, getAddedProducts, updateProduct, deleteProduct, getProductsByWholesalerRetailor, bulkCreateProducts,getWholesalerProducts,getWholesalerProductsByCategory, bulkUploadCSV, searchWholesalerProducts, getWholesalerInventoryAnalytics } = require('../Controllers/productController');
+const { createProduct, getAddedProducts, updateProduct, deleteProduct, getProductsByWholesalerRetailor, bulkCreateProducts,getWholesalerProducts,getWholesalerProductsByCategory, bulkUploadCSV, searchWholesalerProducts, getWholesalerInventoryAnalytics , adjustInventory } = require('../Controllers/productController');
 const { uploadProduct, uploadCategory, uploadBlog, uploadCSV } = require('../multerConfig/multerConfig');
 const { createCategory, getCategories, updateCategory, deleteCategory, getRetailerPurchases, createBrand, getBrands, updateBrand, deleteBrand, createBlog, getBlogs, getAllBlogs, updateBlog, deleteBlog } = require('../Controllers/categoryController');
 const { protect, restrictTo } = require('../Middleware/tokenVerify');
 const { getWholesalerProductsWithReviews, getWholesalerProductReviews } = require('../Controllers/wholesalerReviewController');
-const { createNewsletter, getAllNewsletters, deleteNewsletter } = require('../Controllers/newsletterController');
+const { createNewsletter, getAllNewsletters, deleteNewsletter, unsubscribeNewsletter } = require('../Controllers/newsletterController');
 const wholesalerRouter = express.Router();
 
 
@@ -67,7 +67,11 @@ wholesalerRouter.get('/inventory-analytics', protect, restrictTo('wholesaler'), 
 
 // Newsletter routes
 wholesalerRouter.post('/newsletter', createNewsletter);
+wholesalerRouter.post('/newsletter/unsubscribe', unsubscribeNewsletter);
 wholesalerRouter.get('/newsletters', protect, restrictTo('wholesaler'), getAllNewsletters);
 wholesalerRouter.delete('/newsletter/:id', protect, restrictTo('wholesaler'), deleteNewsletter);
 
+
+// Inventory adjustment endpoint — adjust stock / bin_location / symbol
+wholesalerRouter.patch('/inventory/:id', protect, restrictTo('wholesaler', 'admin'), adjustInventory);
 module.exports = wholesalerRouter;

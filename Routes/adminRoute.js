@@ -1,11 +1,11 @@
 const express = require('express');
-const { createProduct, getAddedProducts, updateProduct, deleteProduct, deleteWholesalerProducts } = require('../Controllers/productController');
+const { createProduct, getAddedProducts, updateProduct, deleteProduct, deleteWholesalerProducts, adjustInventory } = require('../Controllers/productController');
 const { uploadProduct, uploadCategory } = require('../multerConfig/multerConfig');
 const { createCategory, getCategories, updateCategory, deleteCategory, createRetailerCategory, getRetailerCategories, updateRetailerCategory, deleteRetailerCategory, createBrand, getBrands, updateBrand, deleteBrand } = require('../Controllers/categoryController');
 const { protect, restrictTo } = require('../Middleware/tokenVerify');
 const { getProductsWithReviews, getProductReviews } = require('../Controllers/adminReviewController');
 const { getInvoiceSettings, updateInvoiceSettings } = require('../Controllers/invoiceSettingsController');
-const { getAdminNewsletters, deleteAdminNewsletter, editAdminNewsletter } = require('../Controllers/newsletterController');
+const { getAdminNewsletters, deleteAdminNewsletter, editAdminNewsletter, setDoNotEmail } = require('../Controllers/newsletterController');
 const adminRouter = express.Router();
 
 
@@ -56,5 +56,9 @@ adminRouter.put('/invoice-settings', protect, restrictTo('admin'), updateInvoice
 adminRouter.get('/newsletters', protect, restrictTo('admin'), getAdminNewsletters);
 adminRouter.delete('/newsletter/:id', protect, restrictTo('admin'), deleteAdminNewsletter);
 adminRouter.put('/newsletter/:id', protect, restrictTo('admin'), editAdminNewsletter);
+adminRouter.patch('/newsletter/:id/do-not-email', protect, restrictTo('admin'), setDoNotEmail);
+adminRouter.patch('/newsletter/:id/do-not-email', protect, restrictTo('admin'), setDoNotEmail);
 
+
+adminRouter.patch('/inventory/:id', protect, restrictTo('admin'), adjustInventory);
 module.exports = adminRouter;

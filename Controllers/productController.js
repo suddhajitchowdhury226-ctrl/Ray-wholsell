@@ -867,10 +867,11 @@ const getWholesalerProducts = async (req, res) => {
     // Fetch ALL products (admin-imported included)
     const products = await productModel
       .find({})
-      .populate('category', 'name')
+      .populate('category', 'name image')
       .populate('subcategory', 'name')
+      .populate('brand', 'name')
       .populate('createdBy', 'name role')
-      .sort({ item_number_int: 1 })
+      .sort({ item_number_int: 1, name: 1 })
       .skip(skip)
       .limit(limitNum)
       .lean();
@@ -910,11 +911,14 @@ const getWholesalerProductsByCategory = async (req, res) => {
 
     const products = await productModel
       .find({ category: categoryId })
-      .populate('category', 'name')
+      .populate('category', 'name image')
+      .populate('subcategory', 'name')
+      .populate('brand', 'name')
       .populate('createdBy', 'name role')
-      .sort({ item_number_int: 1 })
+      .sort({ item_number_int: 1, name: 1 })
       .skip(skip)
-      .limit(limitNumber);
+      .limit(limitNumber)
+      .lean();
 
     const totalProducts = await productModel.countDocuments({ category: categoryId });
 
@@ -1206,8 +1210,8 @@ const filterProductsByUser = async (req, res) => {
 
     // Define fields to select based on role
     const selectFields = role === "wholesaler"
-      ? "name buyPrice stock category images createdBy"
-      : "name sellPrice stock category images createdBy";
+      ? "name buyPrice sellPrice stock category subcategory brand images createdBy bin_location item_number lookup_code sku description"
+      : "name sellPrice stock category subcategory brand images createdBy bin_location item_number lookup_code sku description";
 
     // Pagination
     const pageNumber = parseInt(page);
@@ -1218,7 +1222,9 @@ const filterProductsByUser = async (req, res) => {
     const products = await productModel
       .find(query)
       .select(selectFields)
-      .populate("category", "name")
+      .populate("category", "name image")
+      .populate("subcategory", "name")
+      .populate("brand", "name")
       .populate("createdBy", "name role")
       .sort(sort)
       .skip(skip)
@@ -2116,7 +2122,67 @@ const getWholesalerInventoryAnalytics = async (req, res) => {
   }
 };
 
+
+// ── Inventory adjustment (wholesaler / admin) ─────────────────────────────────
+// Supports: set stock, add to stock, subtract from stock, update bin_location,
+//           update internal symbol, toggle inStock status.
+const adjustInventory = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      stockAction,      // 'set' | 'add' | 'subtract'
+      stockValue,       // number
+      bin_location,
+      internalSymbol,   // '→' | '←' | '*' | ''
+      reorder,
+      supplierName
+    } = req.body;
+
+    const product = await productModel.findById(id);
+    if (!product) return res.status(404).json({ message: 'Product not found' });
+
+    // ── Stock adjustment ──
+    if (stockAction && stockValue !== undefined) {
+      const val = parseFloat(stockValue);
+      if (isNaN(val) || val < 0) return res.status(400).json({ message: 'stockValue must be a non-negative number' });
+
+      if (stockAction === 'set') {
+        product.stock = val;
+      } else if (stockAction === 'add') {
+        product.stock = (product.stock || 0) + val;
+      } else if (stockAction === 'subtract') {
+        const newStock = (product.stock || 0) - val;
+        if (newStock < 0) return res.status(400).json({ message: 'Stock cannot go below zero' });
+        product.stock = newStock;
+      } else {
+        return res.status(400).json({ message: "stockAction must be 'set', 'add', or 'subtract'" });
+      }
+    }
+
+    // ── Other field updates ──
+    if (bin_location     !== undefined) product.bin_location     = bin_location;
+    if (internalSymbol   !== undefined) product.internalSymbol   = internalSymbol;
+    if (reorder          !== undefined) product.reorder          = parseFloat(reorder) || product.reorder;
+    if (supplierName     !== undefined) product.supplierName     = supplierName;
+
+    await product.save();
+
+    const updated = await productModel
+      .findById(id)
+      .populate('category', 'name')
+      .populate('subcategory', 'name')
+      .populate('brand', 'name')
+      .lean();
+
+    res.status(200).json({ success: true, message: 'Inventory updated', product: updated });
+  } catch (error) {
+    console.error('[adjustInventory]', error.message);
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
+  adjustInventory,
   createProduct,
   getAddedProducts,
   updateProduct,

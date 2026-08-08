@@ -1,5 +1,5 @@
 const express = require('express');
-const { getUsersWithForms, deleteUser } = require('../Controllers/userController');
+const { getUsersWithForms, deleteUser, createUser, updateWholesalerApproval, updateUser } = require('../Controllers/userController');
 const { getRetailerPurchases, getCategories, getBrands, getRetailerCategories } = require('../Controllers/categoryController');
 const { getWholesalerProducts, filterProducts, getProductCount, getSingleProduct, filterProductsByUser } = require('../Controllers/productController');
 const { applyCoupon, createCoupon, getCoupons, getCoupon, updateCoupon, deleteCoupon, submitFeedback, createCounseling, getCounselings, deleteCounseling } = require('../Controllers/authController');
@@ -19,6 +19,9 @@ const router = express.Router();
 router.get('/users-with-forms', protect, restrictTo('admin'), getUsersWithForms);
 
 router.delete('/delete-user/:id', protect, restrictTo('admin'), deleteUser);
+router.post('/create-user', protect, restrictTo('admin'), createUser);
+router.put('/update-user/:id', protect, restrictTo('admin'), updateUser);
+router.patch('/approve-wholesaler/:id', protect, restrictTo('admin'), updateWholesalerApproval);
 
 
 router.get(
@@ -764,5 +767,60 @@ router.delete('/delete-coupon/:id',protect, deleteCoupon);
 
 router.post('/apply',applyCoupon);
 
+
+
+// ── Payment: partial capture (capture only the amount actually shipped) ─────────
+// Flow: order is authorized for $500 → only $300 worth ships →
+//       admin calls this endpoint with { purchaseId, captureAmount: 300 }
+//       Stripe captures $300 and any remaining authorisation falls off.
+router.post(
+  '/partial-capture',
+  protect,
+  restrictTo('admin'),
+  async (req, res) => {
+    const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+    const purchaseModel = require('../Models/purchaseModel');
+
+    try {
+      const { purchaseId, captureAmount } = req.body;
+
+      if (!purchaseId || captureAmount == null)
+        return res.status(400).json({ message: 'purchaseId and captureAmount are required' });
+
+      const purchase = await purchaseModel.findById(purchaseId);
+      if (!purchase)
+        return res.status(404).json({ message: 'Purchase not found' });
+
+      if (purchase.status !== 'pending')
+        return res.status(400).json({ message: 'Only pending (authorised) orders can be partially captured' });
+
+      const amountCents = Math.round(parseFloat(captureAmount) * 100);
+      if (amountCents <= 0)
+        return res.status(400).json({ message: 'captureAmount must be greater than 0' });
+
+      // Capture only the specified amount on the existing PaymentIntent
+      const paymentIntent = await stripe.paymentIntents.capture(
+        purchase.paymentIntentId,
+        { amount_to_capture: amountCents }
+      );
+
+      // Update purchase total to the actually-captured amount
+      purchase.total  = parseFloat(captureAmount);
+      purchase.status = 'completed';
+      await purchase.save();
+
+      res.status(200).json({
+        success: true,
+        message: `Captured $${captureAmount} of original order`,
+        paymentIntentId: paymentIntent.id,
+        capturedAmount:  captureAmount,
+        purchase
+      });
+    } catch (error) {
+      console.error('[partial-capture]', error.message);
+      res.status(400).json({ message: error.message });
+    }
+  }
+);
 
 module.exports = router;
