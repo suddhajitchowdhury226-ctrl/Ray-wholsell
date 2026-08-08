@@ -1,6 +1,6 @@
 const express = require('express');
 const { getUsersWithForms, deleteUser, createUser, updateWholesalerApproval, updateUser } = require('../Controllers/userController');
-const { getRetailerPurchases, getCategories, getBrands, getRetailerCategories } = require('../Controllers/categoryController');
+const { getRetailerPurchases, getCategories, getBrands, getRetailerCategories, getDepartmentsWithCategories } = require('../Controllers/categoryController');
 const { getWholesalerProducts, filterProducts, getProductCount, getSingleProduct, filterProductsByUser } = require('../Controllers/productController');
 const { applyCoupon, createCoupon, getCoupons, getCoupon, updateCoupon, deleteCoupon, submitFeedback, createCounseling, getCounselings, deleteCounseling } = require('../Controllers/authController');
 const { protect, restrictTo } = require('../Middleware/tokenVerify');
@@ -385,6 +385,7 @@ router.post(
 
 // Public category and product endpoints for frontend
 router.get('/categories', getCategories);
+router.get('/departments', getDepartmentsWithCategories);
 router.get('/filter-products', filterProducts);
 
 

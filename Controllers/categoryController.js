@@ -757,6 +757,49 @@ const deleteRetailerCategory = async (req, res) => {
 };
 
 
+
+// ── getDepartmentsWithCategories ──────────────────────────────────────────────
+// Returns all departments with their categories and subcategories.
+// Used by the wholesale frontend filter sidebar.
+// Shape:
+// [{ department: "VITAMINS A - Z", categories: [{ _id, name, subcategories: [{_id, name}] }] }]
+const getDepartmentsWithCategories = async (req, res) => {
+  try {
+    const Category    = require('../Models/categoryModel');
+    const Subcategory = require('../Models/subcategoryModel');
+
+    const categories = await Category
+      .find({})
+      .populate({ path: 'subcategories', select: 'name _id', model: Subcategory })
+      .select('name department subcategories image')
+      .lean();
+
+    // Group by department; categories without a department go into "OTHER"
+    const deptMap = {};
+    for (const cat of categories) {
+      const dept = (cat.department || 'OTHER').trim().toUpperCase();
+      if (!deptMap[dept]) deptMap[dept] = [];
+      deptMap[dept].push({
+        _id:          cat._id,
+        name:         cat.name,
+        image:        cat.image || '',
+        subcategories: (cat.subcategories || []).map(s => ({ _id: s._id, name: s.name }))
+      });
+    }
+
+    // Sort departments A-Z, categories within each dept A-Z
+    const departments = Object.keys(deptMap).sort().map(dept => ({
+      department: dept,
+      categories: deptMap[dept].sort((a, b) => a.name.localeCompare(b.name))
+    }));
+
+    res.status(200).json({ success: true, departments });
+  } catch (error) {
+    console.error('[getDepartmentsWithCategories]', error.message);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 module.exports = {
   createCategory,
   getCategories,
@@ -766,5 +809,6 @@ module.exports = {
   getRetailerCategories,
   updateRetailerCategory,
   deleteRetailerCategory,
-  getRetailerPurchases, deleteBrand, updateBrand, getBrands, createBrand, createBlog, getBlogs, getAllBlogs, updateBlog, deleteBlog
+  getRetailerPurchases, deleteBrand, updateBrand, getBrands, createBrand, createBlog, getBlogs, getAllBlogs, updateBlog, deleteBlog,
+  getDepartmentsWithCategories
 };

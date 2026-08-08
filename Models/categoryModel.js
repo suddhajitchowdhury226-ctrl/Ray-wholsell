@@ -25,6 +25,9 @@ const categorySchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Subcategory',
   }],
-}, { timestamps: true });
-
-module.exports = mongoose.model('Category', categorySchema);
+  department: {
+    type: String,
+    trim: true,
+    default: '',
+  },
+}, { timestamps
