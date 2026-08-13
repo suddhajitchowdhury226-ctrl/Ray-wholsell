@@ -69,4 +69,9 @@ wholesalerRouter.get('/inventory-analytics', protect, restrictTo('wholesaler'), 
 wholesalerRouter.post('/newsletter', createNewsletter);
 wholesalerRouter.post('/newsletter/unsubscribe', unsubscribeNewsletter);
 wholesalerRouter.get('/newsletters', protect, restrictTo('wholesaler'), getAllNewsletters);
-wholesalerRouter.d
+wholesalerRouter.delete('/newsletter/:id', protect, restrictTo('wholesaler'), deleteNewsletter);
+
+
+// Inventory adjustment endpoint — adjust stock / bin_location / symbol
+wholesalerRouter.patch('/inventory/:id', protect, restrictTo('wholesaler', 'admin'), adjustInventory);
+module.exports = wholesalerRouter;

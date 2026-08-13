@@ -20,4 +20,25 @@ const newsletterSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
-  doNo
+  doNotEmail: {
+    type: Boolean,
+    default: false
+  },
+  unsubscribedAt: {
+    type: Date,
+    default: null
+  },
+  unsubscribeReason: {
+    type: String,
+    default: ''
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
+});
+
+// Index for fast email lookups
+newsletterSchema.index({ email: 1, type: 1 });
+
+module.exports = mongoose.model('Newsletter', newsletterSchema);
