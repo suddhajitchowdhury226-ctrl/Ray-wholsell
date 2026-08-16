@@ -66,8 +66,10 @@ paypal.configure({
 // ✅ CORS Configuration (before all other routes)
 const allowedOrigins = [
   "https://admin-wholesaler.netlify.app",
-  "https://user-wholesaler.netlify.app",    // ✅ Fix: was missing
-  "https://ray-wholsell.vercel.app",        // ✅ Fix: was missing + had trailing slash
+  "https://user-wholesaler.netlify.app",
+  "https://ray-wholsell.vercel.app",
+  "https://rayonewholesale.com",
+  "https://www.rayonewholesale.com",
   "http://localhost:5173",
   "http://localhost:5174",
   "http://localhost:5175",
@@ -76,7 +78,6 @@ const allowedOrigins = [
   "http://rayonesystem.com",
   "https://rayshealthyliving.com",
   "https://workspace.rayonewholesale.com",
-  "https://rayonewholesale.com",
   "https://wholseal.vercel.app",
   "https://ray-retailll.vercel.app",
   "https://ray-retaill.vercel.app",
