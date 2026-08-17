@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const logger = require('../utils/logger');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-const User = require('../Models/user'); // Ensure this path is correct
+const User = require('../Models/userModel'); // Fixed import path
 const cartModel = require('../Models/cartModel');
 const productModel = require('../Models/productModel');
 const purchaseModel = require('../Models/purchaseModel');
@@ -283,90 +283,115 @@ exports.deleteCartItem = async (req, res) => {
 
 
 
-// exports.createCheckoutSession = async (req, res) => {
-//   const userId = req.user._id;
-//   const { addressId } = req.body;
+exports.createCheckoutSession = async (req, res) => {
+  const userId = req.user._id;
+  const { addressId, shippingCost, cartItems, couponId } = req.body;
 
-//   try {
-//     if (req.user.role !== 'user') {
-//       return res.status(403).json({ message: 'Only users can create checkout sessions' });
-//     }
+  try {
+    console.log('[DEBUG] Backend - Checkout request:', {
+      userId: userId.toString(),
+      addressId,
+      shippingCost,
+      cartItems: cartItems?.length || 0,
+      couponId
+    });
 
-//     if (!addressId || !mongoose.isValidObjectId(addressId)) {
-//       return res.status(400).json({ message: 'Valid shipping address ID is required' });
-//     }
+    if (req.user.role !== 'user') {
+      return res.status(403).json({ message: 'Only users can create checkout sessions' });
+    }
 
-//     const user = await User.findById(userId);
-//     if (!user) {
-//       return res.status(404).json({ message: 'User not found' });
-//     }
+    if (!addressId || !mongoose.isValidObjectId(addressId)) {
+      return res.status(400).json({ message: 'Valid shipping address ID is required' });
+    }
 
-//     const address = user.addresses.id(addressId);
-//     if (!address) {
-//       return res.status(400).json({ message: 'Invalid or unauthorized address' });
-//     }
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
 
-//     const cart = await cartModel.findOne({ user: userId }).populate('items.product');
-//     if (!cart || cart.items.length === 0) {
-//       return res.status(404).json({ message: 'Cart is empty' });
-//     }
+    const address = user.addresses.id(addressId);
+    if (!address) {
+      return res.status(400).json({ message: 'Invalid or unauthorized address' });
+    }
 
-//     const lineItems = cart.items.map(item => {
-//       if (!item.product || !item.product.name || !item.product.buyPrice) {
-//         throw new Error(`Invalid product data for product ID: ${item.product?._id}`);
-//       }
+    // Use provided cart items instead of database cart
+    if (!cartItems || cartItems.length === 0) {
+      return res.status(400).json({ message: 'Cart items are required' });
+    }
 
-//       let imageUrl = [];
-//       if (item.product.images?.[0]) {
-//         const imagePath = item.product.images[0].replace(/\\/g, '/');
-//         const fullUrl = `${process.env.BASE_URL}/${imagePath.startsWith('/') ? imagePath.slice(1) : imagePath}`;
+    // Validate and create line items
+    const lineItems = cartItems.map(item => {
+      if (!item.product || !item.product.name || !item.product.buyPrice) {
+        throw new Error(`Invalid product data for product ID: ${item.product?._id}`);
+      }
 
-//         try {
-//           const url = new URL(fullUrl);
-//           if (url.protocol === 'https:') {
-//             imageUrl = [fullUrl];
-//           } else {
-//             console.warn(`Non-HTTPS image URL for product ${item.product.name}: ${fullUrl}`);
-//           }
-//         } catch (e) {
-//           console.warn(`Invalid image URL for product ${item.product.name}: ${fullUrl}`);
-//         }
-//       }
+      return {
+        price_data: {
+          currency: 'usd',
+          product_data: {
+            name: item.product.name,
+            description: `Product ID: ${item.product._id}`,
+          },
+          unit_amount: Math.round(item.product.buyPrice * 100),
+        },
+        quantity: item.quantity,
+      };
+    });
 
-//       return {
-//         price_data: {
-//           currency: 'usd',
-//           product_data: {
-//             name: item.product.name,
-//             images: imageUrl,
-//           },
-//           unit_amount: Math.round(item.product.buyPrice * 100),
-//         },
-//         quantity: item.quantity,
-//       };
-//     });
+    // Add shipping cost as a separate line item if provided
+    if (shippingCost && shippingCost > 0) {
+      lineItems.push({
+        price_data: {
+          currency: 'usd',
+          product_data: {
+            name: 'Shipping',
+            description: 'Shipping and handling charges',
+          },
+          unit_amount: Math.round(shippingCost * 100),
+        },
+        quantity: 1,
+      });
+    }
 
-//     const session = await stripe.checkout.sessions.create({
-//       payment_method_types: ['card'],
-//       line_items: lineItems,
-//       mode: 'payment',
-//       success_url: `${process.env.FRONTEND_URL}/purchase-summary?session_id={CHECKOUT_SESSION_ID}`,
-//       cancel_url: `${process.env.FRONTEND_URL}/cart`,
-//       customer_email: req.user.email,
-//       metadata: {
-//         userId: userId.toString(),
-//         cartId: cart._id.toString(),
-//         addressId: addressId.toString(),
-//       },
-//     });
+    // Create Stripe checkout session
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items: lineItems,
+      mode: 'payment',
+      success_url: `${process.env.FRONTEND_URL}/purchase-summary?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.FRONTEND_URL}/cart`,
+      customer_email: req.user.email,
+      metadata: {
+        userId: userId.toString(),
+        addressId: addressId.toString(),
+        shippingCost: shippingCost?.toString() || '0',
+        cartItems: JSON.stringify(cartItems),
+        couponId: couponId || '',
+        userEmail: req.user.email,
+        userName: req.user.username || req.user.email,
+        shippingAddress: JSON.stringify({
+          name: address.fullName,
+          address1: address.address,
+          city: address.city,
+          state: address.state,
+          zip: address.zipCode,
+          country: address.country || 'US'
+        })
+      },
+    });
 
-//     res.status(200).json({ sessionId: session.id, url: session.url });
-//   } catch (error) {
-//     console.error('Error creating checkout session:', error);
-//     let errorMessage = error.message || 'Failed to create checkout session';
-//     res.status(500).json({ message: errorMessage });
-//   }
-// };
+    console.log('[DEBUG] Stripe session created:', {
+      sessionId: session.id,
+      url: session.url
+    });
+
+    res.status(200).json({ sessionId: session.id, url: session.url });
+  } catch (error) {
+    console.error('Error creating checkout session:', error);
+    let errorMessage = error.message || 'Failed to create checkout session';
+    res.status(500).json({ message: errorMessage });
+  }
+};
 
 // exports.purchaseSummary = async (req, res) => {
 //   const { session_id } = req.query;
