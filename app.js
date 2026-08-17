@@ -32,6 +32,7 @@ const io = socketIo(server, {
       "https://user-wholesaler.netlify.app",
       "https://ray-wholsell.vercel.app", // ✅ Fix: removed trailing slash
       "https://admin-wholesaler.netlify.app",
+      "https://ray-admin-eight.vercel.app",  // Vercel admin panel
       "http://localhost:5173",
       "http://localhost:5176",
       "http://localhost:5174",
@@ -66,8 +67,9 @@ paypal.configure({
 // ✅ CORS Configuration (before all other routes)
 const allowedOrigins = [
   "https://admin-wholesaler.netlify.app",
-  "https://user-wholesaler.netlify.app",
+  "https://user-wholesaler.netlify.app", 
   "https://ray-wholsell.vercel.app",
+  "https://ray-admin-eight.vercel.app",  // Vercel admin panel
   "https://rayonewholesale.com",
   "https://www.rayonewholesale.com",
   "http://localhost:5173",
