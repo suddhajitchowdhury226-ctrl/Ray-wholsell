@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const logger = require('../utils/logger');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-const User = require('../Models/userModel'); // Fixed import path
+const User = require('../Models/user'); // Fixed import path
 const cartModel = require('../Models/cartModel');
 const productModel = require('../Models/productModel');
 const purchaseModel = require('../Models/purchaseModel');

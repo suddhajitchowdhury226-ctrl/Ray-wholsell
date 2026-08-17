@@ -3,7 +3,7 @@ const router = express.Router();
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const purchaseModel = require("../Models/purchaseModel");
 const cartModel = require("../Models/cartModel");
-const User = require("../Models/userModel");
+const User = require("../Models/user"); // Fixed import path
 const Product = require("../Models/productModel");
 const nodemailer = require('nodemailer');
 
