@@ -120,33 +120,59 @@ app.use(helmet({
   contentSecurityPolicy: false,  // managed per-route if needed
 }));
 
-// ✅ Rate limiting
-// General: 100 requests per 15 minutes per IP across all /api/ routes
-app.use('/api/', rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: { message: 'Too many requests, please try again later.' },
-}));
+// ✅ Rate limiting - DEVELOPMENT MODE (Relaxed limits for testing)
+if (process.env.NODE_ENV === 'production') {
+  // Production: strict rate limiting
+  app.use('/api/', rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 100,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { message: 'Too many requests, please try again later.' },
+  }));
 
-// Login: stricter — 20 attempts per 15 minutes per IP
-app.use('/api/auth/login', rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 20,
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: { message: 'Too many login attempts, please try again later.' },
-}));
+  app.use('/api/auth/login', rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 20,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { message: 'Too many login attempts, please try again later.' },
+  }));
 
-// Forgot password: 10 attempts per 15 minutes per IP
-app.use('/api/auth/forgot-password', rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 10,
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: { message: 'Too many password reset requests, please try again later.' },
-}));
+  app.use('/api/auth/forgot-password', rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 10,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { message: 'Too many password reset requests, please try again later.' },
+  }));
+} else {
+  // Development: very relaxed rate limiting for testing
+  console.log('🔧 Development mode: Using relaxed rate limits for testing');
+  app.use('/api/', rateLimit({
+    windowMs: 1 * 60 * 1000, // 1 minute window
+    max: 1000, // 1000 requests per minute (very generous)
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { message: 'Too many requests, please try again later.' },
+  }));
+
+  app.use('/api/auth/login', rateLimit({
+    windowMs: 1 * 60 * 1000,
+    max: 100, // 100 login attempts per minute
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { message: 'Too many login attempts, please try again later.' },
+  }));
+
+  app.use('/api/auth/forgot-password', rateLimit({
+    windowMs: 1 * 60 * 1000,
+    max: 50,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { message: 'Too many password reset requests, please try again later.' },
+  }));
+}
 
 // ✅ JSON parser after webhook
 app.use(express.json({ limit: "10mb" }));
@@ -187,6 +213,7 @@ app.use("/api/admin", require("./Routes/adminRoute"));
 app.use("/api/wholesaler", require("./Routes/wholesalerRoute"));
 app.use("/api/retailer", require("./Routes/retailorRoute"));
 app.use("/api/user", require("./Routes/userRoute"));
+app.use("/api/orders", require("./Routes/orderRoute"));
 app.use("/api/reviews", require("./Routes/reviewRoute"));
 app.use('/api/bookings', require("./Routes/bookingRoutes"));
 app.use('/api/payments', require('./Routes/paymentRoute'));
