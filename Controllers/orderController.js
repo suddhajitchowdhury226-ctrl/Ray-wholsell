@@ -144,13 +144,14 @@ const generateOrderConfirmationEmail = (order, userAddress) => {
 // Create order from cart checkout
 exports.createOrderFromCart = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.user._id; // Use _id from User document
     const { addressId, couponCode, notes, items: requestItems } = req.body;
 
     console.log('📦 Creating order from cart for user:', userId);
     console.log('📍 Address ID:', addressId);
     console.log('🎫 Coupon code:', couponCode);
     console.log('📦 Items provided in request:', requestItems ? requestItems.length : 0);
+    console.log('📦 Request items:', requestItems);
 
     // Get user with addresses
     const user = await User.findById(userId).populate('addresses');
@@ -161,18 +162,35 @@ exports.createOrderFromCart = async (req, res) => {
     let orderItems = [];
     let subtotal = 0;
 
+    // Validate we have either request items or we can fetch from DB
+    if (!requestItems || requestItems.length === 0) {
+      console.log('⚠️ No items in request, will try backend cart');
+    }
+
     // Priority: Use items from request body (for localStorage-based carts)
-    if (requestItems && requestItems.length > 0) {
+    if (requestItems && Array.isArray(requestItems) && requestItems.length > 0) {
       console.log('✅ Using items from request body');
       for (const item of requestItems) {
+        console.log(`   Processing item: productId=${item.productId}, qty=${item.quantity}, price=${item.price}`);
+        
+        if (!item.productId || !item.quantity) {
+          throw new Error(`Invalid item: missing productId or quantity. Item: ${JSON.stringify(item)}`);
+        }
+        
         const product = await Product.findById(item.productId);
         if (!product) {
           return res.status(404).json({ message: `Product ${item.productId} not found` });
         }
         
         const itemPrice = item.price || product.buyPrice || product.sellPrice;
+        if (!itemPrice) {
+          throw new Error(`Product ${product._id} has no price set (buyPrice: ${product.buyPrice}, sellPrice: ${product.sellPrice})`);
+        }
+        
         const itemTotal = itemPrice * item.quantity;
         subtotal += itemTotal;
+        
+        console.log(`   ✓ Added ${item.quantity} x ${product.name} @ $${itemPrice} = $${itemTotal}`);
         
         orderItems.push({
           product: product._id,
@@ -194,6 +212,11 @@ exports.createOrderFromCart = async (req, res) => {
 
       for (const cartItem of cart.items) {
         const product = cartItem.product;
+        if (!product) {
+          console.warn('⚠️ Cart item missing product reference');
+          continue;
+        }
+        
         const itemPrice = cartItem.websiteRole === 'wholesaler' ? product.buyPrice : product.sellPrice;
         const itemTotal = itemPrice * cartItem.quantity;
         
@@ -210,6 +233,8 @@ exports.createOrderFromCart = async (req, res) => {
         });
       }
     }
+    
+    console.log('📊 Order summary:', { itemCount: orderItems.length, subtotal });
 
     // Find the delivery address
     const deliveryAddress = user.addresses.id(addressId);
@@ -338,9 +363,16 @@ exports.createOrderFromCart = async (req, res) => {
 
   } catch (error) {
     console.error('❌ Error creating order:', error);
+    console.error('❌ Stack trace:', error.stack);
+    console.error('❌ Error details:', {
+      message: error.message,
+      name: error.name,
+      code: error.code
+    });
     res.status(500).json({
       message: 'Failed to create order',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
+      details: process.env.NODE_ENV === 'development' ? error.stack : undefined
     });
   }
 };
@@ -348,7 +380,7 @@ exports.createOrderFromCart = async (req, res) => {
 // Get user's orders
 exports.getUserOrders = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.user._id;
     
     const orders = await Order.find({ user: userId })
       .populate('items.product', 'name images')
@@ -372,7 +404,7 @@ exports.getUserOrders = async (req, res) => {
 exports.getOrderDetails = async (req, res) => {
   try {
     const { orderId } = req.params;
-    const userId = req.user.id;
+    const userId = req.user._id;
 
     const order = await Order.findOne({ _id: orderId, user: userId })
       .populate('items.product', 'name images');
