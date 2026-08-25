@@ -102,7 +102,7 @@ async function checkRealUsers() {
     mongoose.connection.close();
     
     console.log('\n📧 EMAIL INFO:');
-    console.log('✉️  Sender email: satpalemailcheck12@gmail.com');
+    console.log('✉️  Sender email: rayonewholesale@gmail.com');
     console.log('📨 Users should check:');
     console.log('   1. Inbox folder');
     console.log('   2. Spam/Junk folder');

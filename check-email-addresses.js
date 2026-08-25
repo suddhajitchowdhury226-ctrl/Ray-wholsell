@@ -85,7 +85,7 @@ async function checkEmailAddresses() {
 
     console.log('\n💡 যদি real user orders থাকে, তাহলে emails সেই addresses এ গেছে।');
     console.log('💡 User দের বলুন spam/junk folder চেক করতে।');
-    console.log('💡 Email address: satpalemailcheck12@gmail.com থেকে email আসবে।');
+    console.log('💡 Email address: rayonewholesale@gmail.com থেকে email আসবে।');
 
   } catch (error) {
     console.error('❌ Error checking email addresses:', error);

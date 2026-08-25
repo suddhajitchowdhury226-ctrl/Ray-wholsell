@@ -46,7 +46,7 @@ async function sendTestEmails() {
         </ul>
 
         <div style="border-left: 4px solid #77a13d; padding-left: 15px; margin: 20px 0;">
-          <p><strong>📧 Sender:</strong> satpalemailcheck12@gmail.com</p>
+          <p><strong>📧 Sender:</strong> rayonewholesale@gmail.com</p>
           <p><strong>📅 Date:</strong> ${new Date().toLocaleString('bn-BD')}</p>
           <p><strong>🎯 Purpose:</strong> Email delivery verification</p>
         </div>
@@ -94,7 +94,7 @@ async function sendTestEmails() {
     console.log(`   1. Inbox folder চেক করতে`);
     console.log(`   2. Spam/Junk folder চেক করতে`);
     console.log(`   3. Gmail হলে Promotions tab চেক করতে`);
-    console.log(`   4. Email sender: satpalemailcheck12@gmail.com`);
+    console.log(`   4. Email sender: rayonewholesale@gmail.com`);
     
   } catch (error) {
     console.error('❌ Error in test email process:', error);

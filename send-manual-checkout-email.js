@@ -106,7 +106,7 @@ async function sendManualCheckoutEmails() {
               <h3 style="color: #007bff; margin: 0 0 15px 0; font-size: 18px;">✅ Email System Working!</h3>
               <p style="margin: 8px 0; color: #555;">• যদি আপনি এই email টি পেয়ে থাকেন তাহলে checkout emails কাজ করছে</p>
               <p style="margin: 8px 0; color: #555;">• Real checkout এর পর এই format এ email আসবে</p>
-              <p style="margin: 8px 0; color: #555;">• Email sender: satpalemailcheck12@gmail.com</p>
+              <p style="margin: 8px 0; color: #555;">• Email sender: rayonewholesale@gmail.com</p>
               <p style="margin: 8px 0; color: #555;">• Spam/Junk folder চেক করতে ভুলবেন না!</p>
             </div>
 
@@ -159,7 +159,7 @@ async function sendManualCheckoutEmails() {
     console.log(`   📧 Inbox folder`);
     console.log(`   📧 Spam/Junk folder`);
     console.log(`   📧 Promotions tab (Gmail users)`);
-    console.log(`   📧 Sender: satpalemailcheck12@gmail.com`);
+    console.log(`   📧 Sender: rayonewholesale@gmail.com`);
 
   } catch (error) {
     console.error('❌ Error in manual email sending:', error);

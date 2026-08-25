@@ -117,7 +117,7 @@ async function debugYourCheckout() {
     console.log('\n💡 DEBUGGING INSTRUCTIONS:');
     console.log('1. If no orders found: Checkout is not completing - check frontend errors');
     console.log('2. If orders found but no email: Email sending is failing during checkout');
-    console.log('3. If recent order exists: Check spam folder for email from satpalemailcheck12@gmail.com');
+    console.log('3. If recent order exists: Check spam folder for email from rayonewholesale@gmail.com');
     console.log('4. Check browser console for checkout errors');
     console.log('5. Check backend terminal for email sending logs during checkout');
     

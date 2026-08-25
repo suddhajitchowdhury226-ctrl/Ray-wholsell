@@ -1095,7 +1095,7 @@ exports.submitFeedback = async (req, res) => {
 
     // Send email notification
     const mailOptions = {
-      from: '"Feedback System" <satpalemailcheck12@gmail.com>',
+      from: '"Feedback System" <rayonewholesale@gmail.com>',
       to: email,
       subject: 'Thank You for Your Feedback',
       html: `

@@ -82,7 +82,7 @@ async function verifySetup() {
       
       console.log('\n📧 EMAIL CONFIRMATION:');
       console.log(`   📨 You should receive email at: ${yourUser.email}`);
-      console.log('   📤 From: satpalemailcheck12@gmail.com');
+      console.log('   📤 From: rayonewholesale@gmail.com');
       console.log('   📁 Check: Inbox, Spam/Junk, Promotions');
       
       console.log('\n🔧 SYSTEM STATUS:');
