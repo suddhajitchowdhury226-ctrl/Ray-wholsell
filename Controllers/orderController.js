@@ -401,6 +401,139 @@ exports.getUserOrders = async (req, res) => {
   }
 };
 
+// Send Merchant Enquiry Email
+exports.sendMerchantEnquiry = async (req, res) => {
+  try {
+    const { orderId, merchantEmail } = req.body;
+    const Order = require('../Models/purchaseModel');
+    const nodemailer = require('nodemailer');
+
+    if (!orderId || !merchantEmail) {
+      return res.status(400).json({ message: 'Order ID and merchant email are required' });
+    }
+
+    // Fetch order with product details
+    const order = await Order.findById(orderId)
+      .populate('items.product', 'name images sku')
+      .populate('user', 'name email');
+
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+
+    // Create email template with product details (NO PRICE)
+    const generateMerchantEnquiryEmail = () => {
+      const itemsHtml = order.items.map(item => {
+        const imageUrl = item.product?.images?.[0] 
+          ? (item.product.images[0].startsWith('http') 
+              ? item.product.images[0] 
+              : `${process.env.BACKEND_URL}/${item.product.images[0].replace(/\\/g, '/').replace(/^\/+/, '')}`)
+          : '';
+
+        return `
+          <tr style="border-bottom: 1px solid #eee;">
+            <td style="padding: 12px;">
+              ${imageUrl ? `<img src="${imageUrl}" alt="${item.product.name}" style="width: 80px; height: 80px; object-fit: contain; border-radius: 4px;"><br/>` : ''}
+              <strong>${item.product.name}</strong><br/>
+              <small style="color: #666;">SKU: ${item.product.sku || 'N/A'}</small><br/>
+              <strong>Qty Requested: ${item.quantity}</strong>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      return `
+        <div style="font-family: Arial, sans-serif; max-width: 700px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
+          <div style="background: linear-gradient(135deg, #77a13d, #e97717); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+            <h1 style="color: white; margin: 0; font-size: 24px;">Product Availability Enquiry</h1>
+            <p style="color: #f0f0f0; margin: 10px 0 0 0;">From: Ray Healthy Living</p>
+          </div>
+          
+          <div style="background: white; padding: 30px; border-radius: 0 0 10px 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+            <p style="margin: 0 0 15px 0; color: #333;">Dear Merchant,</p>
+            
+            <p style="margin: 0 0 20px 0; color: #555;">
+              We have a customer enquiry for the following products. Please confirm if these items are available on your platform:
+            </p>
+            
+            <h3 style="color: #77a13d; margin: 20px 0 15px 0;">Enquired Products:</h3>
+            <table style="width: 100%; border-collapse: collapse; border: 1px solid #eee; margin-bottom: 20px;">
+              <thead>
+                <tr style="background-color: #f8f9fa;">
+                  <th style="padding: 15px; text-align: left; color: #333; font-weight: 600;">Product (Image)</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${itemsHtml}
+              </tbody>
+            </table>
+
+            <div style="background: #f0f9ff; padding: 15px; border-left: 4px solid #007bff; margin: 20px 0;">
+              <p style="margin: 0; color: #333;"><strong>Customer Details:</strong></p>
+              <p style="margin: 5px 0; color: #555;">Name: ${order.user?.name || 'N/A'}</p>
+              <p style="margin: 5px 0; color: #555;">Email: ${order.user?.email || 'N/A'}</p>
+              <p style="margin: 5px 0; color: #555;">Order ID: #${order.orderNumber || order._id}</p>
+            </div>
+
+            <div style="background: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin: 20px 0;">
+              <p style="margin: 0 0 10px 0; color: #333;"><strong>Please confirm:</strong></p>
+              <ul style="margin: 5px 0; color: #555; padding-left: 20px;">
+                <li>Availability of each product</li>
+                <li>Current pricing (if available)</li>
+                <li>Delivery timeline</li>
+                <li>Any minimum order quantities</li>
+              </ul>
+            </div>
+
+            <p style="margin: 20px 0 10px 0; color: #555;">
+              Please reply to this email with your response at your earliest convenience.
+            </p>
+
+            <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
+              <p style="color: #999; font-size: 12px; margin: 5px 0;">
+                © ${new Date().getFullYear()} Ray Healthy Living. All rights reserved.
+              </p>
+            </div>
+          </div>
+        </div>
+      `;
+    };
+
+    // Send email
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: merchantEmail,
+      subject: `Product Availability Enquiry - Order #${order.orderNumber || order._id} - Ray Healthy Living`,
+      html: generateMerchantEnquiryEmail(),
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    console.log('📧 Merchant enquiry email sent to:', merchantEmail);
+
+    res.status(200).json({
+      message: 'Merchant enquiry sent successfully',
+      merchantEmail,
+      orderId,
+    });
+
+  } catch (error) {
+    console.error('❌ Error sending merchant enquiry:', error);
+    res.status(500).json({
+      message: 'Failed to send merchant enquiry',
+      error: error.message,
+    });
+  }
+};
+
 // Get single order details
 exports.getOrderDetails = async (req, res) => {
   try {
