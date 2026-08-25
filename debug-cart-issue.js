@@ -1,120 +1,196 @@
-const mongoose = require('mongoose');
-const User = require('./Models/user');
-const Cart = require('./Models/cartModel');
-const Product = require('./Models/productModel');
 require('dotenv').config();
+const mongoose = require('mongoose');
+const axios = require('axios');
 
-console.log('🛒 Debugging cart issue for debnathtulanka@gmail.com...');
+const userModel = require('./Models/user');
+const productModel = require('./Models/productModel');
+const cartModel = require('./Models/cartModel');
 
-// Connect to MongoDB
-mongoose.connect(process.env.DATABASE_URL)
-.then(() => {
-  console.log('✅ MongoDB connected');
-  debugCartIssue();
-}).catch(err => {
-  console.error('❌ MongoDB connection error:', err);
+const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.DATABASE_URL);
+    console.log('✅ MongoDB Connected');
+  } catch (error) {
+    console.error('❌ MongoDB Connection Error:', error.message);
+    process.exit(1);
+  }
+};
+
+const debugAddToCart = async () => {
+  await connectDB();
+
+  console.log('\n=== DEBUGGING ADD TO CART ISSUE ===\n');
+
+  // 1. Check if there are any users with role 'user'
+  console.log('1️⃣ Checking for users with role "user"...');
+  const users = await userModel.find({ role: 'user' }).limit(5);
+  console.log(`   Found ${users.length} users`);
+  if (users.length > 0) {
+    console.log(`   Sample user: ${users[0].name} (${users[0].email}) ID: ${users[0]._id}`);
+  } else {
+    console.log('   ⚠️  No users found!');
+  }
+
+  // 2. Check if there are any products
+  console.log('\n2️⃣ Checking for products...');
+  const products = await productModel.find().limit(5);
+  console.log(`   Found ${products.length} products in database`);
+  if (products.length > 0) {
+    const product = products[0];
+    console.log(`   Sample product: ${product.name}`);
+    console.log(`   Product ID: ${product._id}`);
+    console.log(`   Stock: ${product.stock}`);
+    console.log(`   Buy Price: ${product.buyPrice || 'N/A'}`);
+    console.log(`   Sell Price: ${product.sellPrice || 'N/A'}`);
+  } else {
+    console.log('   ⚠️  No products found!');
+  }
+
+  // 3. Check if any carts exist
+  console.log('\n3️⃣ Checking for existing carts...');
+  const carts = await cartModel.find().populate('user', 'name email').populate('items.product', 'name');
+  console.log(`   Found ${carts.length} carts in database`);
+  if (carts.length > 0) {
+    const cart = carts[0];
+    console.log(`   Sample cart user: ${cart.user?.name || 'Unknown'}`);
+    console.log(`   Items in cart: ${cart.items.length}`);
+    if (cart.items.length > 0) {
+      console.log(`   First item: ${cart.items[0].product?.name || 'Product not found'} (Qty: ${cart.items[0].quantity})`);
+    }
+  } else {
+    console.log('   No carts exist yet');
+  }
+
+  // 4. Test add to cart functionality directly
+  if (users.length > 0 && products.length > 0) {
+    console.log('\n4️⃣ Testing add to cart directly...');
+    const testUser = users[0];
+    const testProduct = products[0];
+
+    console.log(`   User: ${testUser.name} (ID: ${testUser._id})`);
+    console.log(`   Product: ${testProduct.name} (ID: ${testProduct._id})`);
+
+    try {
+      // Check if cart exists
+      let cart = await cartModel.findOne({ user: testUser._id });
+      
+      if (!cart) {
+        console.log('   Creating new cart...');
+        cart = new cartModel({
+          user: testUser._id,
+          items: [{
+            product: testProduct._id,
+            quantity: 1,
+            websiteRole: 'wholesaler'
+          }],
+        });
+        await cart.save();
+        console.log('   ✅ New cart created successfully');
+      } else {
+        console.log('   Cart already exists, checking items...');
+        const itemIndex = cart.items.findIndex(item =>
+          item.product.toString() === testProduct._id.toString()
+        );
+        
+        if (itemIndex > -1) {
+          const oldQty = cart.items[itemIndex].quantity;
+          cart.items[itemIndex].quantity += 1;
+          console.log(`   ✅ Increased quantity from ${oldQty} to ${cart.items[itemIndex].quantity}`);
+        } else {
+          cart.items.push({
+            product: testProduct._id,
+            quantity: 1,
+            websiteRole: 'wholesaler'
+          });
+          console.log('   ✅ Added new item to cart');
+        }
+        await cart.save();
+      }
+
+      // Fetch updated cart
+      const updatedCart = await cartModel
+        .findById(cart._id)
+        .populate('items.product', 'name buyPrice sellPrice stock images')
+        .populate('user', 'name email');
+
+      console.log(`   Final cart items: ${updatedCart.items.length}`);
+      console.log('   Cart items:');
+      updatedCart.items.forEach((item, idx) => {
+        console.log(`     ${idx + 1}. ${item.product?.name || 'Unknown'} x ${item.quantity}`);
+      });
+    } catch (error) {
+      console.error('   ❌ Error testing add to cart:', error.message);
+      console.error('   Full error:', error);
+    }
+  }
+
+  // 5. Check backend server configuration
+  console.log('\n5️⃣ Checking backend configuration...');
+  console.log(`   PORT: ${process.env.PORT || 'Not set'}`);
+  console.log(`   BASE_URL: ${process.env.BASE_URL || 'Not set'}`);
+  console.log(`   FRONTEND_URL: ${process.env.FRONTEND_URL || 'Not set'}`);
+  console.log(`   JWT_SECRET: ${process.env.JWT_SECRET ? 'Set ✓' : 'Not set ✗'}`);
+  console.log(`   STRIPE_SECRET_KEY: ${process.env.STRIPE_SECRET_KEY ? 'Set ✓' : 'Not set ✗'}`);
+
+  // 6. Test backend API endpoint
+  console.log('\n6️⃣ Testing backend API...');
+  const backendURL = process.env.BASE_URL || 'http://api.rayonewholesale.com';
+  console.log(`   Testing URL: ${backendURL}/api/user/categories`);
+  
+  try {
+    const response = await axios.get(`${backendURL}/api/user/categories`, {
+      timeout: 5000
+    });
+    console.log(`   ✅ Backend is responding (Status: ${response.status})`);
+    console.log(`   Categories found: ${response.data?.categories?.length || response.data?.length || 0}`);
+  } catch (error) {
+    if (error.code === 'ECONNREFUSED') {
+      console.log('   ❌ Backend is NOT running on this URL');
+      console.log('   ⚠️  Make sure the backend server is started');
+    } else if (error.code === 'ENOTFOUND') {
+      console.log(`   ❌ Cannot resolve hostname: ${backendURL}`);
+    } else if (error.response) {
+      console.log(`   ⚠️  Backend responded with status: ${error.response.status}`);
+    } else {
+      console.log(`   ❌ Backend error: ${error.message}`);
+    }
+  }
+
+  // 7. Check database indexes
+  console.log('\n7️⃣ Checking database indexes...');
+  try {
+    const cartIndexes = await cartModel.collection.getIndexes();
+    console.log('   Cart collection indexes:', Object.keys(cartIndexes).join(', '));
+
+    const productIndexes = await productModel.collection.getIndexes();
+    console.log('   Product collection indexes:', Object.keys(productIndexes).join(', '));
+
+    const userIndexes = await userModel.collection.getIndexes();
+    console.log('   User collection indexes:', Object.keys(userIndexes).join(', '));
+  } catch (error) {
+    console.log('   ⚠️  Could not fetch indexes:', error.message);
+  }
+
+  console.log('\n=== RECOMMENDATIONS ===\n');
+  
+  if (users.length === 0) {
+    console.log('❌ Create at least one user with role "user" to test cart functionality');
+  }
+  
+  if (products.length === 0) {
+    console.log('❌ Add products to the database');
+  }
+
+  console.log('\n✅ Frontend should connect to: ' + backendURL);
+  console.log('   Update your frontend .env file:');
+  console.log(`   VITE_BASE_URL=${backendURL}`);
+
+  console.log('\n=== DEBUG COMPLETE ===\n');
+  
+  mongoose.connection.close();
+};
+
+debugAddToCart().catch(error => {
+  console.error('Fatal error:', error);
   process.exit(1);
 });
-
-async function debugCartIssue() {
-  try {
-    const yourEmail = 'debnathtulanka@gmail.com';
-    
-    console.log(`\n🔍 Finding user: ${yourEmail}`);
-    const yourUser = await User.findOne({ email: yourEmail });
-    
-    if (!yourUser) {
-      console.log('❌ User not found');
-      return;
-    }
-    
-    console.log(`✅ User found: ${yourUser.name} (ID: ${yourUser._id})`);
-    
-    // Check database cart
-    console.log('\n🛒 Checking database cart...');
-    const dbCart = await Cart.findOne({ user: yourUser._id }).populate('items.product', 'name stock buyPrice sellPrice');
-    
-    if (!dbCart) {
-      console.log('❌ No cart found in database');
-      console.log('💡 This explains the "Cart is empty" error during checkout');
-      
-      // Create a cart with sample products
-      console.log('\n🔧 Creating cart with available products...');
-      const products = await Product.find({ stock: { $gt: 0 } }).limit(2);
-      
-      if (products.length === 0) {
-        console.log('❌ No products available in database');
-        return;
-      }
-      
-      console.log(`📦 Found ${products.length} products:`);
-      products.forEach((product, index) => {
-        console.log(`   ${index + 1}. ${product.name} (Stock: ${product.stock}, Price: $${product.buyPrice || product.sellPrice})`);
-      });
-      
-      // Create cart
-      const newCartItems = products.map(product => ({
-        product: product._id,
-        quantity: 12, // MOQ
-        websiteRole: 'wholesaler'
-      }));
-
-      const newCart = new Cart({
-        user: yourUser._id,
-        items: newCartItems
-      });
-
-      await newCart.save();
-      console.log('✅ New cart created in database');
-      
-      // Verify the cart
-      const verifyCart = await Cart.findOne({ user: yourUser._id }).populate('items.product', 'name stock buyPrice sellPrice');
-      console.log('\n✅ New cart verification:');
-      console.log(`   🛒 Items count: ${verifyCart.items.length}`);
-      verifyCart.items.forEach((item, index) => {
-        console.log(`   ${index + 1}. ${item.product.name} - Qty: ${item.quantity} - Price: $${item.product.buyPrice || item.product.sellPrice}`);
-      });
-      
-    } else {
-      console.log(`✅ Database cart found with ${dbCart.items.length} items:`);
-      
-      if (dbCart.items.length === 0) {
-        console.log('❌ Database cart exists but is empty');
-      } else {
-        dbCart.items.forEach((item, index) => {
-          console.log(`   ${index + 1}. Product: ${item.product?.name || 'Unknown'}`);
-          console.log(`      📦 Product ID: ${item.product?._id || item.product}`);
-          console.log(`      🔢 Quantity: ${item.quantity}`);
-          console.log(`      👤 Website Role: ${item.websiteRole}`);
-          console.log(`      💰 Product Price: $${item.product?.buyPrice || item.product?.sellPrice || 'N/A'}`);
-          console.log(`      📦 Stock: ${item.product?.stock || 'N/A'}`);
-        });
-      }
-    }
-    
-    // Check localStorage simulation
-    console.log('\n💾 Frontend localStorage cart issue:');
-    console.log('💡 The frontend shows cart items from localStorage');
-    console.log('💡 But the backend expects cart items in the database');
-    console.log('💡 This creates a mismatch during checkout');
-    
-    console.log('\n🔧 SOLUTIONS:');
-    console.log('1. ✅ Database cart created/updated');
-    console.log('2. 🔄 Frontend should sync cart to database when items are added');
-    console.log('3. 🔍 Check if frontend add-to-cart API calls are working');
-    console.log('4. 🛒 Clear browser localStorage and re-add items properly');
-    
-    console.log('\n📝 INSTRUCTIONS:');
-    console.log('1. 🌐 Go to http://localhost:5173/');
-    console.log('2. 🛒 Clear your browser cart (if any)');
-    console.log('3. 📦 Add products to cart using "Add to Cart" buttons');
-    console.log('4. 🛍️ Try checkout - should work now');
-    console.log('5. 📧 Check email for confirmation');
-
-  } catch (error) {
-    console.error('❌ Error debugging cart:', error);
-  } finally {
-    mongoose.connection.close();
-    process.exit(0);
-  }
-}
