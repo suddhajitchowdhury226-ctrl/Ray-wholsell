@@ -253,10 +253,11 @@ exports.createOrderFromCart = async (req, res) => {
     const shippingCost = subtotal >= 100 ? 0 : 15.00;
     const total = subtotal + shippingCost - discount;
 
-    // Generate order number
-    const timestamp = Date.now().toString().slice(-8);
-    const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
-    const orderNumber = `ORD-${timestamp}${random}`;
+    // Generate order number - Format: YYYY-NNNNN-XX
+    const year = new Date().getFullYear();
+    const random = Math.floor(Math.random() * 100000).toString().padStart(5, '0');
+    const sequence = Math.floor(Math.random() * 100).toString().padStart(2, '0');
+    const orderNumber = `${year}-${random}-${sequence}`;
 
     // Create the order
     const order = new Order({
