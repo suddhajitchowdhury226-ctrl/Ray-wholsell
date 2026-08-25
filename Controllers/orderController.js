@@ -145,11 +145,12 @@ const generateOrderConfirmationEmail = (order, userAddress) => {
 exports.createOrderFromCart = async (req, res) => {
   try {
     const userId = req.user.id;
-    const { addressId, couponCode, notes } = req.body;
+    const { addressId, couponCode, notes, items: requestItems } = req.body;
 
     console.log('📦 Creating order from cart for user:', userId);
     console.log('📍 Address ID:', addressId);
     console.log('🎫 Coupon code:', couponCode);
+    console.log('📦 Items provided in request:', requestItems ? requestItems.length : 0);
 
     // Get user with addresses
     const user = await User.findById(userId).populate('addresses');
@@ -157,38 +158,63 @@ exports.createOrderFromCart = async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Get user's cart
-    const cart = await Cart.findOne({ user: userId }).populate('items.product');
-    if (!cart || cart.items.length === 0) {
-      return res.status(400).json({ message: 'Cart is empty' });
+    let orderItems = [];
+    let subtotal = 0;
+
+    // Priority: Use items from request body (for localStorage-based carts)
+    if (requestItems && requestItems.length > 0) {
+      console.log('✅ Using items from request body');
+      for (const item of requestItems) {
+        const product = await Product.findById(item.productId);
+        if (!product) {
+          return res.status(404).json({ message: `Product ${item.productId} not found` });
+        }
+        
+        const itemPrice = item.price || product.buyPrice || product.sellPrice;
+        const itemTotal = itemPrice * item.quantity;
+        subtotal += itemTotal;
+        
+        orderItems.push({
+          product: product._id,
+          name: product.name,
+          quantity: item.quantity,
+          price: itemPrice,
+          websiteRole: item.websiteRole || 'user',
+          variantId: item.variantId,
+          flavour: item.flavour,
+        });
+      }
+    } else {
+      // Fallback: Get user's cart from database
+      console.log('✅ Using items from backend cart');
+      const cart = await Cart.findOne({ user: userId }).populate('items.product');
+      if (!cart || cart.items.length === 0) {
+        return res.status(400).json({ message: 'Cart is empty' });
+      }
+
+      for (const cartItem of cart.items) {
+        const product = cartItem.product;
+        const itemPrice = cartItem.websiteRole === 'wholesaler' ? product.buyPrice : product.sellPrice;
+        const itemTotal = itemPrice * cartItem.quantity;
+        
+        subtotal += itemTotal;
+        
+        orderItems.push({
+          product: product._id,
+          name: product.name,
+          quantity: cartItem.quantity,
+          price: itemPrice,
+          websiteRole: cartItem.websiteRole,
+          variantId: cartItem.variantId,
+          flavour: cartItem.flavour,
+        });
+      }
     }
 
     // Find the delivery address
     const deliveryAddress = user.addresses.id(addressId);
     if (!deliveryAddress) {
       return res.status(400).json({ message: 'Invalid delivery address' });
-    }
-
-    // Calculate totals
-    let subtotal = 0;
-    const orderItems = [];
-
-    for (const cartItem of cart.items) {
-      const product = cartItem.product;
-      const itemPrice = cartItem.websiteRole === 'wholesaler' ? product.buyPrice : product.sellPrice;
-      const itemTotal = itemPrice * cartItem.quantity;
-      
-      subtotal += itemTotal;
-      
-      orderItems.push({
-        product: product._id,
-        name: product.name,
-        quantity: cartItem.quantity,
-        price: itemPrice,
-        websiteRole: cartItem.websiteRole,
-        variantId: cartItem.variantId,
-        flavour: cartItem.flavour,
-      });
     }
 
     // Apply coupon discount if provided
