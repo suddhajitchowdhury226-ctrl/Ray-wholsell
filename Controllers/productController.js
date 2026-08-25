@@ -851,14 +851,14 @@ const getRetailerProductsByCategory = async (req, res) => {
 
 const getWholesalerProducts = async (req, res) => {
   try {
-    const { role, page = 1, limit = 7 } = req.query;
+    const { role, page = 1, limit = 1000 } = req.query;
 
     if (role !== 'wholesaler') {
       return res.status(400).json({ message: 'Invalid role. Must be wholesaler.' });
     }
 
     const pageNum = parseInt(page);
-    const limitNum = parseInt(limit);
+    const limitNum = parseInt(limit) || 1000;
     const skip = (pageNum - 1) * limitNum;
 
     const bulkCount = await bulkOrderModel.find({});
@@ -877,6 +877,8 @@ const getWholesalerProducts = async (req, res) => {
       .lean();
 
     const totalProducts = await productModel.countDocuments({});
+
+    console.log(`📦 Fetched ${products.length} products (page ${pageNum}, limit ${limitNum}, total ${totalProducts})`);
 
     res.status(200).json({
       products,
