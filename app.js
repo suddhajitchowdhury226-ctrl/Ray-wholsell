@@ -37,6 +37,7 @@ const io = socketIo(server, {
       "http://localhost:5176",
       "http://localhost:5174",
       "http://localhost:5175",
+      "http://localhost:5181",  // Frontend dev server
       "https://retailer-wholesaler-website.netlify.app",
       "http://rayonesystem.com",
       "https://rayshealthyliving.com",
@@ -77,6 +78,7 @@ const allowedOrigins = [
   "http://localhost:5175",
   "http://localhost:5176",
   "http://localhost:5180",  // Admin panel
+  "http://localhost:5181",  // Frontend dev server
   "https://retailer-wholesaler-website.netlify.app",
   "http://rayonesystem.com",
   "https://rayshealthyliving.com",
