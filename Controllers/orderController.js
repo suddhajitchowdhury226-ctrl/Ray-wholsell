@@ -18,14 +18,30 @@ const createTransporter = () => {
 
 // Generate order confirmation email HTML
 const generateOrderConfirmationEmail = (order, userAddress) => {
-  const itemsHtml = order.items.map(item => `
-    <tr style="border-bottom: 1px solid #eee;">
-      <td style="padding: 12px; color: #333;">${item.name}</td>
-      <td style="padding: 12px; text-align: center; color: #666;">${item.quantity}</td>
-      <td style="padding: 12px; text-align: right; color: #333;">$${item.price.toFixed(2)}</td>
-      <td style="padding: 12px; text-align: right; font-weight: 600; color: #333;">$${(item.price * item.quantity).toFixed(2)}</td>
-    </tr>
-  `).join('');
+  const baseUrl = process.env.BACKEND_URL || 'https://ray-wholsell.onrender.com';
+  
+  const itemsHtml = order.items.map(item => {
+    // Build image URL
+    let imageUrl = '';
+    if (item.product && item.product.images && item.product.images.length > 0) {
+      const imagePath = item.product.images[0];
+      imageUrl = imagePath.startsWith('http') 
+        ? imagePath 
+        : `${baseUrl}/${imagePath.replace(/\\/g, '/').replace(/^\/+/, '')}`;
+    }
+    
+    return `
+      <tr style="border-bottom: 1px solid #eee;">
+        <td style="padding: 12px; color: #333;">
+          ${imageUrl ? `<img src="${imageUrl}" alt="${item.name}" style="width: 80px; height: 80px; object-fit: contain; margin-bottom: 8px; border-radius: 4px;"><br/>` : ''}
+          <strong>${item.name}</strong>
+        </td>
+        <td style="padding: 12px; text-align: center; color: #666;">${item.quantity}</td>
+        <td style="padding: 12px; text-align: right; color: #333;">$${item.price.toFixed(2)}</td>
+        <td style="padding: 12px; text-align: right; font-weight: 600; color: #333;">$${(item.price * item.quantity).toFixed(2)}</td>
+      </tr>
+    `;
+  }).join('');
 
   return `
     <div style="font-family: Arial, sans-serif; max-width: 700px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
@@ -66,7 +82,7 @@ const generateOrderConfirmationEmail = (order, userAddress) => {
           <table style="width: 100%; border-collapse: collapse; border: 1px solid #eee;">
             <thead>
               <tr style="background-color: #f8f9fa;">
-                <th style="padding: 15px 12px; text-align: left; color: #333; font-weight: 600;">Product</th>
+                <th style="padding: 15px 12px; text-align: left; color: #333; font-weight: 600;">Product (Image)</th>
                 <th style="padding: 15px 12px; text-align: center; color: #333; font-weight: 600;">Qty</th>
                 <th style="padding: 15px 12px; text-align: right; color: #333; font-weight: 600;">Unit Price</th>
                 <th style="padding: 15px 12px; text-align: right; color: #333; font-weight: 600;">Total</th>
@@ -234,6 +250,10 @@ exports.createOrderFromCart = async (req, res) => {
     await Cart.findOneAndUpdate({ user: userId }, { items: [] });
     console.log('🧹 Cart cleared for user:', userId);
 
+    // Populate product data with images for email
+    const populatedOrder = await Order.findById(order._id).populate('items.product', 'name images');
+    console.log('📦 Order populated with product data for email');
+
     // Send confirmation email
     try {
       console.log('📧 Attempting to send confirmation email to:', user.email);
@@ -242,8 +262,8 @@ exports.createOrderFromCart = async (req, res) => {
       const mailOptions = {
         from: process.env.EMAIL_USER,
         to: user.email,
-        subject: `Order Confirmation - ${order.orderNumber} - Ray Healthy Living`,
-        html: generateOrderConfirmationEmail(order, deliveryAddress),
+        subject: `Order Confirmation - ${populatedOrder.orderNumber} - Ray Healthy Living`,
+        html: generateOrderConfirmationEmail(populatedOrder, deliveryAddress),
       };
 
       console.log('📧 Mail options:', {
@@ -256,6 +276,7 @@ exports.createOrderFromCart = async (req, res) => {
       console.log('✅ Order confirmation email sent successfully to:', user.email);
       console.log('📧 Email ID:', emailResult.messageId);
       console.log('📧 Email Response:', emailResult.response);
+      console.log('🖼️ Product images included in email');
       
     } catch (emailError) {
       console.error('❌ Error sending confirmation email:', emailError);
