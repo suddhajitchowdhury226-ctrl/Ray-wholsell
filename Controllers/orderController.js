@@ -405,8 +405,6 @@ exports.getUserOrders = async (req, res) => {
 exports.sendMerchantEnquiry = async (req, res) => {
   try {
     const { orderId, merchantEmail } = req.body;
-    const Order = require('../Models/purchaseModel');
-    const nodemailer = require('nodemailer');
 
     if (!orderId || !merchantEmail) {
       return res.status(400).json({ message: 'Order ID and merchant email are required' });
