@@ -440,6 +440,18 @@ exports.sendMerchantEnquiry = async (req, res) => {
         `;
       }).join('');
 
+      // Format delivery address
+      const addr = order.deliveryAddress || {};
+      const addressHtml = `
+        <p style="margin: 5px 0; color: #555;"><strong>${addr.name || 'N/A'}</strong></p>
+        <p style="margin: 5px 0; color: #555;">${addr.addressLine1 || ''}</p>
+        ${addr.addressLine2 ? `<p style="margin: 5px 0; color: #555;">${addr.addressLine2}</p>` : ''}
+        <p style="margin: 5px 0; color: #555;">${addr.city || ''}, ${addr.state || ''} ${addr.zipcode || ''}</p>
+        <p style="margin: 5px 0; color: #555;">${addr.country || ''}</p>
+        ${addr.contactNumber ? `<p style="margin: 5px 0; color: #555;">Phone: ${addr.contactNumber}</p>` : ''}
+        ${addr.email ? `<p style="margin: 5px 0; color: #555;">Email: ${addr.email}</p>` : ''}
+      `;
+
       return `
         <div style="font-family: Arial, sans-serif; max-width: 700px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
           <div style="background: linear-gradient(135deg, #77a13d, #e97717); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
@@ -471,6 +483,11 @@ exports.sendMerchantEnquiry = async (req, res) => {
               <p style="margin: 5px 0; color: #555;">Name: ${order.user?.name || 'N/A'}</p>
               <p style="margin: 5px 0; color: #555;">Email: ${order.user?.email || 'N/A'}</p>
               <p style="margin: 5px 0; color: #555;">Order ID: #${order.orderNumber || order._id}</p>
+            </div>
+
+            <div style="background: #e8f5e9; padding: 15px; border-left: 4px solid #4caf50; margin: 20px 0;">
+              <p style="margin: 0 0 10px 0; color: #333;"><strong>Delivery Address:</strong></p>
+              ${addressHtml}
             </div>
 
             <div style="background: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin: 20px 0;">
