@@ -81,7 +81,7 @@ const orderSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['pending_review', 'approved', 'processing', 'shipped', 'delivered', 'cancelled'],
+    enum: ['pending_review', 'confirmed', 'approved', 'processing', 'shipped', 'delivered', 'cancelled'],
     default: 'pending_review',
   },
   couponCode: {
@@ -101,6 +101,31 @@ const orderSchema = new mongoose.Schema({
     enum: ['retailer', 'wholesaler'],
     default: 'wholesaler',
   },
+  // Track admin confirmation details
+  confirmedItems: [{
+    productId: mongoose.Schema.Types.ObjectId,
+    name: String,
+    quantity: Number,           // confirmed/available quantity
+    price: Number,
+    isAvailable: {
+      type: Boolean,
+      default: true
+    },
+    originalQuantity: Number,   // quantity originally requested
+    _id: false
+  }],
+  adminNotes: {
+    type: String,
+    default: '',
+  },
+  shippingCostSet: {
+    amount: Number,
+    setBy: mongoose.Schema.Types.ObjectId,  // admin ID
+    setAt: Date,
+    _id: false
+  },
+  confirmedAt: Date,            // when admin confirmed the order
+  confirmedBy: mongoose.Schema.Types.ObjectId,  // admin ID
 }, {
   timestamps: true,
 });

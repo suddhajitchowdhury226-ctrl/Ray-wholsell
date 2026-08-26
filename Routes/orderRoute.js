@@ -5,7 +5,8 @@ const {
   getOrderDetails,
   getAllOrders,
   updateOrderStatus,
-  sendMerchantEnquiry
+  sendMerchantEnquiry,
+  confirmOrder
 } = require('../Controllers/orderController');
 const { protect, restrictTo } = require('../Middleware/tokenVerify');
 
@@ -20,5 +21,6 @@ router.get('/details/:orderId', protect, restrictTo('user'), getOrderDetails);
 router.get('/all-orders', protect, restrictTo('admin'), getAllOrders);
 router.patch('/update-status/:orderId', protect, restrictTo('admin'), updateOrderStatus);
 router.post('/merchant-enquiry', protect, restrictTo('admin'), sendMerchantEnquiry);
+router.post('/confirm-order', protect, restrictTo('admin'), confirmOrder);
 
 module.exports = router;

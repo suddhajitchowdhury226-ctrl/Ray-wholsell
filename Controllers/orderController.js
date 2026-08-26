@@ -644,3 +644,227 @@ exports.updateOrderStatus = async (req, res) => {
     });
   }
 };
+
+// Admin: Confirm order with item selection and shipping cost
+exports.confirmOrder = async (req, res) => {
+  try {
+    const { orderId, confirmedItems, shippingCost, adminNotes } = req.body;
+    const adminId = req.user._id;
+
+    // Validation
+    if (!orderId || !confirmedItems || !Array.isArray(confirmedItems)) {
+      return res.status(400).json({ 
+        message: 'Order ID and confirmedItems array are required' 
+      });
+    }
+
+    if (typeof shippingCost !== 'number' || shippingCost < 0) {
+      return res.status(400).json({ 
+        message: 'Valid shipping cost (non-negative number) is required' 
+      });
+    }
+
+    // Fetch order
+    const order = await Order.findById(orderId)
+      .populate('user', 'name email')
+      .populate('items.product', 'name images');
+
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+
+    if (order.status !== 'pending_review') {
+      return res.status(400).json({ 
+        message: `Order cannot be confirmed. Current status: ${order.status}` 
+      });
+    }
+
+    // Process confirmed items
+    const itemsMap = {};
+    confirmedItems.forEach(item => {
+      itemsMap[item.productId] = item;
+    });
+
+    // Calculate new subtotal based on available items only
+    let newSubtotal = 0;
+    const processedItems = [];
+    const unavailableItems = [];
+
+    order.items.forEach(item => {
+      const confirmation = itemsMap[item.product._id.toString()] || { isAvailable: false };
+      
+      if (confirmation.isAvailable) {
+        const confirmedQty = confirmation.quantity || item.quantity;
+        const itemTotal = item.price * confirmedQty;
+        newSubtotal += itemTotal;
+        
+        processedItems.push({
+          productId: item.product._id,
+          name: item.name || item.product.name,
+          quantity: confirmedQty,
+          price: item.price,
+          isAvailable: true,
+          originalQuantity: item.quantity
+        });
+      } else {
+        unavailableItems.push({
+          name: item.name || item.product.name,
+          quantity: item.quantity
+        });
+      }
+    });
+
+    // Calculate new total: subtotal + shipping - discount
+    const newTotal = newSubtotal + shippingCost - (order.discount || 0);
+
+    // Update order
+    order.confirmedItems = processedItems;
+    order.subtotal = newSubtotal;
+    order.shippingCost = shippingCost;
+    order.total = newTotal;
+    order.adminNotes = adminNotes || '';
+    order.shippingCostSet = {
+      amount: shippingCost,
+      setBy: adminId,
+      setAt: new Date()
+    };
+    order.status = 'confirmed'; // Awaiting payment
+    order.confirmedAt = new Date();
+    order.confirmedBy = adminId;
+
+    await order.save();
+
+    // Send confirmation email to customer
+    const transporter = createTransporter();
+    
+    const generateConfirmedOrderEmail = () => {
+      const baseUrl = process.env.BACKEND_URL || 'https://ray-wholsell.onrender.com';
+      
+      const availableItemsHtml = processedItems.map(item => `
+        <tr style="border-bottom: 1px solid #eee;">
+          <td style="padding: 12px; color: #333;"><strong>${item.name}</strong></td>
+          <td style="padding: 12px; text-align: center; color: #666;">${item.quantity}</td>
+          <td style="padding: 12px; text-align: right; color: #333;">$${item.price.toFixed(2)}</td>
+          <td style="padding: 12px; text-align: right; font-weight: 600; color: #333;">$${(item.price * item.quantity).toFixed(2)}</td>
+        </tr>
+      `).join('');
+
+      const unavailableHtml = unavailableItems.length > 0 ? `
+        <div style="background: #fee2e2; padding: 15px; border-left: 4px solid #dc2626; margin: 20px 0; border-radius: 4px;">
+          <p style="margin: 0 0 10px 0; color: #333;"><strong>⚠️ Items Not Available:</strong></p>
+          <ul style="margin: 5px 0; color: #555; padding-left: 20px;">
+            ${unavailableItems.map(item => `<li>${item.name} (Qty: ${item.quantity})</li>`).join('')}
+          </ul>
+          ${adminNotes ? `<p style="margin: 10px 0 0 0; color: #555; font-style: italic;">Reason: ${adminNotes}</p>` : ''}
+        </div>
+      ` : '';
+
+      return `
+        <div style="font-family: Arial, sans-serif; max-width: 700px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
+          <div style="background: linear-gradient(135deg, #77a13d, #e97717); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+            <h1 style="color: white; margin: 0; font-size: 28px;">Order Confirmed! ✓</h1>
+            <p style="color: #f0f0f0; margin: 10px 0 0 0; font-size: 16px;">Awaiting Payment</p>
+          </div>
+          
+          <div style="background: white; padding: 30px; border-radius: 0 0 10px 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+            <div style="margin-bottom: 25px;">
+              <h2 style="color: #77a13d; margin: 0 0 15px 0; font-size: 24px;">Order #${order.orderNumber}</h2>
+              <p style="color: #666; margin: 5px 0;">Order Date: ${new Date(order.createdAt).toLocaleDateString('en-US', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+              })}</p>
+              <p style="color: #666; margin: 5px 0;">Status: <span style="background: #dbeafe; color: #1e40af; padding: 4px 12px; border-radius: 15px; font-weight: 600;">Awaiting Payment</span></p>
+            </div>
+
+            ${unavailableHtml}
+
+            <div style="margin-bottom: 25px;">
+              <h3 style="color: #333; margin: 0 0 15px 0; font-size: 18px;">Confirmed Products:</h3>
+              <table style="width: 100%; border-collapse: collapse; border: 1px solid #eee;">
+                <thead>
+                  <tr style="background-color: #f8f9fa;">
+                    <th style="padding: 15px 12px; text-align: left; color: #333; font-weight: 600;">Product</th>
+                    <th style="padding: 15px 12px; text-align: center; color: #333; font-weight: 600;">Qty</th>
+                    <th style="padding: 15px 12px; text-align: right; color: #333; font-weight: 600;">Unit Price</th>
+                    <th style="padding: 15px 12px; text-align: right; color: #333; font-weight: 600;">Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${availableItemsHtml}
+                </tbody>
+              </table>
+            </div>
+
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 25px;">
+              <h3 style="color: #333; margin: 0 0 15px 0; font-size: 18px;">Order Summary</h3>
+              <div style="display: flex; justify-content: space-between; margin: 8px 0; color: #555;">
+                <span>Subtotal:</span>
+                <strong>$${newSubtotal.toFixed(2)}</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between; margin: 8px 0; color: #555;">
+                <span>Shipping Cost:</span>
+                <strong>$${shippingCost.toFixed(2)}</strong>
+              </div>
+              ${order.discount > 0 ? `
+                <div style="display: flex; justify-content: space-between; margin: 8px 0; color: #555;">
+                  <span>Discount:</span>
+                  <strong style="color: #4caf50;">-$${order.discount.toFixed(2)}</strong>
+                </div>
+              ` : ''}
+              <div style="display: flex; justify-content: space-between; margin: 12px 0 0 0; padding-top: 12px; border-top: 2px solid #ddd; color: #333; font-size: 18px; font-weight: 700;">
+                <span>Total Amount:</span>
+                <span style="color: #77a13d;">$${newTotal.toFixed(2)}</span>
+              </div>
+            </div>
+
+            <div style="background: #e8f5e9; padding: 15px; border-left: 4px solid #4caf50; margin-bottom: 25px; border-radius: 4px;">
+              <p style="margin: 0; color: #333;"><strong>Next Step:</strong></p>
+              <p style="margin: 5px 0 0 0; color: #555;">Please proceed to payment to complete your order. You can view your order status and payment options in your account.</p>
+            </div>
+
+            <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
+              <p style="color: #999; font-size: 12px; margin: 5px 0;">
+                © ${new Date().getFullYear()} Ray Healthy Living. All rights reserved.
+              </p>
+            </div>
+          </div>
+        </div>
+      `;
+    };
+
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: order.userEmail || order.user?.email,
+      subject: `Order Confirmed #${order.orderNumber} - Awaiting Payment`,
+      html: generateConfirmedOrderEmail(),
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    console.log('✅ Order confirmed and email sent to:', order.userEmail);
+
+    res.status(200).json({
+      message: 'Order confirmed successfully. Email sent to customer.',
+      order,
+      summary: {
+        orderNumber: order.orderNumber,
+        availableItems: processedItems.length,
+        unavailableItems: unavailableItems.length,
+        subtotal: newSubtotal,
+        shippingCost,
+        discount: order.discount,
+        total: newTotal,
+        status: 'confirmed'
+      }
+    });
+
+  } catch (error) {
+    console.error('❌ Error confirming order:', error);
+    res.status(500).json({
+      message: 'Failed to confirm order',
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+    });
+  }
+};
