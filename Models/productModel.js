@@ -55,6 +55,12 @@ const productSchema = new mongoose.Schema({
     required: false,
     description: 'Original product name from master list (for reference/search)'
   },
+  productDescription: {
+    type: String,
+    trim: true,
+    required: false,
+    description: 'Product description/details from Column D (e.g., "Powder Capsules", "Herbal Handbook")'
+  },
   rhlProductName: {
     type: String,
     trim: true,
