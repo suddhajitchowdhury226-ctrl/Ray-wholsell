@@ -1,12 +1,12 @@
 const mongoose = require('mongoose');
 const fs = require('fs');
 const path = require('path');
-require('dotenv').config({ path: './Ray-wholsell-1/.env' });
+require('dotenv').config({ path: './.env' });
 
 // Import models
-const Product = require('./Ray-wholsell-1/Models/productModel');
-const Category = require('./Ray-wholsell-1/Models/categoryModel');
-const Brand = require('./Ray-wholsell-1/Models/brandModel');
+const Product = require('./Models/productModel');
+const Category = require('./Models/categoryModel');
+const Brand = require('./Models/brandModel');
 
 // Product JSON file path
 const productsJsonPath = path.join(__dirname, 'products-extracted.json');
@@ -45,6 +45,7 @@ async function getOrCreateCategory(categoryName) {
       category = new Category({
         name,
         description: `${name} - Wholesale Products`,
+        createdBy: '6a81c579b4004187e8640f70' // Admin user ID
       });
       await category.save();
       console.log(`  📁 Created category: ${name}`);
@@ -66,6 +67,7 @@ async function getOrCreateBrand(brandName) {
     if (!brand) {
       brand = new Brand({
         name: brandName,
+        createdBy: '6a81c579b4004187e8640f70' // Admin user ID
       });
       await brand.save();
       console.log(`  🏷️  Created brand: ${brandName}`);
