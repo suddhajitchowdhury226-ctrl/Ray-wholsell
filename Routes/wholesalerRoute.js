@@ -1,5 +1,5 @@
 const express = require('express');
-const { createProduct, getAddedProducts, updateProduct, deleteProduct, getProductsByWholesalerRetailor, bulkCreateProducts,getWholesalerProducts,getWholesalerProductsByCategory, bulkUploadCSV, searchWholesalerProducts, getWholesalerInventoryAnalytics , adjustInventory } = require('../Controllers/productController');
+const { createProduct, getAddedProducts, updateProduct, deleteProduct, getProductsByWholesalerRetailor, bulkCreateProducts,getWholesalerProducts,getWholesalerProductsByCategory, bulkUploadCSV, searchWholesalerProducts, getWholesalerInventoryAnalytics , adjustInventory, getProductsRange } = require('../Controllers/productController');
 const { uploadProduct, uploadCategory, uploadBlog, uploadCSV } = require('../multerConfig/multerConfig');
 const { createCategory, getCategories, updateCategory, deleteCategory, getRetailerPurchases, createBrand, getBrands, updateBrand, deleteBrand, createBlog, getBlogs, getAllBlogs, updateBlog, deleteBlog } = require('../Controllers/categoryController');
 const { protect, restrictTo } = require('../Middleware/tokenVerify');
@@ -15,6 +15,7 @@ wholesalerRouter.get('/get-products',protect, restrictTo('wholesaler'),getProduc
 //tirtho wholesaler
 wholesalerRouter.get('/get-tirtho-wholesaler',getWholesalerProducts); // Get all products added by the wholesaler
 wholesalerRouter.get('/get-tirtho-wholesaler-category', getWholesalerProductsByCategory); // Get all products added by the wholesaler
+wholesalerRouter.get('/get-products-range', getProductsRange); // Get products by range (e.g., 200-607)
 wholesalerRouter.get('/search-products', searchWholesalerProducts); // Search wholesaler products
 
 

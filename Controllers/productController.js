@@ -2183,6 +2183,37 @@ const adjustInventory = async (req, res) => {
   }
 };
 
+// Get products by range (for products 200-607 display)
+const getProductsRange = async (req, res) => {
+  try {
+    const { skip = 200, limit = 407 } = req.query;
+
+    const skipNum = parseInt(skip) || 200;
+    const limitNum = parseInt(limit) || 407;
+
+    // Fetch ALL products using skip and limit
+    const products = await productModel
+      .find({})
+      .populate('category', 'name image')
+      .populate('subcategory', 'name')
+      .populate('brand', 'name')
+      .populate('createdBy', 'name role')
+      .sort({ item_number_int: 1, name: 1 })
+      .skip(skipNum)
+      .limit(limitNum)
+      .lean();
+
+    const totalProducts = await productModel.countDocuments({});
+
+    console.log(`📦 Fetched products range: skip=${skipNum}, limit=${limitNum}, returned=${products.length}, total=${totalProducts}`);
+
+    res.status(200).json(products);
+  } catch (error) {
+    console.error('Error fetching products range:', error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   adjustInventory,
   createProduct,
@@ -2197,7 +2228,8 @@ module.exports = {
   filterProducts,
   getProductCount,
   getRetailerInventoryAnalytics,
-  getWholesalerInventoryAnalytics
+  getWholesalerInventoryAnalytics,
+  getProductsRange
 };
 
 
