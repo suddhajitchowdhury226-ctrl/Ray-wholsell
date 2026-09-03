@@ -2183,31 +2183,39 @@ const adjustInventory = async (req, res) => {
   }
 };
 
-// Get products by range (for products 200-607 display)
+// Get products by Product ID range (e.g., 200-609)
 const getProductsRange = async (req, res) => {
   try {
-    const { skip = 200, limit = 407 } = req.query;
+    const { startId = 200, endId = 609 } = req.query;
 
-    const skipNum = parseInt(skip) || 200;
-    const limitNum = parseInt(limit) || 407;
+    const startNum = parseInt(startId) || 200;
+    const endNum = parseInt(endId) || 609;
 
-    // Fetch ALL products using skip and limit
+    console.log(`📦 Fetching products with item_number from ${startNum} to ${endNum}`);
+
+    // Fetch products by Product ID range (item_number field)
     const products = await productModel
-      .find({})
+      .find({
+        item_number: { $gte: startNum.toString(), $lte: endNum.toString() }
+      })
       .populate('category', 'name image')
       .populate('subcategory', 'name')
       .populate('brand', 'name')
       .populate('createdBy', 'name role')
-      .sort({ item_number_int: 1, name: 1 })
-      .skip(skipNum)
-      .limit(limitNum)
+      .sort({ item_number: 1 })  // Sort by Product ID ascending (200, 201, 202, etc)
       .lean();
 
     const totalProducts = await productModel.countDocuments({});
+    const productsInRange = products.length;
 
-    console.log(`📦 Fetched products range: skip=${skipNum}, limit=${limitNum}, returned=${products.length}, total=${totalProducts}`);
+    console.log(`✅ Found ${productsInRange} products in range ${startNum}-${endNum}`);
 
-    res.status(200).json(products);
+    res.status(200).json({
+      products,
+      range: { start: startNum, end: endNum },
+      count: productsInRange,
+      total: totalProducts
+    });
   } catch (error) {
     console.error('Error fetching products range:', error);
     res.status(500).json({ message: error.message });
