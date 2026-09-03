@@ -11,11 +11,18 @@ const orderSchema = new mongoose.Schema({
     required: [true, 'Order number is required'],
     unique: true,
   },
+  
+  // === Order Items ===
   items: [{
     product: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Product',
       required: [true, 'Product ID is required'],
+    },
+    rhlProductId: {
+      type: String,
+      required: false,
+      description: 'RHL Product ID for reference'
     },
     name: {
       type: String,
@@ -48,7 +55,20 @@ const orderSchema = new mongoose.Schema({
       type: String,
       required: false,
     },
+    manufacturer: {
+      type: String,
+      enum: ['RHL1', 'RHL2', 'RHL3', 'Internal', 'Other'],
+      required: false,
+      description: 'Manufacturer for this product (for routing)'
+    },
+    bin_location: {
+      type: String,
+      required: false,
+      description: 'Warehouse bin location for fulfillment'
+    }
   }],
+  
+  // === Delivery Address ===
   deliveryAddress: {
     title: String,
     name: String,
@@ -61,6 +81,8 @@ const orderSchema = new mongoose.Schema({
     country: String,
     zipcode: String,
   },
+  
+  // === Pricing & Totals ===
   subtotal: {
     type: Number,
     required: [true, 'Subtotal is required'],
@@ -79,19 +101,174 @@ const orderSchema = new mongoose.Schema({
     required: [true, 'Total price is required'],
     min: [0, 'Total cannot be negative'],
   },
+  finalTotal: {
+    type: Number,
+    required: false,
+    description: 'Final total after manufacturer confirmation (may differ from initial total)'
+  },
+  
+  // === Order Status Workflow ===
   status: {
     type: String,
-    enum: ['pending_review', 'confirmed', 'approved', 'processing', 'shipped', 'delivered', 'cancelled'],
-    default: 'pending_review',
+    enum: [
+      'draft',
+      'requested',
+      'order_confirmation_sent',
+      'manufacturer_inquiry_sent',
+      'manufacturer_confirmed',
+      'approved',
+      'payment_authorized',
+      'payment_captured',
+      'processing',
+      'shipped',
+      'delivered',
+      'cancelled',
+      'pending_payment'
+    ],
+    default: 'draft',
   },
+  
+  // === Payment Information (Stripe Authorization + Capture) ===
+  payment: {
+    method: {
+      type: String,
+      enum: ['stripe', 'paypal', 'bank_transfer', 'other'],
+      default: 'stripe'
+    },
+    stripePaymentIntentId: {
+      type: String,
+      required: false,
+      description: 'Stripe PaymentIntent ID for this order'
+    },
+    stripeClientSecret: {
+      type: String,
+      required: false,
+      description: 'Stripe client secret for authorization'
+    },
+    authorizedAmount: {
+      type: Number,
+      required: false,
+      description: 'Initial authorized amount (may be different from final capture)'
+    },
+    authorizationTimestamp: {
+      type: Date,
+      required: false,
+      description: 'When the card authorization occurred'
+    },
+    authorizationExpiresAt: {
+      type: Date,
+      required: false,
+      description: 'When the authorization expires (varies by card network)'
+    },
+    capturedAmount: {
+      type: Number,
+      required: false,
+      description: 'Final amount captured from customer'
+    },
+    captureTimestamp: {
+      type: Date,
+      required: false,
+      description: 'When the final capture occurred'
+    },
+    releasedAmount: {
+      type: Number,
+      required: false,
+      description: 'Amount released from the authorization'
+    },
+    authorizationStatus: {
+      type: String,
+      enum: ['pending', 'authorized', 'capturing', 'captured', 'failed', 'expired', 'cancelled'],
+      default: 'pending'
+    },
+    stripeChargeId: {
+      type: String,
+      required: false,
+      description: 'Stripe Charge ID after capture'
+    },
+    paymentError: {
+      type: String,
+      required: false,
+      description: 'Error message if payment fails'
+    }
+  },
+  
+  // === Admin Review & Confirmation ===
+  confirmedItems: [{
+    productId: mongoose.Schema.Types.ObjectId,
+    rhlProductId: String,
+    name: String,
+    quantity: Number,
+    price: Number,
+    isAvailable: {
+      type: Boolean,
+      default: true
+    },
+    originalQuantity: Number,
+    manufacturer: String,
+    manufacturerConfirmedAt: Date,
+    _id: false
+  }],
+  
+  // === Order Notes & Communication ===
+  adminNotes: {
+    type: String,
+    default: '',
+  },
+  standardNotes: [{
+    note: {
+      type: String,
+      enum: [
+        'Product currently unavailable',
+        'Product discontinued',
+        'Product temporarily out of stock',
+        'Expected back in stock shortly',
+        'Quantity adjusted based on availability'
+      ]
+    },
+    addedAt: Date,
+    addedBy: mongoose.Schema.Types.ObjectId
+  }],
+  customerNotes: {
+    type: String,
+    default: '',
+    description: 'Notes visible to customer about order status'
+  },
+  
+  // === Shipping ===
+  shippingCostSet: {
+    amount: Number,
+    setBy: mongoose.Schema.Types.ObjectId,
+    setAt: Date,
+    _id: false
+  },
+  
+  // === Manufacturer Inquiry ===
+  manufacturerInquiry: {
+    inquiryId: String,
+    sentAt: Date,
+    sentBy: mongoose.Schema.Types.ObjectId,
+    responses: [{
+      manufacturer: String,
+      receivedAt: Date,
+      availability: String,
+      confirmedQuantities: [{ productId: String, quantity: Number }],
+      pricing: [{ productId: String, price: Number }],
+      deliveryTimeline: String,
+      minimumOrderQuantity: Number,
+      _id: false
+    }]
+  },
+  
+  // === Order Lifecycle Tracking ===
+  confirmedAt: Date,
+  confirmedBy: mongoose.Schema.Types.ObjectId,
+  submittedAt: Date,
   couponCode: {
     type: String,
     default: null,
   },
-  notes: {
-    type: String,
-    default: '',
-  },
+  
+  // === User Info ===
   userEmail: {
     type: String,
     required: [true, 'User email is required'],
@@ -101,31 +278,6 @@ const orderSchema = new mongoose.Schema({
     enum: ['retailer', 'wholesaler'],
     default: 'wholesaler',
   },
-  // Track admin confirmation details
-  confirmedItems: [{
-    productId: mongoose.Schema.Types.ObjectId,
-    name: String,
-    quantity: Number,           // confirmed/available quantity
-    price: Number,
-    isAvailable: {
-      type: Boolean,
-      default: true
-    },
-    originalQuantity: Number,   // quantity originally requested
-    _id: false
-  }],
-  adminNotes: {
-    type: String,
-    default: '',
-  },
-  shippingCostSet: {
-    amount: Number,
-    setBy: mongoose.Schema.Types.ObjectId,  // admin ID
-    setAt: Date,
-    _id: false
-  },
-  confirmedAt: Date,            // when admin confirmed the order
-  confirmedBy: mongoose.Schema.Types.ObjectId,  // admin ID
 }, {
   timestamps: true,
 });

@@ -3,6 +3,39 @@
 const mongoose = require('mongoose');
 
 const productSchema = new mongoose.Schema({
+  // === RHL Product Identifiers ===
+  rhlProductId: {
+    type: String,
+    unique: true,
+    sparse: true,
+    required: false,
+    description: 'Ray\'s Healthy Living unique product identifier (customer-facing)'
+  },
+  rhlUpc: {
+    type: String,
+    required: false,
+    description: 'Ray\'s Healthy Living / GS1 UPC barcode (customer-facing)'
+  },
+  
+  // === Manufacturer Information ===
+  manufacturer: {
+    type: String,
+    enum: ['RHL1', 'RHL2', 'RHL3', 'Internal', 'Other'],
+    required: false,
+    description: 'Manufacturer supplier identifier for routing orders'
+  },
+  manufacturerItemNumber: {
+    type: String,
+    required: false,
+    description: 'Manufacturer\'s item number for ordering (NOT customer-facing)'
+  },
+  manufacturerUpc: {
+    type: String,
+    required: false,
+    description: 'Original manufacturer UPC (internal use only, NOT customer-facing)'
+  },
+  
+  // === Legacy Fields (kept for backwards compatibility) ===
   item_number: {
     type: String,
     required: false,
@@ -17,8 +50,9 @@ const productSchema = new mongoose.Schema({
   },
   sku: {
     type: String,
-   
   },
+  
+  // === Pricing ===
   buyPrice: {
     type: Number,
     min: [0, 'Buy price cannot be negative'],
@@ -27,10 +61,29 @@ const productSchema = new mongoose.Schema({
     type: Number,
     min: [0, 'Sell price cannot be negative'],
   },
+  wholesaleSellPrice: {
+    type: Number,
+    min: [0, 'Wholesale price cannot be negative'],
+    required: false,
+    description: 'Wholesale-specific pricing if different from retail'
+  },
+  
+  // === Inventory ===
   stock: {
     type: Number,
     min: [0, 'Stock cannot be negative'],
   },
+  reorder: {
+    type: Number,
+    required: false,
+  },
+  bin_location: {
+    type: String,
+    required: false,
+    description: 'Internal warehouse bin location for fulfillment'
+  },
+  
+  // === Product Details ===
   category: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Category',
@@ -39,21 +92,21 @@ const productSchema = new mongoose.Schema({
   subcategory: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Subcategory',
-    // required: [true, 'Please select a subcategory'],
   },
   brand: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Brand',
-    // required: [true, 'Please select a brand'],
   },
-  images: [{
+  
+  // === Product Form (for future filtering) ===
+  productForm: {
     type: String,
+    enum: ['Liquid', 'Capsule', 'Powder', 'Tablet', 'Tincture', 'Oil', 'Cream', 'Other'],
     required: false,
-  }],
-  createdBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    description: 'Product form/type for filtering and sorting'
   },
+  
+  // === Description & Ingredients ===
   description: {
     type: String,
   },
@@ -62,14 +115,19 @@ const productSchema = new mongoose.Schema({
   },
   ingredient: {
     type: String,
+    description: 'Product ingredients list'
   },
   disclaimer: {
     type: String,
   },
-  bin_location: {
+  
+  // === Media ===
+  images: [{
     type: String,
     required: false,
-  },
+  }],
+  
+  // === Dimensions & Weight ===
   length: {
     type: Number,
     required: false,
@@ -86,18 +144,22 @@ const productSchema = new mongoose.Schema({
     type: Number,
     required: false,
   },
-  reorder: {
-    type: Number,
-    required: false,
-    
+  
+  // === Metadata ===
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
   },
   supplierName: {
     type: String,
     required: false,
   },
+  
+  // === Product Variants ===
   variants: [{
     variantName: { type: String },
     sku: { type: String },
+    rhlProductId: { type: String, description: 'RHL ID for this variant' },
     bin_location: { type: String },
     price: { type: Number },
     stock: { type: Number },
