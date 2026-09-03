@@ -109,7 +109,7 @@ async function uploadProducts() {
           continue;
         }
 
-        // Create product
+        // Create product with stock set to quantity value (or default if not available)
         const product = new Product({
           name: productData.name,
           description: productData.description,
@@ -124,7 +124,7 @@ async function uploadProducts() {
           department: productData.department,
           quantity: productData.quantity,
           size: productData.size,
-          stock: 0
+          stock: productData.quantity || 100 // Set stock from quantity, default 100 if not specified
         });
 
         await product.save();

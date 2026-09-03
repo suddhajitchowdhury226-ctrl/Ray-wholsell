@@ -20,7 +20,7 @@ async function debugYourCheckout() {
     const yourEmail = 'debnathtulanka@gmail.com';
     
     console.log(`\n🔍 Looking for user: ${yourEmail}`);
-    
+     
     // Find your user account
     const yourUser = await User.findOne({ email: yourEmail });
     

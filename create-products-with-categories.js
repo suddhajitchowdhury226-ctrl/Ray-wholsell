@@ -8,9 +8,34 @@ console.log('🔄 Extracting products with proper categories...');
 const file = 'Master Copy Vitality Works Product List 2026 - RHL Names Elevated.xlsx';
 const workbook = XLSX.readFile(file);
 const sheet = workbook.Sheets[workbook.SheetNames[0]];
-const data = XLSX.utils.sheet_to_json(sheet, { range: 10 }); // Start from row 11
 
-// Category mapping: Product TYPE -> Main Category (max 50 chars)
+// Read raw sheet to get proper cell values (skip header rows, start at row 12 = index 11)
+const rows = [];
+for (let i = 12; i <= sheet['!ref'].split(':')[1].replace(/[A-Z]/g, ''); i++) {
+  const row = {};
+  // Column mapping based on Excel structure
+  row.productType = sheet[`B${i}`]?.v;      // Column B: PRODUCT TYPE
+  row.itemNumber = sheet[`C${i}`]?.v;        // Column C: ITEM #
+  row.rhlProductId = sheet[`D${i}`]?.v;      // Column D: RHL Product ID #
+  row.rhlBarcode = sheet[`E${i}`]?.v;        // Column E: RHL GSI Barcode
+  row.upc = sheet[`F${i}`]?.v;               // Column F: UPC
+  row.productName = sheet[`G${i}`]?.v;       // Column G: PRODUCT NAME
+  row.newRhlName = sheet[`H${i}`]?.v;        // Column H: New RHL Product Name
+  row.description = sheet[`I${i}`]?.v;       // Column I: RHL Short Product Description
+  row.ingredients = sheet[`J${i}`]?.v;       // Column J: Ingredents
+  row.size = sheet[`K${i}`]?.v;              // Column K: SIZE
+  row.wholesalePrice = sheet[`L${i}`]?.v;    // Column L: Manfacture WHOLESALE
+  row.costPrice = sheet[`M${i}`]?.v;         // Column M: RHL COST 25% LESS
+  row.qty = sheet[`N${i}`]?.v;               // Column N: QTY
+  
+  if (row.newRhlName) {
+    rows.push(row);
+  }
+}
+
+console.log(`Found ${rows.length} products in Excel`);
+
+// Category mapping
 const categoryMapping = {
   'Liquid- Single': 'Single Herbal Liquid Extracts',
   'Liquid- Single Alcohol Free': 'Single Herbal Liquid Extracts',
@@ -34,28 +59,35 @@ const categoryMapping = {
   'Literature': 'Literature'
 };
 
-const products = data.map((row, index) => {
-  const productType = row['PRODUCT TYPE'] || 'Health Supplements';
+const products = rows.map((row, index) => {
+  const productType = row.productType || 'Health Supplements';
   const mainCategory = categoryMapping[productType] || 'Health Supplements';
   
   return {
-    upc: (row['UPC'] || row['RHL GSI Barcode'] || '').toString().trim(),
-    lookup_code: (row['RHL GSI Barcode'] || '').toString().trim(),
-    item_number: (row['RHL Product ID #'] || row['ITEM #'] || '').toString().trim(),
-    name: (row['New RHL Product Name'] || row['PRODUCT NAME'] || '').trim(),
-    brand: productType, // Keep original type as brand for now
-    category: mainCategory, // Map to main category
-    department: productType, // Keep product type as department
-    description: (row['RHL Short Product Description'] || '').trim(),
-    ingredient: (row['Ingredents'] || row['Ingredients'] || '').trim(),
-    buyPrice: parseFloat(row['RHL COST 25% LESS'] || 0) || 0,
-    sellPrice: parseFloat(row['Manufacture WHOLESALE'] || 0) || 0,
-    quantity: parseInt(row['QTY'] || 0) || 0,
-    size: (row['SIZE'] || '').trim()
+    upc: (row.upc || row.rhlBarcode || '').toString().trim(),
+    lookup_code: (row.rhlBarcode || '').toString().trim(),
+    item_number: (row.rhlProductId || row.itemNumber || '').toString().trim(),
+    name: (row.newRhlName || row.productName || '').trim(),
+    brand: productType,
+    category: mainCategory,
+    department: productType,
+    description: (row.description || '').toString().trim(),
+    ingredient: (row.ingredients || '').toString().trim(),
+    buyPrice: parseFloat(row.costPrice) || 0,
+    sellPrice: parseFloat(row.wholesalePrice) || 0,
+    quantity: parseInt(row.qty) || 100, // Default to 100 if not specified
+    size: (row.size || '').toString().trim()
   };
-}).filter(p => p.name); // Remove empty rows
+}).filter(p => p.name && p.sellPrice > 0); // Only keep products with name and price
 
-console.log(`✅ Extracted ${products.length} products with categories`);
+console.log(`✅ Extracted ${products.length} products with prices`);
+
+// Show pricing range
+const prices = products.map(p => p.sellPrice).sort((a, b) => a - b);
+console.log(`\n💰 Price Range:`);
+console.log(`  Min: $${prices[0].toFixed(2)}`);
+console.log(`  Max: $${prices[prices.length - 1].toFixed(2)}`);
+console.log(`  Avg: $${(prices.reduce((a, b) => a + b) / prices.length).toFixed(2)}`);
 
 // Show category distribution
 const categoryCount = {};
