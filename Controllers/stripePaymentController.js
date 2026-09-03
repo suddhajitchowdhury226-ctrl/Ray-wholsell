@@ -252,7 +252,7 @@ exports.releaseAuthorization = async (req, res) => {
     // Update order
     order.payment.authorizationStatus = 'cancelled';
     order.status = 'cancelled';
-    order.payment.paymentError = 'Authorization was released by merchant';
+    order.payment.paymentError = 'Authorization was released by admin';
     await order.save();
 
     return res.status(200).json({

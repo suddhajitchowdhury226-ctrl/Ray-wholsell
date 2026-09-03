@@ -401,13 +401,13 @@ exports.getUserOrders = async (req, res) => {
   }
 };
 
-// Send Merchant Enquiry Email
-exports.sendMerchantEnquiry = async (req, res) => {
+// Send Manufacturer inquiry Email
+exports.sendManufacturerInquiry = async (req, res) => {
   try {
-    const { orderId, merchantEmail } = req.body;
+    const { orderId, manufacturerEmail } = req.body;
 
-    if (!orderId || !merchantEmail) {
-      return res.status(400).json({ message: 'Order ID and merchant email are required' });
+    if (!orderId || !manufacturerEmail) {
+      return res.status(400).json({ message: 'Order ID and Manufacturer email are required' });
     }
 
     // Fetch order with product details
@@ -420,7 +420,7 @@ exports.sendMerchantEnquiry = async (req, res) => {
     }
 
     // Create email template with product details (NO PRICE)
-    const generateMerchantEnquiryEmail = () => {
+    const generateManufacturerInquiryEmail = () => {
       const itemsHtml = order.items.map(item => {
         const imageUrl = item.product?.images?.[0] 
           ? (item.product.images[0].startsWith('http') 
@@ -455,18 +455,18 @@ exports.sendMerchantEnquiry = async (req, res) => {
       return `
         <div style="font-family: Arial, sans-serif; max-width: 700px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
           <div style="background: linear-gradient(135deg, #77a13d, #e97717); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
-            <h1 style="color: white; margin: 0; font-size: 24px;">Product Availability Enquiry</h1>
+            <h1 style="color: white; margin: 0; font-size: 24px;">Product Availability inquiry</h1>
             <p style="color: #f0f0f0; margin: 10px 0 0 0;">From: Ray Healthy Living</p>
           </div>
           
           <div style="background: white; padding: 30px; border-radius: 0 0 10px 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-            <p style="margin: 0 0 15px 0; color: #333;">Dear Merchant,</p>
+            <p style="margin: 0 0 15px 0; color: #333;">Dear Manufacturer,</p>
             
             <p style="margin: 0 0 20px 0; color: #555;">
-              We have a customer enquiry for the following products. Please confirm if these items are available on your platform:
+              We have a customer inquiry for the following products. Please confirm if these items are available on your platform:
             </p>
             
-            <h3 style="color: #77a13d; margin: 20px 0 15px 0;">Enquired Products:</h3>
+            <h3 style="color: #77a13d; margin: 20px 0 15px 0;">Inquired Products:</h3>
             <table style="width: 100%; border-collapse: collapse; border: 1px solid #eee; margin-bottom: 20px;">
               <thead>
                 <tr style="background-color: #f8f9fa;">
@@ -525,25 +525,25 @@ exports.sendMerchantEnquiry = async (req, res) => {
 
     const mailOptions = {
       from: process.env.EMAIL_USER,
-      to: merchantEmail,
-      subject: `Product Availability Enquiry - Order #${order.orderNumber || order._id} - Ray Healthy Living`,
-      html: generateMerchantEnquiryEmail(),
+      to: manufacturerEmail,
+      subject: `Product Availability inquiry - Order #${order.orderNumber || order._id} - Ray Healthy Living`,
+      html: generateManufacturerInquiryEmail(),
     };
 
     await transporter.sendMail(mailOptions);
 
-    console.log('📧 Merchant enquiry email sent to:', merchantEmail);
+    console.log('📧 Manufacturer inquiry email sent to:', manufacturerEmail);
 
     res.status(200).json({
-      message: 'Merchant enquiry sent successfully',
-      merchantEmail,
+      message: 'Manufacturer inquiry sent successfully',
+      manufacturerEmail,
       orderId,
     });
 
   } catch (error) {
-    console.error('❌ Error sending merchant enquiry:', error);
+    console.error('❌ Error sending Manufacturer inquiry:', error);
     res.status(500).json({
-      message: 'Failed to send merchant enquiry',
+      message: 'Failed to send Manufacturer inquiry',
       error: error.message,
     });
   }
