@@ -47,6 +47,19 @@ const productSchema = new mongoose.Schema({
   name: {
     type: String,
     trim: true,
+    description: 'Product name - displayed on product page'
+  },
+  originalProductName: {
+    type: String,
+    trim: true,
+    required: false,
+    description: 'Original product name from master list (for reference/search)'
+  },
+  rhlProductName: {
+    type: String,
+    trim: true,
+    required: false,
+    description: 'New RHL elevated product name (alternative display name)'
   },
   sku: {
     type: String,
