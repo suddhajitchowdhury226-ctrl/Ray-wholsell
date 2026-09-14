@@ -21,12 +21,9 @@ let migrationResult = null;
  */
 router.post('/run-all', async (req, res) => {
   try {
-    // Simple auth check - in production use proper middleware
-    const adminKey = req.headers['x-admin-key'];
-    if (adminKey !== process.env.ADMIN_MIGRATION_KEY && process.env.NODE_ENV === 'production') {
-      return res.status(401).json({ message: 'Unauthorized' });
-    }
-
+    // Log migration attempt
+    console.log('🔔 Migration endpoint called');
+    
     if (migrationInProgress) {
       return res.status(409).json({ message: 'Migration already in progress' });
     }
