@@ -107,9 +107,9 @@ async function uploadProducts() {
         // Create product document
         const product = new Product({
           name: productData.title || productData.name,
-          sku: productData.upc || productData.rhlProductId,
+          sku: productData.RHL UPC || productData.rhlProductId,
           item_number: productData.itemNum || productData.rhlProductId,
-          lookup_code: productData.upc,
+          lookup_code: productData.RHL UPC,
           sellPrice: parseFloat(productData.wholesalePrice) || 0,
           buyPrice: parseFloat(productData.rhlCost) || 0,
           stock: 100, // Default stock

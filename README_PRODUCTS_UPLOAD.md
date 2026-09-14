@@ -87,9 +87,9 @@ node ../upload-products-to-db.js
 {
   _id: ObjectId,
   name: "Product Title",
-  sku: "UPC Code",
+  sku: "RHL UPC Code",
   item_number: "Product ID",
-  lookup_code: "UPC",
+  lookup_code: "RHL UPC",
   sellPrice: 12.70,
   buyPrice: 9.52,
   stock: 100,
@@ -199,7 +199,7 @@ db.products.find({
   name: "Adaptogen Vitality Complex" 
 }).project({ name: 1, sellPrice: 1, buyPrice: 1 })
 
-// Find by UPC
+// Find by RHL UPC
 db.products.findOne({ lookup_code: "788332173202" })
 ```
 
@@ -235,7 +235,7 @@ db.products.findOne({ lookup_code: "788332173202" })
 
 3. **Test Search**
    - Search for "Adaptogen"
-   - Search for "788332173202" (UPC)
+   - Search for "788332173202" (RHL UPC)
    - Should find products
 
 4. **Check Product Details**
@@ -298,11 +298,11 @@ db.products.findOne({ lookup_code: "788332173202" })
 |--------|-------|
 | Total Extracted Products | 483 |
 | Products with Name | 483 (100%) |
-| Products with UPC | 483 (100%) |
+| Products with RHL UPC | 483 (100%) |
 | Products with Price | 483 (100%) |
 | Products with Description | 483 (100%) |
 | Products with Ingredients | 483 (100%) |
-| Duplicate UPCs Removed | ~50 |
+| Duplicate RHL UPCs Removed | ~50 |
 | Average Wholesale Price | $21.45 |
 | Price Range | $5.20 - $89.90 |
 | Unique Brands | 25 |
@@ -357,7 +357,7 @@ Did upload complete but products not showing?
 
 Are some products missing?
 ├─ Check MongoDB for count (should be 483)
-├─ Search specific product by UPC
+├─ Search specific product by RHL UPC
 ├─ Check error log for failed products
 └─ Review products-extracted.json for data issues
 ```

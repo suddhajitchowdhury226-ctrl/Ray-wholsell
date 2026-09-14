@@ -108,7 +108,7 @@ const manufacturerSchema = new mongoose.Schema({
   // === Product Identifiers ===
   productIdField: {
     type: String,
-    enum: ['manufacturerItemNumber', 'sku', 'upc', 'other'],
+    enum: ['manufacturerItemNumber', 'sku', 'RHL UPC', 'other'],
     description: 'Which field to use as the primary product identifier in orders'
   },
   

@@ -1,198 +1,168 @@
 
-
 const mongoose = require('mongoose');
 
-const productSchema = new mongoose.Schema({
-  // === RHL Product Identifiers ===
-  rhlProductId: {
+// === Variant Schema (for size-specific data) ===
+const variantSchema = new mongoose.Schema({
+  size: {
     type: String,
+    required: true,
+    description: 'Size/format: "1 oz", "90 vcp", "2 oz", etc.'
+  },
+  itemNumber: {
+    type: String,
+    required: true,
     unique: true,
-    sparse: true,
-    required: false,
-    description: 'Ray\'s Healthy Living unique product identifier (customer-facing)'
+    description: 'Internal item number (used for ordering and cross-reference)'
   },
   rhlUpc: {
     type: String,
-    required: false,
-    description: 'Ray\'s Healthy Living / GS1 UPC barcode (customer-facing)'
-  },
-  
-  // === Manufacturer Information ===
-  manufacturer: {
-    type: String,
-    enum: ['RHL1', 'RHL2', 'RHL3', 'Internal', 'Other'],
-    required: false,
-    description: 'Manufacturer supplier identifier for routing orders'
-  },
-  manufacturerItemNumber: {
-    type: String,
-    required: false,
-    description: 'Manufacturer\'s item number for ordering (NOT customer-facing)'
+    default: null,
+    description: 'Our (RHL) UPC barcode for this variant'
   },
   manufacturerUpc: {
     type: String,
-    required: false,
-    description: 'Original manufacturer UPC (internal use only, NOT customer-facing)'
+    default: null,
+    description: 'Manufacturer original UPC barcode for this variant'
+  },
+  price: {
+    type: Number,
+    default: null,
+    description: 'Wholesale price in USD for this variant'
+  },
+  status: {
+    type: String,
+    default: 'active',
+    enum: ['active', 'inactive', 'discontinued'],
+    description: 'Availability status of this variant'
+  }
+}, { _id: true });
+
+// === Main Product Schema ===
+const productSchema = new mongoose.Schema({
+  // === NEW: Core Product Identifiers ===
+  rhlId: {
+    type: Number,
+    required: true,
+    unique: true,
+    index: true,
+    description: 'Ray\'s Healthy Living unique product ID (authoritative identifier)'
   },
   
-  // === Legacy Fields (kept for backwards compatibility) ===
-  item_number: {
+  // === NEW: Category & Classification ===
+  category: {
     type: String,
-    required: false,
+    required: true,
+    index: true,
+    description: 'Product category (e.g., "FRESH GROUND VEGGIE CAPSULES")'
   },
-  lookup_code: {
+  type: {
     type: String,
-    required: false,
+    default: null,
+    description: 'Product sub-type or format (e.g., "Capsules- Fresh Ground")'
   },
+  
+  // === Product Names ===
   name: {
     type: String,
+    required: true,
     trim: true,
-    description: 'Product name - displayed on product page'
+    description: 'Display/branded product name (customer-facing)'
   },
-  originalProductName: {
+  manufacturerName: {
     type: String,
-    trim: true,
-    required: false,
-    description: 'Original product name from master list (for reference/search)'
+    default: null,
+    description: 'Original manufacturer product name'
   },
-  productDescription: {
+  
+  // === NEW: Description & Ingredients ===
+  description: {
     type: String,
-    trim: true,
-    required: false,
-    description: 'Product description/details from Column D (e.g., "Powder Capsules", "Herbal Handbook")'
+    default: null,
+    description: 'Short marketing description'
   },
-  rhlProductName: {
+  ingredients: {
     type: String,
-    trim: true,
-    required: false,
-    description: 'New RHL elevated product name (alternative display name)'
+    default: null,
+    description: 'Full ingredient list (plain text)'
+  },
+  
+  // === NEW: Variants (size-specific data) ===
+  variants: [variantSchema],
+  
+  // === Status ===
+  status: {
+    type: String,
+    default: 'active',
+    enum: ['active', 'inactive', 'discontinued'],
+    description: 'Overall product status'
+  },
+  
+  // === LEGACY FIELDS (kept for backwards compatibility with existing code) ===
+  rhlProductId: {
+    type: String,
+    sparse: true,
+    description: '[LEGACY] Old RHL identifier'
+  },
+  item_number: {
+    type: String,
+    description: '[LEGACY] Old item number'
   },
   sku: {
     type: String,
+    description: '[LEGACY] Old SKU field'
   },
-  
-  // === Pricing ===
   buyPrice: {
     type: Number,
     min: [0, 'Buy price cannot be negative'],
+    description: '[LEGACY] Old buy price'
   },
   sellPrice: {
     type: Number,
     min: [0, 'Sell price cannot be negative'],
+    description: '[LEGACY] Old sell price'
   },
   wholesaleSellPrice: {
     type: Number,
     min: [0, 'Wholesale price cannot be negative'],
-    required: false,
-    description: 'Wholesale-specific pricing if different from retail'
+    description: '[LEGACY] Old wholesale price'
   },
-  
-  // === Inventory ===
   stock: {
     type: Number,
     min: [0, 'Stock cannot be negative'],
+    description: '[LEGACY] Old stock field'
   },
-  reorder: {
-    type: Number,
-    required: false,
-  },
-  bin_location: {
-    type: String,
-    required: false,
-    description: 'Internal warehouse bin location for fulfillment'
-  },
-  
-  // === Product Details ===
-  category: {
+  categoryRef: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Category',
-    required: [true, 'Please select a category'],
+    description: '[LEGACY] Old category reference'
   },
   subcategory: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Subcategory',
+    description: '[LEGACY] Old subcategory reference'
   },
   brand: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Brand',
+    description: '[LEGACY] Old brand reference'
   },
-  
-  // === Product Form (for future filtering) ===
-  productForm: {
-    type: String,
-    enum: ['Liquid', 'Capsule', 'Powder', 'Tablet', 'Tincture', 'Oil', 'Cream', 'Other'],
-    required: false,
-    description: 'Product form/type for filtering and sorting'
-  },
-  
-  // === Description & Ingredients ===
-  description: {
-    type: String,
-  },
-  additional: {
-    type: String,
-  },
-  ingredient: {
-    type: String,
-    description: 'Product ingredients list'
-  },
-  disclaimer: {
-    type: String,
-  },
-  
-  // === Media ===
   images: [{
     type: String,
-    required: false,
+    description: '[LEGACY] Old images array'
   }],
-  
-  // === Dimensions & Weight ===
-  length: {
-    type: Number,
-    required: false,
-  },
-  width: {
-    type: Number,
-    required: false,
-  },
-  height: {
-    type: Number,
-    required: false,
-  },
-  weight: {
-    type: Number,
-    required: false,
-  },
-  
-  // === Metadata ===
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-  },
-  supplierName: {
-    type: String,
-    required: false,
+    description: '[LEGACY] Creator reference'
   },
   
-  // === Product Variants ===
-  variants: [{
-    variantName: { type: String },
-    sku: { type: String },
-    rhlProductId: { type: String, description: 'RHL ID for this variant' },
-    bin_location: { type: String },
-    price: { type: Number },
-    stock: { type: Number },
-    dimensions: {
-      length: Number,
-      width: Number,
-      height: Number,
-      unit: { type: String, default: 'cm' }
-    },
-    weight: {
-      value: Number,
-      unit: { type: String, default: 'kg' }
-    }
-  }],
 }, { timestamps: true });
+
+// === Indexes for Performance ===
+productSchema.index({ rhlId: 1 });
+productSchema.index({ category: 1 });
+productSchema.index({ 'variants.itemNumber': 1 });
+productSchema.index({ 'variants.rhlUpc': 1 });
+productSchema.index({ 'variants.manufacturerUpc': 1 });
 
 module.exports = mongoose.model('Product', productSchema);

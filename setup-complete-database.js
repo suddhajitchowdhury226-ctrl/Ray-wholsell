@@ -179,7 +179,7 @@ const adminUser = {
   updatedAt: new Date()
 };
 
-async function setupCompleteDatabase() {
+async function setRHL UPCompleteDatabase() {
   const client = new MongoClient(uri);
   
   try {
@@ -294,4 +294,4 @@ async function setupCompleteDatabase() {
   }
 }
 
-setupCompleteDatabase().catch(console.error);
+setRHL UPCompleteDatabase().catch(console.error);

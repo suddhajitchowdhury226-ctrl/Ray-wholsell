@@ -8,7 +8,7 @@ async function run() {
     console.log('Name:', p.name?.substring(0,50));
     console.log('Desc:', p.description?.substring(0,60));
     console.log('Ingr:', p.ingredient?.substring(0,80));
-    console.log('UPC:', p.lookup_code);
+    console.log('RHL UPC:', p.lookup_code);
     console.log();
   });
   const withIngr = await Product.countDocuments({ ingredient: { $exists: true, $ne: null } });

@@ -2223,11 +2223,174 @@ const getProductsRange = async (req, res) => {
 };
 
 module.exports = {
+
+/**
+ * NEW ENDPOINTS FOR CATEGORY-WISE CATALOG
+ */
+
+// GET /api/products - Get products with category filter and pagination
+// Special sorting: rhlId 200, then 201, then rest
+const getCatalogProducts = async (req, res) => {
+  try {
+    const { category, page = 1, limit = 20, search = '' } = req.query;
+
+    const pageNum = parseInt(page);
+    const limitNum = parseInt(limit);
+    const skip = (pageNum - 1) * limitNum;
+
+    // Build base query
+    let query = { status: 'active' };
+
+    // Filter by category if provided
+    if (category) {
+      query.category = category;
+    }
+
+    // Search by name or ingredients
+    if (search) {
+      const escapedSearch = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      query.$or = [
+        { name: { $regex: escapedSearch, $options: 'i' } },
+        { ingredients: { $regex: escapedSearch, $options: 'i' } },
+        { description: { $regex: escapedSearch, $options: 'i' } }
+      ];
+    }
+
+    // Get total count
+    const totalProducts = await productModel.countDocuments(query);
+
+    // Use aggregation pipeline for custom sorting: 200, 201, then rest
+    const products = await productModel.aggregate([
+      { $match: query },
+      {
+        $addFields: {
+          // Add a sort priority: 0 for rhlId 200, 1 for rhlId 201, 2 for rest
+          sortPriority: {
+            $cond: [
+              { $eq: ['$rhlId', 200] },
+              0,
+              {
+                $cond: [
+                  { $eq: ['$rhlId', 201] },
+                  1,
+                  2
+                ]
+              }
+            ]
+          }
+        }
+      },
+      {
+        $sort: {
+          sortPriority: 1,    // Sort by priority (200 first, 201 second, rest last)
+          rhlId: 1            // Then by rhlId ascending for rest
+        }
+      },
+      { $skip: skip },
+      { $limit: limitNum },
+      {
+        $project: {
+          sortPriority: 0     // Remove helper field
+        }
+      }
+    ]);
+
+    res.status(200).json({
+      success: true,
+      products,
+      totalProducts,
+      currentPage: pageNum,
+      totalPages: Math.ceil(totalProducts / limitNum),
+      pageSize: limitNum
+    });
+
+  } catch (error) {
+    console.error('Error fetching catalog products:', error);
+    res.status(500).json({ success: false, message: 'Server error. Please try again later.' });
+  }
+};
+
+// GET /api/categories - Get distinct categories with product counts
+const getCatalogCategories = async (req, res) => {
+  try {
+    // Get distinct categories and count products in each
+    const categories = await productModel.aggregate([
+      { $match: { status: 'active' } },
+      {
+        $group: {
+          _id: '$category',
+          count: { $sum: 1 },
+          variantCount: { $sum: { $size: '$variants' } }
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          name: '$_id',
+          productCount: '$count',
+          variantCount: '$variantCount'
+        }
+      },
+      { $sort: { name: 1 } }
+    ]);
+
+    res.status(200).json({
+      success: true,
+      categories,
+      totalCategories: categories.length
+    });
+
+  } catch (error) {
+    console.error('Error fetching categories:', error);
+    res.status(500).json({ success: false, message: 'Server error. Please try again later.' });
+  }
+};
+
+// GET /api/products/:rhlId - Get full product detail including all variants
+const getCatalogProductDetail = async (req, res) => {
+  try {
+    const { rhlId } = req.params;
+
+    const rhlIdNum = parseInt(rhlId);
+    if (isNaN(rhlIdNum)) {
+      return res.status(400).json({ success: false, message: 'Invalid rhlId format' });
+    }
+
+    const product = await productModel
+      .findOne({ rhlId: rhlIdNum, status: 'active' })
+      .lean();
+
+    if (!product) {
+      return res.status(404).json({ success: false, message: 'Product not found' });
+    }
+
+    res.status(200).json({
+      success: true,
+      product
+    });
+
+  } catch (error) {
+    console.error('Error fetching product detail:', error);
+    res.status(500).json({ success: false, message: 'Server error. Please try again later.' });
+  }
+};
+
+module.exports = {
   adjustInventory,
   createProduct,
   getAddedProducts,
   updateProduct,
-  deleteProduct, getProductsByWholesalerRetailor, getSingleProduct, filterProductsByUser, bulkCreateProducts, getProductss, getRetailerProducts,getWholesalerProducts,getRetailerProductsByCategory,getWholesalerProductsByCategory,getProductsByRetailer,
+  deleteProduct,
+  getProductsByWholesalerRetailor,
+  getSingleProduct,
+  filterProductsByUser,
+  bulkCreateProducts,
+  getProductss,
+  getRetailerProducts,
+  getWholesalerProducts,
+  getRetailerProductsByCategory,
+  getWholesalerProductsByCategory,
+  getProductsByRetailer,
   deleteWholesalerProducts,
   bulkUploadCSV,
   bulkUploadCSVRetailer,
@@ -2237,7 +2400,11 @@ module.exports = {
   getProductCount,
   getRetailerInventoryAnalytics,
   getWholesalerInventoryAnalytics,
-  getProductsRange
+  getProductsRange,
+  // NEW ENDPOINTS
+  getCatalogProducts,
+  getCatalogCategories,
+  getCatalogProductDetail
 };
 
 

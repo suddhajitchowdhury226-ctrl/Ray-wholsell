@@ -1,7 +1,7 @@
 const express = require('express');
 const { getUsersWithForms, deleteUser, createUser, updateWholesalerApproval, updateUser } = require('../Controllers/userController');
 const { getRetailerPurchases, getCategories, getBrands, getRetailerCategories, getDepartmentsWithCategories } = require('../Controllers/categoryController');
-const { getWholesalerProducts, filterProducts, getProductCount, getSingleProduct, filterProductsByUser } = require('../Controllers/productController');
+const { getWholesalerProducts, filterProducts, getProductCount, getSingleProduct, filterProductsByUser, getCatalogProducts, getCatalogCategories, getCatalogProductDetail } = require('../Controllers/productController');
 const { applyCoupon, createCoupon, getCoupons, getCoupon, updateCoupon, deleteCoupon, submitFeedback, createCounseling, getCounselings, deleteCounseling } = require('../Controllers/authController');
 const { protect, restrictTo } = require('../Middleware/tokenVerify');
 const { getAllPurchases, purchaseSummary, createCheckoutSession, deleteCartItem, getCart, updateCartItem, addToCart, checkPayment, calculateShippingRates, createShippingLabel, createCheckoutAndShipment, getPurchaseByIds } = require('../Controllers/cartController');
@@ -388,6 +388,10 @@ router.get('/categories', getCategories);
 router.get('/departments', getDepartmentsWithCategories);
 router.get('/filter-products', filterProducts);
 
+// NEW: Category-wise catalog endpoints (public, no auth required)
+router.get('/catalog/products', getCatalogProducts);
+router.get('/catalog/categories', getCatalogCategories);
+router.get('/catalog/products/:rhlId', getCatalogProductDetail);
 
 router.get('/product-counts', async (req, res) => {
   try {

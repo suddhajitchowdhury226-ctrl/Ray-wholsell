@@ -93,10 +93,10 @@ node setup-manufacturers.js
 ### Product Model (`Models/productModel.js`)
 **New Fields:**
 - `rhlProductId` - Customer-facing RHL product identifier
-- `rhlUpc` - Ray's Healthy Living UPC (customer-facing)
+- `rhlRHL UPC` - Ray's Healthy Living RHL UPC (customer-facing)
 - `manufacturer` - RHL1, RHL2, RHL3, Internal, Other
 - `manufacturerItemNumber` - Supplier's item number (NOT customer-facing)
-- `manufacturerUpc` - Original manufacturer UPC (internal use only)
+- `manufacturerRHL UPC` - Original manufacturer RHL UPC (internal use only)
 - `productForm` - Liquid, Capsule, Powder, Tablet, Tincture, Oil, etc.
 - `wholesaleSellPrice` - Wholesale-specific pricing
 
@@ -119,7 +119,7 @@ node setup-manufacturers.js
 - `manufacturerId` - RHL1, RHL2, RHL3 (unique)
 - `orderingMethod` - email, phone, fax, edi, api, orderdog
 - `integrationDetails` - EDI/API/OrderDog configuration
-- `productIdField` - Primary identifier for orders (manufacturerItemNumber, SKU, UPC)
+- `productIdField` - Primary identifier for orders (manufacturerItemNumber, SKU, RHL UPC)
 - `minimumOrderQuantity` - MOQ requirements
 - `standardLeadDays` - Standard delivery lead time
 - `productCategories` - Categories this manufacturer supplies
@@ -160,7 +160,7 @@ Customer Places Order
 ## 🔄 Remaining Tasks (9/13)
 
 ### HIGH PRIORITY (Critical Path)
-1. **Task #3: Product Data Upload** - Upload 484 Vitality Works products with RHL IDs, UPCs, manufacturer assignment
+1. **Task #3: Product Data Upload** - Upload 484 Vitality Works products with RHL IDs, RHL UPCs, manufacturer assignment
 2. **Task #5: Manufacturer Inquiry Workflow** - Enhanced inquiry with availability, pricing, lead times
 3. **Task #7: Order Workflow** - Implement Requested Order status flow and admin approval interface
 
@@ -265,8 +265,8 @@ curl -X POST http://localhost:5000/api/payments/create-intent \
 ## ⚠️ Important Notes
 
 ### Security
-- Never log or display `manufacturerUpc` publicly (internal only)
-- Use `rhlUpc` for customer-facing documents
+- Never log or display `manufacturerRHL UPC` publicly (internal only)
+- Use `rhlRHL UPC` for customer-facing documents
 - Manufacturer API keys are excluded from default queries
 - Payment authentication handled by Stripe
 
@@ -277,9 +277,9 @@ curl -X POST http://localhost:5000/api/payments/create-intent \
 - System alerts admin if approaching expiration
 
 ### Product Identifiers
-- **Customer sees:** rhlProductId, rhlUpc, description, ingredients
+- **Customer sees:** rhlProductId, rhlRHL UPC, description, ingredients
 - **Internal use:** manufacturerItemNumber for supplier orders
-- **Never show customer:** manufacturerUpc, internal costs, bin_location
+- **Never show customer:** manufacturerRHL UPC, internal costs, bin_location
 
 ### Ordering Methods
 - **OrderDog:** Automated integration (needs configuration)

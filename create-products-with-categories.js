@@ -18,7 +18,7 @@ for (let i = 12; i <= sheet['!ref'].split(':')[1].replace(/[A-Z]/g, ''); i++) {
   row.itemNumber = sheet[`C${i}`]?.v;        // Column C: ITEM #
   row.rhlProductId = sheet[`D${i}`]?.v;      // Column D: RHL Product ID #
   row.rhlBarcode = sheet[`E${i}`]?.v;        // Column E: RHL GSI Barcode
-  row.upc = sheet[`F${i}`]?.v;               // Column F: UPC
+  row.RHL UPC = sheet[`F${i}`]?.v;               // Column F: RHL UPC
   row.productName = sheet[`G${i}`]?.v;       // Column G: PRODUCT NAME
   row.newRhlName = sheet[`H${i}`]?.v;        // Column H: New RHL Product Name
   row.description = sheet[`I${i}`]?.v;       // Column I: RHL Short Product Description
@@ -64,7 +64,7 @@ const products = rows.map((row, index) => {
   const mainCategory = categoryMapping[productType] || 'Health Supplements';
   
   return {
-    upc: (row.upc || row.rhlBarcode || '').toString().trim(),
+    RHL UPC: (row.RHL UPC || row.rhlBarcode || '').toString().trim(),
     lookup_code: (row.rhlBarcode || '').toString().trim(),
     item_number: (row.rhlProductId || row.itemNumber || '').toString().trim(),
     name: (row.newRhlName || row.productName || '').trim(),

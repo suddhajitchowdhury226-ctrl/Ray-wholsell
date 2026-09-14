@@ -10,7 +10,7 @@ This guide explains how to upload 483 products from the Excel file to your Mongo
 ### 1. **Data Extraction** ✓
 - Extracted **483 unique products** from the Excel file
 - Mapped Excel columns to database fields:
-  - **RHL GSI Barcode** → UPC (lookup_code)
+  - **RHL GSI Barcode** → RHL UPC (lookup_code)
   - **PRODUCT NAME** → Product Title (name)
   - **RHL Short Product Description** → Description
   - **Ingredients** → Ingredient Field
@@ -63,9 +63,9 @@ node ../upload-products-to-db.js
 ```javascript
 {
   name: "Product Title",                    // from: PRODUCT NAME / New RHL Product Name
-  sku: "UPC Code",                          // from: RHL GSI Barcode / UPC
+  sku: "RHL UPC Code",                          // from: RHL GSI Barcode / RHL UPC
   item_number: "Product ID",                // from: Product ID
-  lookup_code: "UPC",                       // from: UPC
+  lookup_code: "RHL UPC",                       // from: RHL UPC
   sellPrice: 12.70,                         // from: Manufacture WHOLESALE Price
   buyPrice: 9.52,                           // from: RHL COST 25% LESS
   stock: 100,                               // Default value
@@ -81,7 +81,7 @@ node ../upload-products-to-db.js
 ```json
 {
   "name": "Adaptogen Vitality Complex",
-  "upc": "788332173202",
+  "RHL UPC": "788332173202",
   "rhlProductId": "200",
   "sellPrice": 12.7,
   "rhlCost": 9.52,
@@ -137,10 +137,10 @@ db.products.find({ name: /Adaptogen/ }).pretty()
 // Should show sellPrice: 12.7, buyPrice: 9.52
 ```
 
-#### **4. Check UPC Field**
+#### **4. Check RHL UPC Field**
 ```javascript
 db.products.findOne({ lookup_code: "788332173202" })
-// Should find the product by UPC
+// Should find the product by RHL UPC
 ```
 
 ---
@@ -156,7 +156,7 @@ Products will automatically display on your website:
 - Wholesale Price (from Manufacture WHOLESALE)
 - Description (from RHL Short Product Description)
 - Ingredients (shown in product details)
-- UPC (lookup_code)
+- RHL UPC (lookup_code)
 - Stock Status
 ```
 
@@ -186,7 +186,7 @@ GET /products-details/{id}         // Get single product
 - Rebuild frontend (`npm run build`)
 - Check product.stock > 0 (set to 100 by default)
 
-### **Duplicate UPCs**
+### **Duplicate RHL UPCs**
 - Check `products-extracted.json` for duplicates
 - Script removes duplicates automatically
 
@@ -221,7 +221,7 @@ If you encounter issues:
 
 After successful upload:
 - ✅ 483 products in database
-- ✅ All with correct UPC, SKU, pricing
+- ✅ All with correct RHL UPC, SKU, pricing
 - ✅ Descriptions and ingredients populated
 - ✅ Categories auto-created
 - ✅ Brands auto-created from Product Type

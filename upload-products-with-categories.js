@@ -120,7 +120,7 @@ async function uploadProducts() {
           brand: brandId,
           lookup_code: productData.lookup_code,
           item_number: productData.item_number,
-          upc: productData.upc,
+          RHL UPC: productData.RHL UPC,
           department: productData.department,
           quantity: productData.quantity,
           size: productData.size,

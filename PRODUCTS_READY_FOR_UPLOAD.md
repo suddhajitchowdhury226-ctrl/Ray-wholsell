@@ -22,7 +22,7 @@ Your product data has been **extracted, processed, and formatted** for upload to
 
 | Excel Column | Database Field | Example |
 |---|---|---|
-| RHL GSI Barcode | `lookup_code` (UPC) | 788332173202 |
+| RHL GSI Barcode | `lookup_code` (RHL UPC) | 788332173202 |
 | PRODUCT NAME | `name` | Adaptogen Vitality Complex |
 | New RHL Product Name | `name` (if different) | Adaptogen Vitality Complex |
 | RHL Short Product Description | `description` | "A thoughtfully formulated blend..." |
@@ -40,7 +40,7 @@ Your product data has been **extracted, processed, and formatted** for upload to
 [
   {
     "name": "Adaptogen Vitality Complex",
-    "upc": "788332173202",
+    "RHL UPC": "788332173202",
     "rhlProductId": "200",
     "sellPrice": 12.7,
     "rhlCost": 9.52,
@@ -50,7 +50,7 @@ Your product data has been **extracted, processed, and formatted** for upload to
   },
   {
     "name": "Adaptogen Vitality Complex",
-    "upc": "788332210907",
+    "RHL UPC": "788332210907",
     "rhlProductId": "200",
     "sellPrice": 21.4,
     "rhlCost": 16.05,
@@ -60,7 +60,7 @@ Your product data has been **extracted, processed, and formatted** for upload to
   },
   {
     "name": "Aloe Digestive Comfort",
-    "upc": "788332173301",
+    "RHL UPC": "788332173301",
     "rhlProductId": "201",
     "sellPrice": 14.6,
     "rhlCost": 10.95,
@@ -125,7 +125,7 @@ router.post('/upload-products', async (req, res) => {
 
 ### **Fields Included**
 - ✅ name (product title)
-- ✅ sku (UPC)
+- ✅ sku (RHL UPC)
 - ✅ sellPrice (wholesale price)
 - ✅ buyPrice (cost)
 - ✅ stock (default: 100)
@@ -145,7 +145,7 @@ router.post('/upload-products', async (req, res) => {
 | Category Headers | Multiple |
 | Valid Products | 483 |
 | Duplicates Removed | ~50 |
-| Products with UPC | 483 |
+| Products with RHL UPC | 483 |
 | Products with Price | 483 |
 | Average Price | $21.45 |
 | Min Price | $5.20 |

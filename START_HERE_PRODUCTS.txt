@@ -43,7 +43,7 @@
 ────────────────────────────────────────────────────────────────────────────────
 
   ✓ 483 products in database
-  ✓ UPC codes for all products
+  ✓ RHL UPC codes for all products
   ✓ Wholesale pricing
   ✓ Descriptions from Excel
   ✓ Ingredients lists
@@ -84,7 +84,7 @@
 
   Excel Column                    Database Field    Example
   ─────────────────────────────────────────────────────────────────────────────
-  RHL GSI Barcode          →      lookup_code     (UPC)
+  RHL GSI Barcode          →      lookup_code     (RHL UPC)
   PRODUCT NAME             →      name            (Product Title)
   RHL Short Description    →      description     ("A blend designed...")
   Ingredients              →      ingredient      ("157.5 mg Organic...")

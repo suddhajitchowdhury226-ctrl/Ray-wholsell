@@ -42,7 +42,7 @@ After successful upload:
 | Field | Source | Example |
 |-------|--------|---------|
 | Product Name | "New RHL Product Name" | Adaptogen Vitality Complex |
-| UPC | "RHL GSI Barcode" | 788332173202 |
+| RHL UPC | "RHL GSI Barcode" | 788332173202 |
 | Price | "Manufacture WHOLESALE" | $12.70 |
 | Description | "RHL Short Product Description" | "A thoughtfully formulated blend..." |
 | Ingredients | "Ingredients" | "157.5 mg Organic Eleuthero Root..." |
@@ -69,7 +69,7 @@ db.products.findOne({ name: /Adaptogen/ })
 After upload, products appear at:
 - **Homepage**: Shows "New Arrivals - Wholesaler"
 - **Products Page**: Browse all 483 items
-- **Search**: Find by name, UPC, ingredients
+- **Search**: Find by name, RHL UPC, ingredients
 - **Details**: Full descriptions and ingredients
 
 ---

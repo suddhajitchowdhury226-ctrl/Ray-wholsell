@@ -23,7 +23,7 @@ try {
     itemNum: 2,
     rhlProductId: 3,
     rhlGsiBarcode: 4,
-    upc: 5,
+    RHL UPC: 5,
     productName: 6,
     newRhlProductName: 7,
     description: 8,
@@ -52,7 +52,7 @@ try {
     }
     
     const product = {
-      upc: row[columnMap.upc] ? String(row[columnMap.upc]).trim() : '',
+      RHL UPC: row[columnMap.RHL UPC] ? String(row[columnMap.RHL UPC]).trim() : '',
       rhlProductId: row[columnMap.rhlProductId] ? String(row[columnMap.rhlProductId]).trim() : '',
       name: productName.trim(),
       title: row[columnMap.newRhlProductName] ? row[columnMap.newRhlProductName].trim() : productName.trim(),
@@ -71,12 +71,12 @@ try {
     }
   }
   
-  // Remove duplicates based on UPC or product name
+  // Remove duplicates based on RHL UPC or product name
   const uniqueProducts = [];
   const seen = new Set();
   
   products.forEach(product => {
-    const key = product.upc || product.name;
+    const key = product.RHL UPC || product.name;
     if (!seen.has(key)) {
       seen.add(key);
       uniqueProducts.push(product);
@@ -94,7 +94,7 @@ try {
   console.log('\n📊 Sample Products (first 3):\n');
   uniqueProducts.slice(0, 3).forEach((product, idx) => {
     console.log(`${idx + 1}. ${product.title}`);
-    console.log(`   UPC: ${product.upc}`);
+    console.log(`   RHL UPC: ${product.RHL UPC}`);
     console.log(`   ID: ${product.rhlProductId}`);
     console.log(`   Price: $${product.wholesalePrice}`);
     console.log(`   Description: ${product.description.substring(0, 80)}...`);

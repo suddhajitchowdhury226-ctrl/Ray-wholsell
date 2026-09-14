@@ -49,7 +49,7 @@ async function fixProductNamesFromExcel() {
         const productNameCol = row['PRODUCT NAME'] || row['Product Name'] || row['Name'] || row['name'];
         const rhlProductNameCol = row['New RHL Product Name'] || row['RHL Product Name'] || row['rhlProductName'];
         const rhlProductIdCol = row['RHL ID'] || row['RHL_ID'] || row['rhlProductId'];
-        const upcCol = row['UPC'] || row['Barcode'] || row['lookup_code'];
+        const RHL UPCCol = row['RHL UPC'] || row['Barcode'] || row['lookup_code'];
 
         if (!productNameCol) {
           console.warn(`  ⚠️  Row ${i + 1}: No PRODUCT NAME found`);
@@ -74,7 +74,7 @@ async function fixProductNamesFromExcel() {
             $or: [
               { originalProductName: productNameCol },
               { name: productNameCol },
-              { lookup_code: upcCol }
+              { lookup_code: RHL UPCCol }
             ]
           });
         }
