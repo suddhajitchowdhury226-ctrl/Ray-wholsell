@@ -24,6 +24,7 @@ const productSchema = new mongoose.Schema({
   manufacturerName: String,
   description: String,
   ingredients: String,
+  bin_location: String,
   status: { type: String, default: 'active' },
   variants: [{
     size: { type: String, required: true },

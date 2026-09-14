@@ -127,6 +127,13 @@ const productSchema = new mongoose.Schema({
     description: 'Product images array with metadata'
   },
   
+  // === NEW: Bin Location ===
+  bin_location: {
+    type: String,
+    default: null,
+    description: 'Warehouse bin location for fulfillment (e.g., "A-1-1")'
+  },
+  
   // === Status ===
   status: {
     type: String,
