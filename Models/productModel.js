@@ -89,6 +89,44 @@ const productSchema = new mongoose.Schema({
   // === NEW: Variants (size-specific data) ===
   variants: [variantSchema],
   
+  // === NEW: Product Images ===
+  images: {
+    type: [{
+      url: {
+        type: String,
+        required: true,
+        description: 'Full CDN/S3 URL to image'
+      },
+      key: {
+        type: String,
+        required: true,
+        description: 'Storage key (S3 key or filename) for deletion'
+      },
+      altText: {
+        type: String,
+        default: '',
+        description: 'Alt text for accessibility and SEO'
+      },
+      isPrimary: {
+        type: Boolean,
+        default: false,
+        description: 'Only ONE image per product should be true (primary/featured image)'
+      },
+      order: {
+        type: Number,
+        default: 0,
+        description: 'Display order (0 = first, increments per image)'
+      },
+      uploadedAt: {
+        type: Date,
+        default: Date.now,
+        description: 'Timestamp when image was uploaded'
+      }
+    }],
+    default: [],
+    description: 'Product images array with metadata'
+  },
+  
   // === Status ===
   status: {
     type: String,

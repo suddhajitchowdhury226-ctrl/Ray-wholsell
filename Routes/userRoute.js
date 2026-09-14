@@ -393,6 +393,10 @@ router.get('/catalog/products', getCatalogProducts);
 router.get('/catalog/categories', getCatalogCategories);
 router.get('/catalog/products/:rhlId', getCatalogProductDetail);
 
+// NEW: Product Image management routes
+const productImageRoutes = require('./productImageRoutes');
+router.use('/products/:productId/images', productImageRoutes);
+
 router.get('/product-counts', async (req, res) => {
   try {
     // Aggregate product counts by category, subcategory, and brand
