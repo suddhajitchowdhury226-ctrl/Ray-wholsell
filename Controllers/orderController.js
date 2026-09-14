@@ -171,33 +171,42 @@ exports.createOrderFromCart = async (req, res) => {
     if (requestItems && Array.isArray(requestItems) && requestItems.length > 0) {
       console.log('✅ Using items from request body');
       for (const item of requestItems) {
-        console.log(`   Processing item: productId=${item.productId}, qty=${item.quantity}, price=${item.price}`);
+        // Handle different ID formats: productId, product._id, _id, or product (from backend cart)
+        const productId = item.productId || item.product?._id || item._id || item.product;
+        const quantity = item.quantity;
+        let itemPrice = item.price;
         
-        if (!item.productId || !item.quantity) {
+        console.log(`   Processing item: productId=${productId}, qty=${quantity}, price=${itemPrice}`);
+        
+        if (!productId || !quantity) {
           throw new Error(`Invalid item: missing productId or quantity. Item: ${JSON.stringify(item)}`);
         }
         
-        const product = await Product.findById(item.productId);
+        const product = await Product.findById(productId);
         if (!product) {
-          return res.status(404).json({ message: `Product ${item.productId} not found` });
+          return res.status(404).json({ message: `Product ${productId} not found` });
         }
         
-        const itemPrice = item.price || product.buyPrice || product.sellPrice;
+        // Get price from item, or from product variants, or fallback to buyPrice
         if (!itemPrice) {
-          throw new Error(`Product ${product._id} has no price set (buyPrice: ${product.buyPrice}, sellPrice: ${product.sellPrice})`);
+          itemPrice = product.variants?.[0]?.price || product.buyPrice || product.sellPrice;
         }
         
-        const itemTotal = itemPrice * item.quantity;
+        if (!itemPrice) {
+          throw new Error(`Product ${product._id} has no price set (variants: ${product.variants?.length}, buyPrice: ${product.buyPrice}, sellPrice: ${product.sellPrice})`);
+        }
+        
+        const itemTotal = itemPrice * quantity;
         subtotal += itemTotal;
         
-        console.log(`   ✓ Added ${item.quantity} x ${product.name} @ $${itemPrice} = $${itemTotal}`);
+        console.log(`   ✓ Added ${quantity} x ${product.name} @ $${itemPrice} = $${itemTotal}`);
         
         orderItems.push({
           product: product._id,
           name: product.name,
-          quantity: item.quantity,
+          quantity: quantity,
           price: itemPrice,
-          websiteRole: item.websiteRole || 'user',
+          websiteRole: item.websiteRole || 'wholesaler',
           variantId: item.variantId,
           flavour: item.flavour,
         });
@@ -217,7 +226,9 @@ exports.createOrderFromCart = async (req, res) => {
           continue;
         }
         
-        const itemPrice = cartItem.websiteRole === 'wholesaler' ? product.buyPrice : product.sellPrice;
+        // Get price from variants first, then fallback to buyPrice/sellPrice
+        const basePrice = product.variants?.[0]?.price || product.buyPrice || product.sellPrice;
+        const itemPrice = cartItem.websiteRole === 'wholesaler' ? basePrice : basePrice;
         const itemTotal = itemPrice * cartItem.quantity;
         
         subtotal += itemTotal;
