@@ -10,7 +10,7 @@
 const mongoose = require('mongoose');
 require('dotenv').config();
 
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/rayWholeSale';
+const MONGO_URI = process.env.DATABASE_URL || process.env.MONGO_URI || 'mongodb://localhost:27017/rayWholeSale';
 
 // Product schema for reference
 const productSchema = new mongoose.Schema({
