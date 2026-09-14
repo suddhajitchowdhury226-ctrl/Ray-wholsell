@@ -402,7 +402,7 @@ exports.createOrderFromCart = async (req, res) => {
       shippingCost,
       discount,
       total,
-      status: 'pending_review',
+      status: 'requested',  // Changed from 'pending_review' to match schema enum
       couponCode,
       notes: notes || '',
       userEmail: user.email,
