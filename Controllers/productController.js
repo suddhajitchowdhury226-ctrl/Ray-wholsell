@@ -2222,8 +2222,6 @@ const getProductsRange = async (req, res) => {
   }
 };
 
-module.exports = {
-
 /**
  * NEW ENDPOINTS FOR CATEGORY-WISE CATALOG
  */
