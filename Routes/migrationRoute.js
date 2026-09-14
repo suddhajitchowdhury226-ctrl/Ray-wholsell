@@ -20,14 +20,16 @@ router.post('/run-all', async (req, res) => {
     // Get seed file - try multiple paths
     let seedFilePath;
     const possiblePaths = [
-      path.join(__dirname, '../rhl-product-catalog-seed.json'),
-      path.join(__dirname, '../../rhl-product-catalog-seed.json'),
-      path.join(process.cwd(), 'rhl-product-catalog-seed.json')
+      path.join(__dirname, '../rhl-product-catalog-seed.json'),  // Root level
+      path.join(__dirname, '../..rhl-product-catalog-seed.json'),  // Two levels up
+      path.join(__dirname, 'rhl-product-catalog-seed.json'),  // Same directory
+      path.join(process.cwd(), 'rhl-product-catalog-seed.json')  // CWD
     ];
 
     for (const tryPath of possiblePaths) {
       if (fs.existsSync(tryPath)) {
         seedFilePath = tryPath;
+        console.log(`✅ Found seed file at: ${tryPath}`);
         break;
       }
     }
