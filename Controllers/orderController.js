@@ -746,6 +746,10 @@ exports.getOrderDetails = async (req, res) => {
 // Admin: Get all orders
 exports.getAllOrders = async (req, res) => {
   try {
+    console.log('📡 getAllOrders called');
+    console.log('   User ID:', req.user?._id);
+    console.log('   User Role:', req.user?.role);
+    
     const { status, page = 1, limit = 20 } = req.query;
     
     const filter = {};
