@@ -822,14 +822,22 @@ exports.confirmOrder = async (req, res) => {
     const { orderId, confirmedItems, shippingCost, adminNotes } = req.body;
     const adminId = req.user._id;
 
+    console.log('📋 Confirm Order Request:');
+    console.log('   Body:', JSON.stringify(req.body, null, 2));
+
     // Validation
     if (!orderId || !confirmedItems || !Array.isArray(confirmedItems)) {
+      console.error('❌ Validation failed:');
+      console.error('   orderId:', orderId);
+      console.error('   confirmedItems:', confirmedItems);
+      console.error('   isArray:', Array.isArray(confirmedItems));
       return res.status(400).json({ 
         message: 'Order ID and confirmedItems array are required' 
       });
     }
 
     if (typeof shippingCost !== 'number' || shippingCost < 0) {
+      console.error('❌ Shipping cost validation failed:', shippingCost);
       return res.status(400).json({ 
         message: 'Valid shipping cost (non-negative number) is required' 
       });
