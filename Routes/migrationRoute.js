@@ -62,7 +62,7 @@ router.post('/run-all', async (req, res) => {
           continue;
         }
 
-        const result = await ProductModel.findOneAndUpdate(
+        const result = await productModel.findOneAndUpdate(
           { rhlId: seedProduct.rhlId },
           {
             $set: {
@@ -80,10 +80,7 @@ router.post('/run-all', async (req, res) => {
           { upsert: true, new: true }
         );
 
-        if (result._id.toString() === (seedProduct._id || seedProduct.rhlId).toString()) {
-          updated++;
-          results.updated++;
-        } else {
+        if (result) {
           inserted++;
           results.inserted++;
         }
@@ -94,7 +91,7 @@ router.post('/run-all', async (req, res) => {
           variants: seedProduct.variants?.length || 0
         });
       } catch (error) {
-        console.error(`❌ Error upserting product ${seedProduct.rhlId}:`, error.message);
+        console.error(`❌ Error upserting RHL#${seedProduct.rhlId}:`, error.message);
         errors++;
         results.failed++;
       }
