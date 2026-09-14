@@ -840,9 +840,17 @@ exports.confirmOrder = async (req, res) => {
       return res.status(404).json({ message: 'Order not found' });
     }
 
-    if (order.status !== 'requested') {
+    console.log('🔍 Order details for confirmation:');
+    console.log('   Order ID:', orderId);
+    console.log('   Current status:', order.status);
+    console.log('   Expected status: requested');
+    
+    // Allow confirmation from 'requested', 'draft', or 'pending_payment' status
+    const allowedStatuses = ['requested', 'draft', 'pending_payment'];
+    if (!allowedStatuses.includes(order.status)) {
+      console.error('❌ Order status not allowed for confirmation:', order.status);
       return res.status(400).json({ 
-        message: `Order cannot be confirmed. Current status: ${order.status}. Expected 'requested'.` 
+        message: `Order cannot be confirmed. Current status: ${order.status}. Expected one of: ${allowedStatuses.join(', ')}` 
       });
     }
 
