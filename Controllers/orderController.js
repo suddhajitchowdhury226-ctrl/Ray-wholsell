@@ -141,6 +141,117 @@ const generateOrderConfirmationEmail = (order, userAddress) => {
   `;
 };
 
+// Generate admin notification email HTML
+const generateAdminOrderNotificationEmail = (order, user, userAddress) => {
+  const baseUrl = process.env.BACKEND_URL || 'https://ray-wholsell.onrender.com';
+  
+  const itemsHtml = order.items.map(item => {
+    return `
+      <tr style="border-bottom: 1px solid #eee;">
+        <td style="padding: 12px; color: #333;"><strong>${item.name}</strong></td>
+        <td style="padding: 12px; text-align: center; color: #666;">${item.quantity}</td>
+        <td style="padding: 12px; text-align: right; color: #333;">$${item.price.toFixed(2)}</td>
+        <td style="padding: 12px; text-align: right; font-weight: 600; color: #333;">$${(item.price * item.quantity).toFixed(2)}</td>
+      </tr>
+    `;
+  }).join('');
+
+  return `
+    <div style="font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; background-color: #fff;">
+      <!-- Header -->
+      <div style="background: linear-gradient(135deg, #d9534f, #c9302c); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+        <h1 style="color: white; margin: 0; font-size: 28px;">🔔 NEW ORDER ALERT</h1>
+        <p style="color: #f0f0f0; margin: 10px 0 0 0; font-size: 16px;">A new order has been received!</p>
+      </div>
+      
+      <!-- Order Details -->
+      <div style="background: #fff; padding: 30px; border: 1px solid #eee;">
+        <div style="margin-bottom: 25px;">
+          <h2 style="color: #d9534f; margin: 0 0 15px 0; font-size: 24px;">Order #${order.orderNumber}</h2>
+          <p style="color: #666; margin: 5px 0;"><strong>Total Amount:</strong> $${order.total.toFixed(2)}</p>
+          <p style="color: #666; margin: 5px 0;"><strong>Order Date:</strong> ${new Date(order.createdAt).toLocaleDateString('en-US', { 
+            weekday: 'long', 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+          })}</p>
+          <p style="color: #666; margin: 5px 0;"><strong>Status:</strong> Pending Review</p>
+        </div>
+
+        <!-- Customer Info -->
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 25px;">
+          <h3 style="color: #333; margin: 0 0 15px 0; font-size: 18px;">Customer Information</h3>
+          <p style="margin: 5px 0; color: #555;"><strong>Name:</strong> ${user.name}</p>
+          <p style="margin: 5px 0; color: #555;"><strong>Email:</strong> ${user.email}</p>
+          <p style="margin: 5px 0; color: #555;"><strong>Delivery Contact:</strong> ${userAddress.contactNumber}</p>
+        </div>
+
+        <!-- Delivery Address -->
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 25px;">
+          <h3 style="color: #333; margin: 0 0 15px 0; font-size: 18px;">Delivery Address</h3>
+          <p style="margin: 5px 0; color: #555;"><strong>${userAddress.name}</strong></p>
+          <p style="margin: 5px 0; color: #555;">${userAddress.addressLine1}</p>
+          ${userAddress.addressLine2 ? `<p style="margin: 5px 0; color: #555;">${userAddress.addressLine2}</p>` : ''}
+          <p style="margin: 5px 0; color: #555;">${userAddress.city}, ${userAddress.state} ${userAddress.zipcode}</p>
+          <p style="margin: 5px 0; color: #555;">${userAddress.country}</p>
+        </div>
+
+        <!-- Order Items -->
+        <div style="margin-bottom: 25px;">
+          <h3 style="color: #333; margin: 0 0 15px 0; font-size: 18px;">Order Items</h3>
+          <table style="width: 100%; border-collapse: collapse; border: 1px solid #eee;">
+            <thead>
+              <tr style="background-color: #f8f9fa;">
+                <th style="padding: 15px 12px; text-align: left; color: #333; font-weight: 600;">Product</th>
+                <th style="padding: 15px 12px; text-align: center; color: #333; font-weight: 600;">Qty</th>
+                <th style="padding: 15px 12px; text-align: right; color: #333; font-weight: 600;">Unit Price</th>
+                <th style="padding: 15px 12px; text-align: right; color: #333; font-weight: 600;">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${itemsHtml}
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Order Summary -->
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 25px;">
+          <h3 style="color: #333; margin: 0 0 15px 0; font-size: 18px;">Order Summary</h3>
+          <div style="display: flex; justify-content: space-between; margin: 8px 0; color: #555;">
+            <span>Subtotal:</span>
+            <span>$${order.subtotal.toFixed(2)}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin: 8px 0; color: #555;">
+            <span>Shipping:</span>
+            <span>${order.shippingCost > 0 ? `$${order.shippingCost.toFixed(2)}` : 'FREE'}</span>
+          </div>
+          <hr style="border: none; border-top: 2px solid #d9534f; margin: 15px 0;">
+          <div style="display: flex; justify-content: space-between; margin: 8px 0; color: #333; font-size: 20px; font-weight: bold;">
+            <span>Total:</span>
+            <span style="color: #d9534f;">$${order.total.toFixed(2)}</span>
+          </div>
+        </div>
+
+        <!-- Action Button -->
+        <div style="text-align: center; margin-top: 25px;">
+          <a href="${baseUrl}/admin/orders/${order._id}" style="background: #d9534f; color: white; padding: 12px 30px; text-decoration: none; border-radius: 4px; font-weight: bold; display: inline-block;">
+            View Order in Admin Panel
+          </a>
+        </div>
+
+        <!-- Footer -->
+        <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
+          <p style="color: #999; font-size: 14px; margin: 5px 0;">
+            This is an automated notification from Ray Healthy Living Order System
+          </p>
+        </div>
+      </div>
+    </div>
+  `;
+};
+
 // Create order from cart checkout
 exports.createOrderFromCart = async (req, res) => {
   try {
@@ -317,7 +428,7 @@ exports.createOrderFromCart = async (req, res) => {
     const populatedOrder = await Order.findById(order._id).populate('items.product', 'name images');
     console.log('📦 Order populated with product data for email');
 
-    // Send confirmation email
+    // Send confirmation email to USER
     try {
       console.log('📧 Attempting to send confirmation email to:', user.email);
       const transporter = createTransporter();
@@ -351,6 +462,41 @@ exports.createOrderFromCart = async (req, res) => {
       });
       // Don't fail the order creation if email fails - just log it
       console.log('⚠️ Order created successfully but email failed - user should still receive success message');
+    }
+
+    // Send notification email to ADMIN
+    try {
+      console.log('📧 Attempting to send admin notification email to:', process.env.EMAIL_USER);
+      const transporter = createTransporter();
+      
+      const adminMailOptions = {
+        from: process.env.EMAIL_USER,
+        to: process.env.EMAIL_USER,
+        subject: `🔔 NEW ORDER NOTIFICATION - ${populatedOrder.orderNumber} - Ray Healthy Living`,
+        html: generateAdminOrderNotificationEmail(populatedOrder, user, deliveryAddress),
+      };
+
+      console.log('📧 Admin mail options:', {
+        from: adminMailOptions.from,
+        to: adminMailOptions.to,
+        subject: adminMailOptions.subject
+      });
+
+      const adminEmailResult = await transporter.sendMail(adminMailOptions);
+      console.log('✅ Admin notification email sent successfully');
+      console.log('📧 Admin Email ID:', adminEmailResult.messageId);
+      console.log('📧 Admin Email Response:', adminEmailResult.response);
+      
+    } catch (adminEmailError) {
+      console.error('❌ Error sending admin notification email:', adminEmailError);
+      console.error('❌ Admin email error details:', {
+        message: adminEmailError.message,
+        code: adminEmailError.code,
+        command: adminEmailError.command,
+        response: adminEmailError.response
+      });
+      // Don't fail the order creation if admin email fails - just log it
+      console.log('⚠️ User email sent but admin notification failed');
     }
 
     // Return success response - this ensures the frontend gets the success message
