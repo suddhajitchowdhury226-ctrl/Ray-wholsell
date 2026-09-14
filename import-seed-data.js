@@ -111,8 +111,28 @@ async function importSeedData() {
 
     for (const productData of seedData) {
       try {
+        // Transform seed data to match schema
+        const transformedData = {
+          rhlId: productData.rhlId,
+          name: productData.name,
+          category: productData.category,
+          type: productData.type,
+          description: productData.shortDescription, // Map shortDescription to description
+          ingredients: productData.ingredients,
+          bin_location: productData.bin_location,
+          status: productData.isActive ? 'active' : 'inactive',
+          variants: productData.variants.map(v => ({
+            itemNumber: v.itemNumber,
+            size: v.size,
+            price: v.wholesalePrice, // Map wholesalePrice to price
+            rhlUpc: v.rhlUpc,
+            manufacturerUpc: v.manufacturerUpc,
+            status: 'active'
+          }))
+        };
+
         // Check for null prices in variants
-        productData.variants.forEach(variant => {
+        transformedData.variants.forEach(variant => {
           if (variant.price === null) {
             stats.nullPrices.push({
               rhlId: productData.rhlId,
@@ -126,7 +146,7 @@ async function importSeedData() {
         // Upsert by rhlId
         const result = await Product.findOneAndUpdate(
           { rhlId: productData.rhlId },
-          productData,
+          transformedData,
           { upsert: true, new: true }
         );
 
@@ -136,7 +156,7 @@ async function importSeedData() {
         } else {
           // Check if actually changed or just matched
           const existingData = await Product.findOne({ rhlId: productData.rhlId }).lean();
-          const dataChanged = JSON.stringify(productData) !== JSON.stringify(existingData);
+          const dataChanged = JSON.stringify(transformedData) !== JSON.stringify(existingData);
           
           if (dataChanged) {
             stats.updated++;

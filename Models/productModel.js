@@ -191,7 +191,7 @@ const productSchema = new mongoose.Schema({
     ref: 'Brand',
     description: '[LEGACY] Old brand reference'
   },
-  images: [{
+  legacyImages: [{
     type: String,
     description: '[LEGACY] Old images array'
   }],
