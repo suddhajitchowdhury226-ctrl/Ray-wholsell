@@ -7,56 +7,7 @@ const express = require('express');
 const router = express.Router();
 const fs = require('fs');
 const path = require('path');
-
-// Dynamically import/load product model
-let Product;
-
-// Load product model on first use
-async function getProductModel() {
-  if (!Product) {
-    try {
-      // Try to get from mongoose connection
-      const mongoose = require('mongoose');
-      const productSchema = new mongoose.Schema({
-        rhlId: { type: Number, index: true },
-        category: String,
-        type: String,
-        name: String,
-        manufacturerName: String,
-        description: String,
-        ingredients: String,
-        status: { type: String, default: 'active' },
-        variants: [{
-          size: String,
-          itemNumber: String,
-          rhlUpc: String,
-          manufacturerUpc: String,
-          price: Number,
-          status: String
-        }],
-        // Legacy fields
-        rhlProductId: String,
-        item_number: String,
-        sku: String,
-        buyPrice: Number,
-        sellPrice: Number,
-        wholesaleSellPrice: Number,
-        stock: Number,
-        categoryRef: mongoose.Schema.Types.ObjectId,
-        subcategory: mongoose.Schema.Types.ObjectId,
-        brand: mongoose.Schema.Types.ObjectId,
-        images: [String],
-        createdBy: mongoose.Schema.Types.ObjectId,
-      }, { timestamps: true, strict: false });
-
-      Product = mongoose.model('Product', productSchema, 'products');
-    } catch (error) {
-      console.error('❌ Failed to load Product model:', error);
-      throw error;
-    }
-  }
-  return Product;
-}
+const productModel = require('../Models/productModel');
 
 /**
  * POST /api/migration/run-all
@@ -80,9 +31,6 @@ router.post('/run-all', async (req, res) => {
     const seedProducts = Array.isArray(seedData) ? seedData : seedData.products || [];
 
     console.log(`📦 Found ${seedProducts.length} products in seed file`);
-
-    // Get Product model
-    const ProductModel = await getProductModel();
 
     // Upsert products
     let inserted = 0;
@@ -156,7 +104,8 @@ router.post('/run-all', async (req, res) => {
     console.error('❌ Migration failed:', error);
     res.status(500).json({
       message: 'Migration failed',
-      error: error.message
+      error: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
     });
   }
 });
