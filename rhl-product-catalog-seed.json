@@ -25,7 +25,8 @@
         "price": 21.4,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "S-8-3"
   },
   {
     "rhlId": 201,
@@ -45,7 +46,8 @@
         "price": 14.6,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "T-8-1"
   },
   {
     "rhlId": 202,
@@ -65,7 +67,8 @@
         "price": 8.4,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "U-8-2"
   },
   {
     "rhlId": 203,
@@ -85,7 +88,8 @@
         "price": 8.25,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "V-8-3"
   },
   {
     "rhlId": 204,
@@ -102,7 +106,7 @@
         "itemNumber": "4019710",
         "rhlUpc": null,
         "manufacturerUpc": "788332197109",
-        "price": 11.0,
+        "price": 11,
         "status": "active"
       },
       {
@@ -113,7 +117,8 @@
         "price": 16.8,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "W-8-1"
   },
   {
     "rhlId": 205,
@@ -133,7 +138,8 @@
         "price": 7.3,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "X-8-2"
   },
   {
     "rhlId": 206,
@@ -153,7 +159,8 @@
         "price": 9.7,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "Y-8-3"
   },
   {
     "rhlId": 207,
@@ -173,7 +180,8 @@
         "price": 8.7,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "Z-8-1"
   },
   {
     "rhlId": 208,
@@ -193,7 +201,8 @@
         "price": 11.55,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "A-9-2"
   },
   {
     "rhlId": 209,
@@ -213,7 +222,8 @@
         "price": 9.65,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "B-9-3"
   },
   {
     "rhlId": 210,
@@ -221,7 +231,7 @@
     "manufacturerName": "Black Cohosh Powder Capsules",
     "category": "FRESH GROUND VEGGIE CAPSULES",
     "type": "Capsules- Fresh Ground",
-    "description": "Supports women\u2019s wellness & healthy hormonal balance.",
+    "description": "Supports women’s wellness & healthy hormonal balance.",
     "ingredients": "500 mg Wildcrafted Black Cohosh Root, Full Spectrum",
     "status": "active",
     "variants": [
@@ -233,7 +243,8 @@
         "price": 8.8,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "C-9-1"
   },
   {
     "rhlId": 211,
@@ -253,7 +264,8 @@
         "price": 9.9,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "D-9-2"
   },
   {
     "rhlId": 212,
@@ -270,10 +282,11 @@
         "itemNumber": "4017340",
         "rhlUpc": null,
         "manufacturerUpc": "788332173400",
-        "price": 9.0,
+        "price": 9,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "E-9-3"
   },
   {
     "rhlId": 213,
@@ -282,7 +295,7 @@
     "category": "FRESH GROUND VEGGIE CAPSULES",
     "type": "Capsules- Fresh Ground",
     "description": "Supports memory, focus & cognitive wellness.",
-    "ingredients": "100 mg Cordyceps Mycelia, 100 mg Lion\u2019s Mane Fruiting Body and Mycelia, 100 mg Ginkgo Leaf, 50 mg Gotu Kola Herb, 45 mg Bacopa Herb, 40 mg Rhodiola Root, 40 mg Rosemary Herb, 25 mg Turmeric Root",
+    "ingredients": "100 mg Cordyceps Mycelia, 100 mg Lion’s Mane Fruiting Body and Mycelia, 100 mg Ginkgo Leaf, 50 mg Gotu Kola Herb, 45 mg Bacopa Herb, 40 mg Rhodiola Root, 40 mg Rosemary Herb, 25 mg Turmeric Root",
     "status": "active",
     "variants": [
       {
@@ -293,7 +306,8 @@
         "price": 9.4,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "F-9-1"
   },
   {
     "rhlId": 214,
@@ -302,7 +316,7 @@
     "category": "FRESH GROUND VEGGIE CAPSULES",
     "type": "Capsules- Fresh Ground",
     "description": "Supports digestive & intestinal wellness.",
-    "ingredients": "250 mg Caprylic Acid (from Magnesium Caprylate), 100 mg Pau D\u2019Arco Bark, 50 mg Black Walnut Hull, 50 mg Oregano Leaf, 25 mg Usnea Lichen",
+    "ingredients": "250 mg Caprylic Acid (from Magnesium Caprylate), 100 mg Pau D’Arco Bark, 50 mg Black Walnut Hull, 50 mg Oregano Leaf, 25 mg Usnea Lichen",
     "status": "active",
     "variants": [
       {
@@ -313,7 +327,8 @@
         "price": 10.5,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "G-9-2"
   },
   {
     "rhlId": 215,
@@ -333,7 +348,8 @@
         "price": 7.3,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "H-9-3"
   },
   {
     "rhlId": 216,
@@ -342,7 +358,7 @@
     "category": "FRESH GROUND VEGGIE CAPSULES",
     "type": "Capsules- Fresh Ground",
     "description": "Supports immune & antioxidant wellness.",
-    "ingredients": "500 mg Imported Cat\u2019s Claw Bark, Full Spectrum",
+    "ingredients": "500 mg Imported Cat’s Claw Bark, Full Spectrum",
     "status": "active",
     "variants": [
       {
@@ -353,7 +369,8 @@
         "price": 6.8,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "I-9-1"
   },
   {
     "rhlId": 217,
@@ -373,7 +390,8 @@
         "price": 6.8,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "J-9-2"
   },
   {
     "rhlId": 218,
@@ -393,7 +411,8 @@
         "price": 9.85,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "K-9-3"
   },
   {
     "rhlId": 219,
@@ -401,7 +420,7 @@
     "manufacturerName": "Chaste Tree Powder Capsules",
     "category": "FRESH GROUND VEGGIE CAPSULES",
     "type": "Capsules- Fresh Ground",
-    "description": "Supports women\u2019s wellness & healthy hormonal balance.",
+    "description": "Supports women’s wellness & healthy hormonal balance.",
     "ingredients": "400 mg Organic Chaste Tree Berry, Full Spectrum",
     "status": "active",
     "variants": [
@@ -413,7 +432,8 @@
         "price": 7.2,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "L-9-1"
   },
   {
     "rhlId": 220,
@@ -433,7 +453,8 @@
         "price": 9.25,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "M-9-2"
   },
   {
     "rhlId": 221,
@@ -461,7 +482,8 @@
         "price": 11.9,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "N-9-3"
   },
   {
     "rhlId": 222,
@@ -481,7 +503,8 @@
         "price": 8.5,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "O-9-1"
   },
   {
     "rhlId": 223,
@@ -501,7 +524,8 @@
         "price": 9.3,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "P-9-2"
   },
   {
     "rhlId": 224,
@@ -518,10 +542,11 @@
         "itemNumber": "4021540",
         "rhlUpc": "810078420385",
         "manufacturerUpc": "788332215407",
-        "price": 9.0,
+        "price": 9,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "Q-9-3"
   },
   {
     "rhlId": 225,
@@ -541,7 +566,8 @@
         "price": 8.8,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "R-9-1"
   },
   {
     "rhlId": 226,
@@ -569,7 +595,8 @@
         "price": 18.5,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "S-9-2"
   },
   {
     "rhlId": 227,
@@ -589,7 +616,8 @@
         "price": 7.85,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "T-9-3"
   },
   {
     "rhlId": 228,
@@ -609,7 +637,8 @@
         "price": 9.2,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "U-9-1"
   },
   {
     "rhlId": 229,
@@ -629,7 +658,8 @@
         "price": 12.6,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "V-9-2"
   },
   {
     "rhlId": 230,
@@ -649,7 +679,8 @@
         "price": 9.65,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "W-9-3"
   },
   {
     "rhlId": 231,
@@ -669,7 +700,8 @@
         "price": 14.5,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "X-9-1"
   },
   {
     "rhlId": 232,
@@ -689,7 +721,8 @@
         "price": 9.8,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "Y-9-2"
   },
   {
     "rhlId": 233,
@@ -706,10 +739,11 @@
         "itemNumber": "4022770",
         "rhlUpc": "810078420453",
         "manufacturerUpc": "788332227707",
-        "price": 11.0,
+        "price": 11,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "Z-9-3"
   },
   {
     "rhlId": 234,
@@ -729,7 +763,8 @@
         "price": 6.9,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "A-10-1"
   },
   {
     "rhlId": 235,
@@ -749,7 +784,8 @@
         "price": 6.7,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "B-10-2"
   },
   {
     "rhlId": 236,
@@ -766,7 +802,7 @@
         "itemNumber": "4015490",
         "rhlUpc": "810078420491",
         "manufacturerUpc": "788332154904",
-        "price": 7.0,
+        "price": 7,
         "status": "active"
       },
       {
@@ -777,7 +813,8 @@
         "price": 11.85,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "C-10-3"
   },
   {
     "rhlId": 237,
@@ -802,10 +839,11 @@
         "itemNumber": "4022850",
         "rhlUpc": null,
         "manufacturerUpc": "788332228506",
-        "price": 15.0,
+        "price": 15,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "D-10-1"
   },
   {
     "rhlId": 238,
@@ -825,7 +863,8 @@
         "price": 12.15,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "E-10-2"
   },
   {
     "rhlId": 239,
@@ -845,7 +884,8 @@
         "price": 13.95,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "F-10-3"
   },
   {
     "rhlId": 240,
@@ -862,10 +902,11 @@
         "itemNumber": "4015520",
         "rhlUpc": "810078420545",
         "manufacturerUpc": "788332155208",
-        "price": 16.0,
+        "price": 16,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "G-10-1"
   },
   {
     "rhlId": 241,
@@ -882,10 +923,11 @@
         "itemNumber": "4019780",
         "rhlUpc": "810078420552",
         "manufacturerUpc": "788332197802",
-        "price": 8.0,
+        "price": 8,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "H-10-2"
   },
   {
     "rhlId": 242,
@@ -902,10 +944,11 @@
         "itemNumber": "4023720",
         "rhlUpc": null,
         "manufacturerUpc": "788332237201",
-        "price": 9.0,
+        "price": 9,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "I-10-3"
   },
   {
     "rhlId": 243,
@@ -925,7 +968,8 @@
         "price": 9.9,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "J-10-1"
   },
   {
     "rhlId": 244,
@@ -945,7 +989,8 @@
         "price": 10.4,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "K-10-2"
   },
   {
     "rhlId": 245,
@@ -962,10 +1007,11 @@
         "itemNumber": "4021650",
         "rhlUpc": "810078420583",
         "manufacturerUpc": "788332216503",
-        "price": 11.0,
+        "price": 11,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "L-10-3"
   },
   {
     "rhlId": 246,
@@ -982,10 +1028,11 @@
         "itemNumber": "4015540",
         "rhlUpc": "810078420590",
         "manufacturerUpc": "788332155406",
-        "price": 7.0,
+        "price": 7,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "M-10-1"
   },
   {
     "rhlId": 247,
@@ -1005,7 +1052,8 @@
         "price": 8.8,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "N-10-2"
   },
   {
     "rhlId": 248,
@@ -1014,7 +1062,7 @@
     "category": "FRESH GROUND VEGGIE CAPSULES",
     "type": "Capsules- Fresh Ground",
     "description": "Supports joint comfort & a healthy inflammatory response.",
-    "ingredients": "100mg Boswellia Gum Extract (65% Boswellic Acids), 100mg MSM (Methylsulfonylmethane), 100mg Bromelain, 50mg Hyaluronic Acid, 50mg Turmeric Root, 25mg Licorice Root, 25mg Devil\u2019s Claw Root",
+    "ingredients": "100mg Boswellia Gum Extract (65% Boswellic Acids), 100mg MSM (Methylsulfonylmethane), 100mg Bromelain, 50mg Hyaluronic Acid, 50mg Turmeric Root, 25mg Licorice Root, 25mg Devil’s Claw Root",
     "status": "active",
     "variants": [
       {
@@ -1025,7 +1073,8 @@
         "price": 9.45,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "O-10-3"
   },
   {
     "rhlId": 249,
@@ -1045,7 +1094,8 @@
         "price": 10.1,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "P-10-1"
   },
   {
     "rhlId": 250,
@@ -1065,7 +1115,8 @@
         "price": 12.2,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "Q-10-2"
   },
   {
     "rhlId": 251,
@@ -1082,10 +1133,11 @@
         "itemNumber": "4022840",
         "rhlUpc": "810078420644",
         "manufacturerUpc": "788332228407",
-        "price": 8.0,
+        "price": 8,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "R-10-3"
   },
   {
     "rhlId": 252,
@@ -1105,7 +1157,8 @@
         "price": 12.1,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "S-10-1"
   },
   {
     "rhlId": 253,
@@ -1114,7 +1167,7 @@
     "category": "FRESH GROUND VEGGIE CAPSULES",
     "type": "Capsules- Fresh Ground",
     "description": "Supports stress resilience, relaxation & vitality.",
-    "ingredients": "150 mg Kava Vanuatu Root, 75 mg Kava Root Extract (30% Kavalactones), 75 mg Organic St. John\u2019s Wort Herb, 75 mg Wildcrafted Passion Flower Herb, 25 mg Albizzia Bark (He Huan Pi), 25 mg Albizzia Flower (He Huan Hua)",
+    "ingredients": "150 mg Kava Vanuatu Root, 75 mg Kava Root Extract (30% Kavalactones), 75 mg Organic St. John’s Wort Herb, 75 mg Wildcrafted Passion Flower Herb, 25 mg Albizzia Bark (He Huan Pi), 25 mg Albizzia Flower (He Huan Hua)",
     "status": "active",
     "variants": [
       {
@@ -1125,7 +1178,8 @@
         "price": 13.85,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "T-10-2"
   },
   {
     "rhlId": 254,
@@ -1145,7 +1199,8 @@
         "price": 6.6,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "U-10-3"
   },
   {
     "rhlId": 255,
@@ -1165,7 +1220,8 @@
         "price": 8.3,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "V-10-1"
   },
   {
     "rhlId": 256,
@@ -1174,7 +1230,7 @@
     "category": "FRESH GROUND VEGGIE CAPSULES",
     "type": "Capsules- Fresh Ground",
     "description": "Supports memory, focus & cognitive wellness.",
-    "ingredients": "500 mg Organic Lion\u2019s Mane Mycelia and Fruiting Body",
+    "ingredients": "500 mg Organic Lion’s Mane Mycelia and Fruiting Body",
     "status": "active",
     "variants": [
       {
@@ -1193,7 +1249,8 @@
         "price": 15.4,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "W-10-2"
   },
   {
     "rhlId": 257,
@@ -1202,7 +1259,7 @@
     "category": "FRESH GROUND VEGGIE CAPSULES",
     "type": "Capsules- Fresh Ground",
     "description": "Supports memory, focus & cognitive wellness.",
-    "ingredients": "667 mg Organic Lion\u2019s Mane Mycelia and Fruiting Body",
+    "ingredients": "667 mg Organic Lion’s Mane Mycelia and Fruiting Body",
     "status": "active",
     "variants": [
       {
@@ -1213,7 +1270,8 @@
         "price": 14.65,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "X-10-3"
   },
   {
     "rhlId": 258,
@@ -1233,7 +1291,8 @@
         "price": 10.05,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "Y-10-1"
   },
   {
     "rhlId": 259,
@@ -1250,10 +1309,11 @@
         "itemNumber": "4023130",
         "rhlUpc": "810078428046",
         "manufacturerUpc": "788332231308",
-        "price": 9.0,
+        "price": 9,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "Z-10-2"
   },
   {
     "rhlId": 260,
@@ -1273,7 +1333,8 @@
         "price": 10.5,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "A-11-3"
   },
   {
     "rhlId": 261,
@@ -1301,7 +1362,8 @@
         "price": 17.2,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "B-11-1"
   },
   {
     "rhlId": 262,
@@ -1321,7 +1383,8 @@
         "price": 7.45,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "C-11-2"
   },
   {
     "rhlId": 263,
@@ -1341,7 +1404,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "D-11-3"
   },
   {
     "rhlId": 264,
@@ -1358,10 +1422,11 @@
         "itemNumber": "4020000",
         "rhlUpc": "810078420743",
         "manufacturerUpc": "788332200007",
-        "price": 18.0,
+        "price": 18,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "E-11-1"
   },
   {
     "rhlId": 265,
@@ -1381,7 +1446,8 @@
         "price": 7.45,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "F-11-2"
   },
   {
     "rhlId": 266,
@@ -1401,7 +1467,8 @@
         "price": 7.2,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "G-11-3"
   },
   {
     "rhlId": 267,
@@ -1418,10 +1485,11 @@
         "itemNumber": "4023140",
         "rhlUpc": "810078428053",
         "manufacturerUpc": "788332231407",
-        "price": 13.0,
+        "price": 13,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "H-11-1"
   },
   {
     "rhlId": 268,
@@ -1438,10 +1506,11 @@
         "itemNumber": "4015590",
         "rhlUpc": "810078420774",
         "manufacturerUpc": "788332155901",
-        "price": 10.0,
+        "price": 10,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "I-11-2"
   },
   {
     "rhlId": 269,
@@ -1461,7 +1530,8 @@
         "price": 8.5,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "J-11-3"
   },
   {
     "rhlId": 270,
@@ -1481,7 +1551,8 @@
         "price": 9.25,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "K-11-1"
   },
   {
     "rhlId": 271,
@@ -1501,7 +1572,8 @@
         "price": 7.7,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "L-11-2"
   },
   {
     "rhlId": 272,
@@ -1510,7 +1582,7 @@
     "category": "FRESH GROUND VEGGIE CAPSULES",
     "type": "Capsules- Fresh Ground",
     "description": "Supports daily wellness & balanced body function.",
-    "ingredients": "500 mg Wildcrafted Pau D\u2019Arco Bark, Full Spectrum",
+    "ingredients": "500 mg Wildcrafted Pau D’Arco Bark, Full Spectrum",
     "status": "active",
     "variants": [
       {
@@ -1518,10 +1590,11 @@
         "itemNumber": "4019840",
         "rhlUpc": "810078420804",
         "manufacturerUpc": "788332198403",
-        "price": 7.0,
+        "price": 7,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "M-11-3"
   },
   {
     "rhlId": 273,
@@ -1541,7 +1614,8 @@
         "price": 14.7,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "N-11-1"
   },
   {
     "rhlId": 274,
@@ -1561,7 +1635,8 @@
         "price": 9.4,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "O-11-2"
   },
   {
     "rhlId": 275,
@@ -1581,7 +1656,8 @@
         "price": 14.4,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "P-11-3"
   },
   {
     "rhlId": 276,
@@ -1590,7 +1666,7 @@
     "category": "FRESH GROUND VEGGIE CAPSULES",
     "type": "Capsules- Fresh Ground",
     "description": "Supports memory, focus & cognitive wellness.",
-    "ingredients": "100 mg Lion\u2019s Mane Fruiting Body and Mycelia, 100 mg Chaga Mycelia, 70 mg Kava Root, 70 mg Lavender Flower, 60 mg Lemon Balm Herb, 40 mg Passion Flower Herb, 35 mg Mucuna pruriens Seed, 25 mg Night Blooming Cereus Stem",
+    "ingredients": "100 mg Lion’s Mane Fruiting Body and Mycelia, 100 mg Chaga Mycelia, 70 mg Kava Root, 70 mg Lavender Flower, 60 mg Lemon Balm Herb, 40 mg Passion Flower Herb, 35 mg Mucuna pruriens Seed, 25 mg Night Blooming Cereus Stem",
     "status": "active",
     "variants": [
       {
@@ -1601,7 +1677,8 @@
         "price": 9.4,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "Q-11-1"
   },
   {
     "rhlId": 277,
@@ -1621,7 +1698,8 @@
         "price": 10.3,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "R-11-2"
   },
   {
     "rhlId": 278,
@@ -1641,7 +1719,8 @@
         "price": 8.2,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "S-11-3"
   },
   {
     "rhlId": 279,
@@ -1661,7 +1740,8 @@
         "price": 9.5,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "T-11-1"
   },
   {
     "rhlId": 280,
@@ -1670,7 +1750,7 @@
     "category": "FRESH GROUND VEGGIE CAPSULES",
     "type": "Capsules- Fresh Ground",
     "description": "Supports daily wellness & balanced body function.",
-    "ingredients": "300 mg St. John\u2019s Wort Herb Extract (0.3% Hypericin), 150 mg Organic St. John\u2019s Wort Flowering Tops, Full Spectrum",
+    "ingredients": "300 mg St. John’s Wort Herb Extract (0.3% Hypericin), 150 mg Organic St. John’s Wort Flowering Tops, Full Spectrum",
     "status": "active",
     "variants": [
       {
@@ -1681,7 +1761,8 @@
         "price": 7.8,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "U-11-2"
   },
   {
     "rhlId": 281,
@@ -1690,7 +1771,7 @@
     "category": "FRESH GROUND VEGGIE CAPSULES",
     "type": "Capsules- Fresh Ground",
     "description": "Supports memory, focus & cognitive wellness.",
-    "ingredients": "100 mg Lion\u2019s Mane Fruiting Body and Myclia, 100 mg Turkey Tail Fruiting Body and Mycelia, 100 mg Reishi Fruiting Body and Mycelia, 60 mg Ashwagandha Root, 60 mg Holy Basil Leaf, 60 mg Lemon Balm Herb, 20 mg Bacopa Herb",
+    "ingredients": "100 mg Lion’s Mane Fruiting Body and Myclia, 100 mg Turkey Tail Fruiting Body and Mycelia, 100 mg Reishi Fruiting Body and Mycelia, 60 mg Ashwagandha Root, 60 mg Holy Basil Leaf, 60 mg Lemon Balm Herb, 20 mg Bacopa Herb",
     "status": "active",
     "variants": [
       {
@@ -1701,7 +1782,8 @@
         "price": 9.6,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "V-11-3"
   },
   {
     "rhlId": 282,
@@ -1721,7 +1803,8 @@
         "price": 9.8,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "W-11-1"
   },
   {
     "rhlId": 283,
@@ -1741,7 +1824,8 @@
         "price": 8.2,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "X-11-2"
   },
   {
     "rhlId": 284,
@@ -1761,7 +1845,8 @@
         "price": 9.4,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "Y-11-3"
   },
   {
     "rhlId": 285,
@@ -1789,7 +1874,8 @@
         "price": 24.55,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "Z-11-1"
   },
   {
     "rhlId": 286,
@@ -1798,7 +1884,7 @@
     "category": "FRESH GROUND VEGGIE CAPSULES",
     "type": "Capsules- Fresh Ground",
     "description": "Supports memory, focus & cognitive wellness.",
-    "ingredients": "100 mg Turmeric Root Extract (95% Curcuminoids), 50 mg White Willow Bark Extract (25% Salicin), 70 mg Ashwagandha Root, 35 mg Corydalis Root, 35 mg St. John\u2019s Wort Flowering Herb, 35 mg Ginkgo Leaf, 25 mg Skullcap Herb, 25 mg Stillingia Root, 25 mg Red Root, 10 mg Cayenne Fruit, 5 mg Black Pepper Extract",
+    "ingredients": "100 mg Turmeric Root Extract (95% Curcuminoids), 50 mg White Willow Bark Extract (25% Salicin), 70 mg Ashwagandha Root, 35 mg Corydalis Root, 35 mg St. John’s Wort Flowering Herb, 35 mg Ginkgo Leaf, 25 mg Skullcap Herb, 25 mg Stillingia Root, 25 mg Red Root, 10 mg Cayenne Fruit, 5 mg Black Pepper Extract",
     "status": "active",
     "variants": [
       {
@@ -1806,10 +1892,11 @@
         "itemNumber": "4021670",
         "rhlUpc": "810078420958",
         "manufacturerUpc": "788332216701",
-        "price": 11.0,
+        "price": 11,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "A-12-2"
   },
   {
     "rhlId": 287,
@@ -1829,7 +1916,8 @@
         "price": 18.9,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "B-12-3"
   },
   {
     "rhlId": 288,
@@ -1837,8 +1925,8 @@
     "manufacturerName": "Turmeric Plus Joint Health Powder Capsules",
     "category": "FRESH GROUND VEGGIE CAPSULES",
     "type": "Capsules- Fresh Ground",
-    "description": "Supports women\u2019s wellness & healthy hormonal balance.",
-    "ingredients": "100 mg Turmeric Root Extract (95% Curcuminoids), 100 mg Devil\u2019s Claw Root, 100 mg White Willow Bark Extract (25% Salicin), 50 mg Cat\u2019s Claw Bark, 50 mg Black Cohosh Root, 50 mg Licorice Root, 5 mg Black Pepper Extract",
+    "description": "Supports women’s wellness & healthy hormonal balance.",
+    "ingredients": "100 mg Turmeric Root Extract (95% Curcuminoids), 100 mg Devil’s Claw Root, 100 mg White Willow Bark Extract (25% Salicin), 50 mg Cat’s Claw Bark, 50 mg Black Cohosh Root, 50 mg Licorice Root, 5 mg Black Pepper Extract",
     "status": "active",
     "variants": [
       {
@@ -1846,10 +1934,11 @@
         "itemNumber": "4021690",
         "rhlUpc": "810078420972",
         "manufacturerUpc": "788332216909",
-        "price": 11.0,
+        "price": 11,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "C-12-1"
   },
   {
     "rhlId": 289,
@@ -1858,7 +1947,7 @@
     "category": "FRESH GROUND VEGGIE CAPSULES",
     "type": "Capsules- Fresh Ground",
     "description": "Supports relaxation & restful sleep.",
-    "ingredients": "100 mg Turmeric Root Extract (95% Curcuminoids), 75 mg Valerian Root, 70 mg Kava Root, 50 mg White Willow Bark Extract (25% Salicin), 35 mg Corydalis Root, 35 mg St. John\u2019s Wort Herb, 25 mg Skullcap Herb, 25 mg Stillingia Root, 25 mg Red Root, 5 mg Black Pepper Extract",
+    "ingredients": "100 mg Turmeric Root Extract (95% Curcuminoids), 75 mg Valerian Root, 70 mg Kava Root, 50 mg White Willow Bark Extract (25% Salicin), 35 mg Corydalis Root, 35 mg St. John’s Wort Herb, 25 mg Skullcap Herb, 25 mg Stillingia Root, 25 mg Red Root, 5 mg Black Pepper Extract",
     "status": "active",
     "variants": [
       {
@@ -1866,10 +1955,11 @@
         "itemNumber": "4021680",
         "rhlUpc": "810078420989",
         "manufacturerUpc": "788332216800",
-        "price": 11.0,
+        "price": 11,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "D-12-2"
   },
   {
     "rhlId": 290,
@@ -1897,7 +1987,8 @@
         "price": 14.8,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "E-12-3"
   },
   {
     "rhlId": 291,
@@ -1917,7 +2008,8 @@
         "price": 13.15,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "F-12-1"
   },
   {
     "rhlId": 292,
@@ -1937,7 +2029,8 @@
         "price": 7.65,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "G-12-2"
   },
   {
     "rhlId": 293,
@@ -1957,7 +2050,8 @@
         "price": 15.45,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "H-12-3"
   },
   {
     "rhlId": 294,
@@ -1977,7 +2071,8 @@
         "price": 11.7,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "I-12-1"
   },
   {
     "rhlId": 295,
@@ -1997,7 +2092,8 @@
         "price": 14.8,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "J-12-2"
   },
   {
     "rhlId": 296,
@@ -2014,10 +2110,11 @@
         "itemNumber": "4012890",
         "rhlUpc": "810078420040",
         "manufacturerUpc": "788332128905",
-        "price": 15.0,
+        "price": 15,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "K-12-3"
   },
   {
     "rhlId": 297,
@@ -2037,7 +2134,8 @@
         "price": 16.25,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "L-12-1"
   },
   {
     "rhlId": 298,
@@ -2054,10 +2152,11 @@
         "itemNumber": "4012900",
         "rhlUpc": "810078420064",
         "manufacturerUpc": "788332129001",
-        "price": 19.0,
+        "price": 19,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "M-12-2"
   },
   {
     "rhlId": 299,
@@ -2077,7 +2176,8 @@
         "price": 15.3,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "N-12-3"
   },
   {
     "rhlId": 300,
@@ -2094,10 +2194,11 @@
         "itemNumber": "4013030",
         "rhlUpc": "810078420095",
         "manufacturerUpc": "788332130304",
-        "price": 19.0,
+        "price": 19,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "O-12-1"
   },
   {
     "rhlId": 301,
@@ -2117,7 +2218,8 @@
         "price": 15.4,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "P-12-2"
   },
   {
     "rhlId": 302,
@@ -2134,7 +2236,7 @@
         "itemNumber": "4008381",
         "rhlUpc": "810078420118",
         "manufacturerUpc": "788332083815",
-        "price": 12.0,
+        "price": 12,
         "status": "active"
       },
       {
@@ -2145,7 +2247,8 @@
         "price": 18.9,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "Q-12-3"
   },
   {
     "rhlId": 303,
@@ -2153,7 +2256,7 @@
     "manufacturerName": "Saw Palmetto Liquid Capsules",
     "category": "LIQUID VEGGIE CAPSULES",
     "type": "Capsules- Liquid",
-    "description": "Supports men\u2019s prostate & urinary wellness.",
+    "description": "Supports men’s prostate & urinary wellness.",
     "ingredients": "160 mg Saw Palmetto Berry Supercritical CO2 Extract (minimum 85% Fatty Acids, 136 mg)",
     "status": "active",
     "variants": [
@@ -2162,10 +2265,11 @@
         "itemNumber": "4021050",
         "rhlUpc": "810078420132",
         "manufacturerUpc": "788332210501",
-        "price": 13.0,
+        "price": 13,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "R-12-1"
   },
   {
     "rhlId": 304,
@@ -2182,7 +2286,7 @@
         "itemNumber": "4023700",
         "rhlUpc": null,
         "manufacturerUpc": "788332237003",
-        "price": 9.0,
+        "price": 9,
         "status": "active"
       },
       {
@@ -2190,10 +2294,11 @@
         "itemNumber": "4023710",
         "rhlUpc": null,
         "manufacturerUpc": "788332237102",
-        "price": 15.0,
+        "price": 15,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "S-12-2"
   },
   {
     "rhlId": 305,
@@ -2213,7 +2318,8 @@
         "price": 15.6,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "T-12-3"
   },
   {
     "rhlId": 306,
@@ -2233,7 +2339,8 @@
         "price": 16.5,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "U-12-1"
   },
   {
     "rhlId": 307,
@@ -2261,7 +2368,8 @@
         "price": 23.5,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "V-12-2"
   },
   {
     "rhlId": 308,
@@ -2281,7 +2389,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "W-12-3"
   },
   {
     "rhlId": 309,
@@ -2298,10 +2407,11 @@
         "itemNumber": "4003721",
         "rhlUpc": "810078421016",
         "manufacturerUpc": "788332037214",
-        "price": 10.0,
+        "price": 10,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "X-12-1"
   },
   {
     "rhlId": 310,
@@ -2321,7 +2431,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "Y-12-2"
   },
   {
     "rhlId": 311,
@@ -2349,7 +2460,8 @@
         "price": 13.55,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "Z-12-3"
   },
   {
     "rhlId": 312,
@@ -2377,7 +2489,8 @@
         "price": 13.55,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "A-13-1"
   },
   {
     "rhlId": 313,
@@ -2397,7 +2510,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "B-13-2"
   },
   {
     "rhlId": 314,
@@ -2405,7 +2519,7 @@
     "manufacturerName": "Black Cohosh Liquid Extract",
     "category": "SINGLE HERBAL LIQUID EXTRACTS (Alcohol & Alcohol-Free)",
     "type": "Liquid- Single",
-    "description": "Supports women\u2019s wellness & healthy hormonal balance.",
+    "description": "Supports women’s wellness & healthy hormonal balance.",
     "ingredients": "Cimicifuga racemosa Root",
     "status": "active",
     "variants": [
@@ -2417,7 +2531,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "C-13-3"
   },
   {
     "rhlId": 315,
@@ -2445,7 +2560,8 @@
         "price": 13.55,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "D-13-1"
   },
   {
     "rhlId": 316,
@@ -2465,7 +2581,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "E-13-2"
   },
   {
     "rhlId": 317,
@@ -2482,10 +2599,11 @@
         "itemNumber": "4016091",
         "rhlUpc": "810078421122",
         "manufacturerUpc": "788332160912",
-        "price": 8.0,
+        "price": 8,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "F-13-3"
   },
   {
     "rhlId": 318,
@@ -2505,7 +2623,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "G-13-1"
   },
   {
     "rhlId": 319,
@@ -2525,7 +2644,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "H-13-2"
   },
   {
     "rhlId": 320,
@@ -2545,7 +2665,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "I-13-3"
   },
   {
     "rhlId": 321,
@@ -2565,7 +2686,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "J-13-1"
   },
   {
     "rhlId": 322,
@@ -2585,7 +2707,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "K-13-2"
   },
   {
     "rhlId": 323,
@@ -2593,7 +2716,7 @@
     "manufacturerName": "Chaste Tree Berry Liquid Extract",
     "category": "SINGLE HERBAL LIQUID EXTRACTS (Alcohol & Alcohol-Free)",
     "type": "Liquid- Single",
-    "description": "Supports women\u2019s wellness & healthy hormonal balance.",
+    "description": "Supports women’s wellness & healthy hormonal balance.",
     "ingredients": "Vitex agnus-castus Berry",
     "status": "active",
     "variants": [
@@ -2605,7 +2728,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "L-13-3"
   },
   {
     "rhlId": 324,
@@ -2625,7 +2749,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "M-13-1"
   },
   {
     "rhlId": 325,
@@ -2653,7 +2778,8 @@
         "price": 15.75,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "N-13-2"
   },
   {
     "rhlId": 326,
@@ -2673,7 +2799,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "O-13-3"
   },
   {
     "rhlId": 327,
@@ -2693,7 +2820,8 @@
         "price": 7.9,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "P-13-1"
   },
   {
     "rhlId": 328,
@@ -2713,7 +2841,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "Q-13-2"
   },
   {
     "rhlId": 329,
@@ -2733,7 +2862,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "R-13-3"
   },
   {
     "rhlId": 330,
@@ -2753,7 +2883,8 @@
         "price": 7.8,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "S-13-1"
   },
   {
     "rhlId": 331,
@@ -2773,7 +2904,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "T-13-2"
   },
   {
     "rhlId": 332,
@@ -2793,7 +2925,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "U-13-3"
   },
   {
     "rhlId": 333,
@@ -2821,7 +2954,8 @@
         "price": 14.65,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "V-13-1"
   },
   {
     "rhlId": 334,
@@ -2849,7 +2983,8 @@
         "price": 13.95,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "W-13-2"
   },
   {
     "rhlId": 335,
@@ -2877,7 +3012,8 @@
         "price": 13.55,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "X-13-3"
   },
   {
     "rhlId": 336,
@@ -2897,7 +3033,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "Y-13-1"
   },
   {
     "rhlId": 337,
@@ -2914,10 +3051,11 @@
         "itemNumber": "4004051",
         "rhlUpc": "810078421368",
         "manufacturerUpc": "788332040511",
-        "price": 8.0,
+        "price": 8,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "Z-13-2"
   },
   {
     "rhlId": 338,
@@ -2937,7 +3075,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "A-14-3"
   },
   {
     "rhlId": 339,
@@ -2957,7 +3096,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "B-14-1"
   },
   {
     "rhlId": 340,
@@ -2977,7 +3117,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "C-14-2"
   },
   {
     "rhlId": 341,
@@ -2997,7 +3138,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "D-14-3"
   },
   {
     "rhlId": 342,
@@ -3017,7 +3159,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "E-14-1"
   },
   {
     "rhlId": 343,
@@ -3037,7 +3180,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "F-14-2"
   },
   {
     "rhlId": 344,
@@ -3057,7 +3201,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "G-14-3"
   },
   {
     "rhlId": 345,
@@ -3077,7 +3222,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "H-14-1"
   },
   {
     "rhlId": 346,
@@ -3097,7 +3243,8 @@
         "price": 7.8,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "I-14-2"
   },
   {
     "rhlId": 347,
@@ -3114,10 +3261,11 @@
         "itemNumber": "4004121",
         "rhlUpc": "810078421474",
         "manufacturerUpc": "788332041211",
-        "price": 10.0,
+        "price": 10,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "J-14-3"
   },
   {
     "rhlId": 348,
@@ -3134,10 +3282,11 @@
         "itemNumber": "4004131",
         "rhlUpc": "810078421481",
         "manufacturerUpc": "788332041310",
-        "price": 10.0,
+        "price": 10,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "K-14-1"
   },
   {
     "rhlId": 349,
@@ -3157,7 +3306,8 @@
         "price": 10.5,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "L-14-2"
   },
   {
     "rhlId": 350,
@@ -3185,7 +3335,8 @@
         "price": 18.15,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "M-14-3"
   },
   {
     "rhlId": 351,
@@ -3205,7 +3356,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "N-14-1"
   },
   {
     "rhlId": 352,
@@ -3225,7 +3377,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "O-14-2"
   },
   {
     "rhlId": 353,
@@ -3253,7 +3406,8 @@
         "price": 13.55,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "P-14-3"
   },
   {
     "rhlId": 354,
@@ -3273,7 +3427,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "Q-14-1"
   },
   {
     "rhlId": 355,
@@ -3293,7 +3448,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "R-14-2"
   },
   {
     "rhlId": 356,
@@ -3313,7 +3469,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "S-14-3"
   },
   {
     "rhlId": 357,
@@ -3333,7 +3490,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "T-14-1"
   },
   {
     "rhlId": 358,
@@ -3353,7 +3511,8 @@
         "price": 7.65,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "U-14-2"
   },
   {
     "rhlId": 359,
@@ -3381,7 +3540,8 @@
         "price": 16.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "V-14-3"
   },
   {
     "rhlId": 360,
@@ -3409,7 +3569,8 @@
         "price": 17.05,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "W-14-1"
   },
   {
     "rhlId": 361,
@@ -3429,7 +3590,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "X-14-2"
   },
   {
     "rhlId": 362,
@@ -3449,7 +3611,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "Y-14-3"
   },
   {
     "rhlId": 363,
@@ -3469,7 +3632,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "Z-14-1"
   },
   {
     "rhlId": 364,
@@ -3489,7 +3653,8 @@
         "price": 12.95,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "A-15-2"
   },
   {
     "rhlId": 365,
@@ -3506,10 +3671,11 @@
         "itemNumber": "4004241",
         "rhlUpc": "810078421689",
         "manufacturerUpc": "788332042416",
-        "price": 8.0,
+        "price": 8,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "B-15-3"
   },
   {
     "rhlId": 366,
@@ -3526,10 +3692,11 @@
         "itemNumber": "4004251",
         "rhlUpc": "810078421696",
         "manufacturerUpc": "788332042515",
-        "price": 8.0,
+        "price": 8,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "C-15-1"
   },
   {
     "rhlId": 367,
@@ -3557,7 +3724,8 @@
         "price": 13.55,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "D-15-2"
   },
   {
     "rhlId": 368,
@@ -3577,7 +3745,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "E-15-3"
   },
   {
     "rhlId": 369,
@@ -3605,7 +3774,8 @@
         "price": 13.55,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "F-15-1"
   },
   {
     "rhlId": 370,
@@ -3633,7 +3803,8 @@
         "price": 14.4,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "G-15-2"
   },
   {
     "rhlId": 371,
@@ -3653,7 +3824,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "H-15-3"
   },
   {
     "rhlId": 372,
@@ -3673,7 +3845,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "I-15-1"
   },
   {
     "rhlId": 373,
@@ -3693,7 +3866,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "J-15-2"
   },
   {
     "rhlId": 374,
@@ -3713,7 +3887,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "K-15-3"
   },
   {
     "rhlId": 375,
@@ -3733,7 +3908,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "L-15-1"
   },
   {
     "rhlId": 376,
@@ -3753,7 +3929,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "M-15-2"
   },
   {
     "rhlId": 377,
@@ -3773,7 +3950,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "N-15-3"
   },
   {
     "rhlId": 378,
@@ -3801,7 +3979,8 @@
         "price": 13.55,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "O-15-1"
   },
   {
     "rhlId": 379,
@@ -3829,7 +4008,8 @@
         "price": 26.05,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "P-15-2"
   },
   {
     "rhlId": 380,
@@ -3846,7 +4026,7 @@
         "itemNumber": "4023011",
         "rhlUpc": "810078428008",
         "manufacturerUpc": "788332230110",
-        "price": 18.0,
+        "price": 18,
         "status": "active"
       },
       {
@@ -3857,7 +4037,8 @@
         "price": 30.5,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "Q-15-3"
   },
   {
     "rhlId": 381,
@@ -3877,7 +4058,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "R-15-1"
   },
   {
     "rhlId": 382,
@@ -3894,10 +4076,11 @@
         "itemNumber": "4004361",
         "rhlUpc": "810078421894",
         "manufacturerUpc": "788332043611",
-        "price": 8.0,
+        "price": 8,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "S-15-2"
   },
   {
     "rhlId": 383,
@@ -3917,7 +4100,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "T-15-3"
   },
   {
     "rhlId": 384,
@@ -3937,7 +4121,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "U-15-1"
   },
   {
     "rhlId": 385,
@@ -3957,7 +4142,8 @@
         "price": 6.8,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "V-15-2"
   },
   {
     "rhlId": 386,
@@ -3977,7 +4163,8 @@
         "price": 6.7,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "W-15-3"
   },
   {
     "rhlId": 387,
@@ -3997,7 +4184,8 @@
         "price": 8.8,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "X-15-1"
   },
   {
     "rhlId": 388,
@@ -4017,7 +4205,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "Y-15-2"
   },
   {
     "rhlId": 389,
@@ -4037,7 +4226,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "Z-15-3"
   },
   {
     "rhlId": 390,
@@ -4057,7 +4247,8 @@
         "price": 12.95,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "A-16-1"
   },
   {
     "rhlId": 391,
@@ -4077,7 +4268,8 @@
         "price": 8.3,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "B-16-2"
   },
   {
     "rhlId": 392,
@@ -4097,7 +4289,8 @@
         "price": 9.45,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "C-16-3"
   },
   {
     "rhlId": 393,
@@ -4117,7 +4310,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "D-16-1"
   },
   {
     "rhlId": 394,
@@ -4125,7 +4319,7 @@
     "manufacturerName": "Saw Palmetto Liquid Extract",
     "category": "SINGLE HERBAL LIQUID EXTRACTS (Alcohol & Alcohol-Free)",
     "type": "Liquid- Single",
-    "description": "Supports men\u2019s prostate & urinary wellness.",
+    "description": "Supports men’s prostate & urinary wellness.",
     "ingredients": "Serenoa serrulata Berry",
     "status": "active",
     "variants": [
@@ -4137,7 +4331,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "E-16-2"
   },
   {
     "rhlId": 395,
@@ -4157,7 +4352,8 @@
         "price": 7.55,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "F-16-3"
   },
   {
     "rhlId": 396,
@@ -4177,7 +4373,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "G-16-1"
   },
   {
     "rhlId": 397,
@@ -4197,7 +4394,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "H-16-2"
   },
   {
     "rhlId": 398,
@@ -4225,7 +4423,8 @@
         "price": 13.55,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "I-16-3"
   },
   {
     "rhlId": 399,
@@ -4245,7 +4444,8 @@
         "price": 7.8,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "J-16-1"
   },
   {
     "rhlId": 400,
@@ -4265,7 +4465,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "K-16-2"
   },
   {
     "rhlId": 401,
@@ -4285,7 +4486,8 @@
         "price": 12.95,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "L-16-3"
   },
   {
     "rhlId": 402,
@@ -4313,7 +4515,8 @@
         "price": 13.55,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "M-16-1"
   },
   {
     "rhlId": 403,
@@ -4330,10 +4533,11 @@
         "itemNumber": "4016454",
         "rhlUpc": "810078422129",
         "manufacturerUpc": "788332164545",
-        "price": 10.0,
+        "price": 10,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "N-16-2"
   },
   {
     "rhlId": 404,
@@ -4353,7 +4557,8 @@
         "price": 7.55,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "O-16-3"
   },
   {
     "rhlId": 405,
@@ -4373,7 +4578,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "P-16-1"
   },
   {
     "rhlId": 406,
@@ -4401,7 +4607,8 @@
         "price": 13.95,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "Q-16-2"
   },
   {
     "rhlId": 407,
@@ -4429,7 +4636,8 @@
         "price": 14.65,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "R-16-3"
   },
   {
     "rhlId": 408,
@@ -4449,7 +4657,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "S-16-1"
   },
   {
     "rhlId": 409,
@@ -4469,7 +4678,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "T-16-2"
   },
   {
     "rhlId": 410,
@@ -4489,7 +4699,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "U-16-3"
   },
   {
     "rhlId": 411,
@@ -4509,7 +4720,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "V-16-1"
   },
   {
     "rhlId": 412,
@@ -4529,7 +4741,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "W-16-2"
   },
   {
     "rhlId": 413,
@@ -4549,7 +4762,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "X-16-3"
   },
   {
     "rhlId": 414,
@@ -4566,10 +4780,11 @@
         "itemNumber": "4004671",
         "rhlUpc": "810078422280",
         "manufacturerUpc": "788332046711",
-        "price": 8.0,
+        "price": 8,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "Y-16-1"
   },
   {
     "rhlId": 415,
@@ -4589,7 +4804,8 @@
         "price": 7.8,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "Z-16-2"
   },
   {
     "rhlId": 416,
@@ -4609,7 +4825,8 @@
         "price": 7.55,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "A-17-3"
   },
   {
     "rhlId": 417,
@@ -4629,7 +4846,8 @@
         "price": 7.95,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "B-17-1"
   },
   {
     "rhlId": 418,
@@ -4649,7 +4867,8 @@
         "price": 8.2,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "C-17-2"
   },
   {
     "rhlId": 419,
@@ -4658,7 +4877,7 @@
     "category": "HERBAL FORMULA LIQUID EXTRACTS (Alcohol & Alcohol-Free)",
     "type": "Liquid- Formula",
     "description": "Supports stress resilience, relaxation & vitality.",
-    "ingredients": "Licorice Root, Eleuthero Root, Fresh Devil\u2019s Club Root Bark, Dandelion Root, Sarsaparilla Root, Fresh Ginger Root",
+    "ingredients": "Licorice Root, Eleuthero Root, Fresh Devil’s Club Root Bark, Dandelion Root, Sarsaparilla Root, Fresh Ginger Root",
     "status": "active",
     "variants": [
       {
@@ -4677,7 +4896,8 @@
         "price": 13.55,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "D-17-3"
   },
   {
     "rhlId": 420,
@@ -4697,7 +4917,8 @@
         "price": 8.25,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "E-17-1"
   },
   {
     "rhlId": 421,
@@ -4725,7 +4946,8 @@
         "price": 13.55,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "F-17-2"
   },
   {
     "rhlId": 422,
@@ -4745,7 +4967,8 @@
         "price": 7.8,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "G-17-3"
   },
   {
     "rhlId": 423,
@@ -4754,7 +4977,7 @@
     "category": "HERBAL FORMULA LIQUID EXTRACTS (Alcohol & Alcohol-Free)",
     "type": "Liquid- Formula",
     "description": "Supports stress resilience, relaxation & vitality.",
-    "ingredients": "Fresh Night Blooming Cereus, Vanuatu Kava Root, Fresh St. John\u2018s Wort Flower, Fresh Lobelia Herb, Fresh Pulsatilla Herb",
+    "ingredients": "Fresh Night Blooming Cereus, Vanuatu Kava Root, Fresh St. John‘s Wort Flower, Fresh Lobelia Herb, Fresh Pulsatilla Herb",
     "status": "active",
     "variants": [
       {
@@ -4773,7 +4996,8 @@
         "price": 14.4,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "H-17-1"
   },
   {
     "rhlId": 424,
@@ -4793,11 +5017,12 @@
         "price": 12.15,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "I-17-2"
   },
   {
     "rhlId": 425,
-    "name": "Respiratory Botanical Support \u2013 Alcohol-Free",
+    "name": "Respiratory Botanical Support – Alcohol-Free",
     "manufacturerName": "Breath Freshener Spray CinnaMint Liquid Extract Alcohol-Free",
     "category": "HERBAL FORMULA LIQUID EXTRACTS (Alcohol & Alcohol-Free)",
     "type": "Liquid- Formula Alcohol-Free",
@@ -4813,11 +5038,12 @@
         "price": 5.2,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "J-17-3"
   },
   {
     "rhlId": 426,
-    "name": "Respiratory Botanical Support \u2013 Alcohol-Free",
+    "name": "Respiratory Botanical Support – Alcohol-Free",
     "manufacturerName": "Breath Freshener Spray VanillaMint Liquid Extract Alcohol-Free",
     "category": "HERBAL FORMULA LIQUID EXTRACTS (Alcohol & Alcohol-Free)",
     "type": "Liquid- Formula Alcohol-Free",
@@ -4833,7 +5059,8 @@
         "price": 5.2,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "K-17-1"
   },
   {
     "rhlId": 427,
@@ -4861,7 +5088,8 @@
         "price": 13.55,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "L-17-2"
   },
   {
     "rhlId": 428,
@@ -4881,7 +5109,8 @@
         "price": 9.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "M-17-3"
   },
   {
     "rhlId": 429,
@@ -4909,7 +5138,8 @@
         "price": 13.55,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "N-17-1"
   },
   {
     "rhlId": 430,
@@ -4937,7 +5167,8 @@
         "price": 11.3,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "O-17-2"
   },
   {
     "rhlId": 431,
@@ -4962,10 +5193,11 @@
         "itemNumber": "4008962",
         "rhlUpc": "810078422518",
         "manufacturerUpc": "788332089626",
-        "price": 12.0,
+        "price": 12,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "P-17-3"
   },
   {
     "rhlId": 432,
@@ -4993,11 +5225,12 @@
         "price": 13.95,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "Q-17-1"
   },
   {
     "rhlId": 433,
-    "name": "Liver Wellness Complex \u2013 Alcohol-Free",
+    "name": "Liver Wellness Complex – Alcohol-Free",
     "manufacturerName": "Detoxify Liquid Extract Alcohol-Free",
     "category": "HERBAL FORMULA LIQUID EXTRACTS (Alcohol & Alcohol-Free)",
     "type": "Liquid- Formula Alcohol-Free",
@@ -5013,7 +5246,8 @@
         "price": 7.95,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "R-17-2"
   },
   {
     "rhlId": 434,
@@ -5041,11 +5275,12 @@
         "price": 13.95,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "S-17-3"
   },
   {
     "rhlId": 435,
-    "name": "Digestive Comfort Complex \u2013 Alcohol-Free",
+    "name": "Digestive Comfort Complex – Alcohol-Free",
     "manufacturerName": "Digest-Ease Liquid Extract Alcohol-Free",
     "category": "HERBAL FORMULA LIQUID EXTRACTS (Alcohol & Alcohol-Free)",
     "type": "Liquid- Formula Alcohol-Free",
@@ -5061,7 +5296,8 @@
         "price": 7.95,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "T-17-1"
   },
   {
     "rhlId": 436,
@@ -5081,7 +5317,8 @@
         "price": 7.55,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "U-17-2"
   },
   {
     "rhlId": 437,
@@ -5101,7 +5338,8 @@
         "price": 7.55,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "V-17-3"
   },
   {
     "rhlId": 438,
@@ -5118,7 +5356,7 @@
         "itemNumber": "4004741",
         "rhlUpc": "810078422655",
         "manufacturerUpc": "788332047411",
-        "price": 8.0,
+        "price": 8,
         "status": "active"
       },
       {
@@ -5129,11 +5367,12 @@
         "price": 14.55,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "W-17-1"
   },
   {
     "rhlId": 439,
-    "name": "Immune Botanical Complex \u2013 Alcohol-Free",
+    "name": "Immune Botanical Complex – Alcohol-Free",
     "manufacturerName": "Echinacea-Goldenseal Complex Liquid Extract Alcohol Free",
     "category": "HERBAL FORMULA LIQUID EXTRACTS (Alcohol & Alcohol-Free)",
     "type": "Liquid- Formula Alcohol-Free",
@@ -5157,15 +5396,16 @@
         "price": 15.3,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "X-17-2"
   },
   {
     "rhlId": 440,
-    "name": "Women\u2019s Cycle Support",
+    "name": "Women’s Cycle Support",
     "manufacturerName": "Fem-Cycle (PMS Formula) Liquid Extract",
     "category": "HERBAL FORMULA LIQUID EXTRACTS (Alcohol & Alcohol-Free)",
     "type": "Liquid- Formula",
-    "description": "Supports women\u2019s wellness & healthy hormonal balance.",
+    "description": "Supports women’s wellness & healthy hormonal balance.",
     "ingredients": "Chaste Tree Berry, Wild Yam Root, Dong Quai Root, Red Raspberry Leaf, Licorice Root, Oregon Grape Root, Cramp Bark, Nettles Leaf, Fresh Garrya Leaf",
     "status": "active",
     "variants": [
@@ -5185,15 +5425,16 @@
         "price": 13.95,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "Y-17-3"
   },
   {
     "rhlId": 441,
-    "name": "Women\u2019s Midlife Support",
+    "name": "Women’s Midlife Support",
     "manufacturerName": "Fem-Silver (Menopause Formula) Liquid Extract",
     "category": "HERBAL FORMULA LIQUID EXTRACTS (Alcohol & Alcohol-Free)",
     "type": "Liquid- Formula",
-    "description": "Supports women\u2019s wellness & healthy hormonal balance.",
+    "description": "Supports women’s wellness & healthy hormonal balance.",
     "ingredients": "Wild Yam Root, Dong Quai Root, Chaste Tree Berry, Black Cohosh Root, Milk Thistle Seed, Motherwort Herb, Fresh Lobelia Herb",
     "status": "active",
     "variants": [
@@ -5205,11 +5446,12 @@
         "price": 7.55,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "Z-17-1"
   },
   {
     "rhlId": 442,
-    "name": "Women\u2019s Preconception Botanical Support \u2013 Alcohol-Free",
+    "name": "Women’s Preconception Botanical Support – Alcohol-Free",
     "manufacturerName": "Fertility-Preg Liquid Extract Alcohol-Free",
     "category": "HERBAL FORMULA LIQUID EXTRACTS (Alcohol & Alcohol-Free)",
     "type": "Liquid- Formula Alcohol-Free",
@@ -5233,7 +5475,8 @@
         "price": 13.95,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "A-18-2"
   },
   {
     "rhlId": 443,
@@ -5253,7 +5496,8 @@
         "price": 7.85,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "B-18-3"
   },
   {
     "rhlId": 444,
@@ -5273,7 +5517,8 @@
         "price": 7.85,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "C-18-1"
   },
   {
     "rhlId": 445,
@@ -5293,7 +5538,8 @@
         "price": 7.85,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "D-18-2"
   },
   {
     "rhlId": 446,
@@ -5313,7 +5559,8 @@
         "price": 7.85,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "E-18-3"
   },
   {
     "rhlId": 447,
@@ -5341,11 +5588,12 @@
         "price": 15.2,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "F-18-1"
   },
   {
     "rhlId": 448,
-    "name": "Energy & Vitality Complex \u2013 Alcohol-Free",
+    "name": "Energy & Vitality Complex – Alcohol-Free",
     "manufacturerName": "Ginseng Master Liquid Extract Alcohol-Free",
     "category": "HERBAL FORMULA LIQUID EXTRACTS (Alcohol & Alcohol-Free)",
     "type": "Liquid- Formula Alcohol-Free",
@@ -5361,7 +5609,8 @@
         "price": 8.8,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "G-18-2"
   },
   {
     "rhlId": 449,
@@ -5389,7 +5638,8 @@
         "price": 13.95,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "H-18-3"
   },
   {
     "rhlId": 450,
@@ -5409,7 +5659,8 @@
         "price": 7.55,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "I-18-1"
   },
   {
     "rhlId": 451,
@@ -5429,7 +5680,8 @@
         "price": 7.55,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "J-18-2"
   },
   {
     "rhlId": 452,
@@ -5449,7 +5701,8 @@
         "price": 7.55,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "K-18-3"
   },
   {
     "rhlId": 453,
@@ -5469,7 +5722,8 @@
         "price": 7.55,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "L-18-1"
   },
   {
     "rhlId": 454,
@@ -5478,7 +5732,7 @@
     "category": "HERBAL FORMULA LIQUID EXTRACTS (Alcohol & Alcohol-Free)",
     "type": "Liquid- Formula",
     "description": "Supports joint comfort & a healthy inflammatory response.",
-    "ingredients": "Neem Leaf, Licorice Root, Fresh St. John\u2019s Wort Flowering Tops, Fresh Turmeric Root",
+    "ingredients": "Neem Leaf, Licorice Root, Fresh St. John’s Wort Flowering Tops, Fresh Turmeric Root",
     "status": "active",
     "variants": [
       {
@@ -5489,7 +5743,8 @@
         "price": 7.55,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "M-18-2"
   },
   {
     "rhlId": 455,
@@ -5509,7 +5764,8 @@
         "price": 7.7,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "N-18-3"
   },
   {
     "rhlId": 456,
@@ -5529,7 +5785,8 @@
         "price": 7.55,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "O-18-1"
   },
   {
     "rhlId": 457,
@@ -5537,8 +5794,8 @@
     "manufacturerName": "Joint Tonic Liquid Extract",
     "category": "HERBAL FORMULA LIQUID EXTRACTS (Alcohol & Alcohol-Free)",
     "type": "Liquid- Formula",
-    "description": "Supports women\u2019s wellness & healthy hormonal balance.",
-    "ingredients": "Devil\u2018s Claw Tuber, Yucca Root, Licorice Root, Fresh Dandelion Root, Black Cohosh Root, Fresh California Poppy Herb",
+    "description": "Supports women’s wellness & healthy hormonal balance.",
+    "ingredients": "Devil‘s Claw Tuber, Yucca Root, Licorice Root, Fresh Dandelion Root, Black Cohosh Root, Fresh California Poppy Herb",
     "status": "active",
     "variants": [
       {
@@ -5549,16 +5806,17 @@
         "price": 7.55,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "P-18-2"
   },
   {
     "rhlId": 458,
-    "name": "Calm & Resilience Complex \u2013 Alcohol-Free",
+    "name": "Calm & Resilience Complex – Alcohol-Free",
     "manufacturerName": "Kava Gold Alcohol-Free",
     "category": "HERBAL FORMULA LIQUID EXTRACTS (Alcohol & Alcohol-Free)",
     "type": "Liquid- Formula Alcohol-Free",
     "description": "Supports stress resilience, relaxation & vitality.",
-    "ingredients": "Vanuatu Kava Root, Fresh Hawaiian Kava Root, Passion Flower Herb, Fresh St. John\u2018s Wort Flowering Tops, Fresh Lobelia Herb, Fresh Pulsatilla Herb",
+    "ingredients": "Vanuatu Kava Root, Fresh Hawaiian Kava Root, Passion Flower Herb, Fresh St. John‘s Wort Flowering Tops, Fresh Lobelia Herb, Fresh Pulsatilla Herb",
     "status": "active",
     "variants": [
       {
@@ -5569,7 +5827,8 @@
         "price": 8.8,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "Q-18-3"
   },
   {
     "rhlId": 459,
@@ -5578,7 +5837,7 @@
     "category": "HERBAL FORMULA LIQUID EXTRACTS (Alcohol & Alcohol-Free)",
     "type": "Liquid- Formula",
     "description": "Supports stress resilience, relaxation & vitality.",
-    "ingredients": "Vanuatu Kava Root, Fresh Hawaiian Kava Root, Passion Flower Herb, Fresh St. John\u2018s Wort Flowering Tops, Fresh Lobelia Herb, Fresh Pulsatilla Herb",
+    "ingredients": "Vanuatu Kava Root, Fresh Hawaiian Kava Root, Passion Flower Herb, Fresh St. John‘s Wort Flowering Tops, Fresh Lobelia Herb, Fresh Pulsatilla Herb",
     "status": "active",
     "variants": [
       {
@@ -5597,11 +5856,12 @@
         "price": 15.3,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "R-18-1"
   },
   {
     "rhlId": 460,
-    "name": "Liver Wellness Complex \u2013 Alcohol-Free",
+    "name": "Liver Wellness Complex – Alcohol-Free",
     "manufacturerName": "Liver Detox Alcohol-Free",
     "category": "HERBAL FORMULA LIQUID EXTRACTS (Alcohol & Alcohol-Free)",
     "type": "Liquid- Formula Alcohol-Free",
@@ -5625,7 +5885,8 @@
         "price": 14.65,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "S-18-2"
   },
   {
     "rhlId": 461,
@@ -5653,7 +5914,8 @@
         "price": 13.95,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "T-18-3"
   },
   {
     "rhlId": 462,
@@ -5673,7 +5935,8 @@
         "price": 13.95,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "U-18-1"
   },
   {
     "rhlId": 463,
@@ -5701,11 +5964,12 @@
         "price": 14.25,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "V-18-2"
   },
   {
     "rhlId": 464,
-    "name": "Men\u2019s Vitality Support",
+    "name": "Men’s Vitality Support",
     "manufacturerName": "Male Virility Liquid Extract",
     "category": "HERBAL FORMULA LIQUID EXTRACTS (Alcohol & Alcohol-Free)",
     "type": "Liquid- Formula",
@@ -5721,11 +5985,12 @@
         "price": 7.9,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "W-18-3"
   },
   {
     "rhlId": 465,
-    "name": "Men\u2019s Prostate & Urinary Support",
+    "name": "Men’s Prostate & Urinary Support",
     "manufacturerName": "Men's Silver (Prostate Formula) Liquid Extract",
     "category": "HERBAL FORMULA LIQUID EXTRACTS (Alcohol & Alcohol-Free)",
     "type": "Liquid- Formula",
@@ -5741,7 +6006,8 @@
         "price": 7.55,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "X-18-1"
   },
   {
     "rhlId": 466,
@@ -5761,11 +6027,12 @@
         "price": 7.55,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "Y-18-2"
   },
   {
     "rhlId": 467,
-    "name": "Immune Botanical Complex \u2013 Alcohol-Free",
+    "name": "Immune Botanical Complex – Alcohol-Free",
     "manufacturerName": "Mushroom Immune Liquid Extract Alcohol-Free",
     "category": "HERBAL FORMULA LIQUID EXTRACTS (Alcohol & Alcohol-Free)",
     "type": "Liquid- Formula Alcohol-Free",
@@ -5778,10 +6045,11 @@
         "itemNumber": "4019992",
         "rhlUpc": "810078423119",
         "manufacturerUpc": "788332199929",
-        "price": 15.0,
+        "price": 15,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "Z-18-3"
   },
   {
     "rhlId": 468,
@@ -5801,7 +6069,8 @@
         "price": 8.4,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "A-19-1"
   },
   {
     "rhlId": 469,
@@ -5818,10 +6087,11 @@
         "itemNumber": "4008852",
         "rhlUpc": "810078423140",
         "manufacturerUpc": "788332088520",
-        "price": 8.0,
+        "price": 8,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "B-19-2"
   },
   {
     "rhlId": 470,
@@ -5849,7 +6119,8 @@
         "price": 13.95,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "C-19-3"
   },
   {
     "rhlId": 471,
@@ -5869,7 +6140,8 @@
         "price": 4.7,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "D-19-1"
   },
   {
     "rhlId": 472,
@@ -5897,7 +6169,8 @@
         "price": 13.95,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "E-19-2"
   },
   {
     "rhlId": 473,
@@ -5917,7 +6190,8 @@
         "price": 7.95,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "F-19-3"
   },
   {
     "rhlId": 474,
@@ -5945,7 +6219,8 @@
         "price": 13.95,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "G-19-1"
   },
   {
     "rhlId": 475,
@@ -5965,7 +6240,8 @@
         "price": 7.95,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "H-19-2"
   },
   {
     "rhlId": 476,
@@ -5985,7 +6261,8 @@
         "price": 9.45,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "I-19-3"
   },
   {
     "rhlId": 477,
@@ -6002,7 +6279,7 @@
         "itemNumber": "4011881",
         "rhlUpc": "810078423263",
         "manufacturerUpc": "788332118814",
-        "price": 9.0,
+        "price": 9,
         "status": "active"
       },
       {
@@ -6010,10 +6287,11 @@
         "itemNumber": "4011882",
         "rhlUpc": "810078423270",
         "manufacturerUpc": "788332118821",
-        "price": 17.0,
+        "price": 17,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "J-19-1"
   },
   {
     "rhlId": 478,
@@ -6033,7 +6311,8 @@
         "price": 9.6,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "K-19-2"
   },
   {
     "rhlId": 479,
@@ -6053,7 +6332,8 @@
         "price": 9.2,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "L-19-3"
   },
   {
     "rhlId": 480,
@@ -6073,7 +6353,8 @@
         "price": 7.8,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "M-19-1"
   },
   {
     "rhlId": 481,
@@ -6093,7 +6374,8 @@
         "price": 7.8,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "N-19-2"
   },
   {
     "rhlId": 482,
@@ -6113,7 +6395,8 @@
         "price": 13.95,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "O-19-3"
   },
   {
     "rhlId": 483,
@@ -6133,7 +6416,8 @@
         "price": 7.85,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "P-19-1"
   },
   {
     "rhlId": 484,
@@ -6153,7 +6437,8 @@
         "price": 7.55,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "Q-19-2"
   },
   {
     "rhlId": 485,
@@ -6181,7 +6466,8 @@
         "price": 13.95,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "R-19-3"
   },
   {
     "rhlId": 486,
@@ -6201,7 +6487,8 @@
         "price": 7.55,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "S-19-1"
   },
   {
     "rhlId": 487,
@@ -6210,7 +6497,7 @@
     "category": "HERBAL FORMULA LIQUID EXTRACTS (Alcohol & Alcohol-Free)",
     "type": "Liquid- Formula",
     "description": "Supports digestive & intestinal wellness.",
-    "ingredients": "Usnea Lichen, Pau D\u2019Arco Bark, Fresh Black Walnut Hull, Fresh Spilanthes Flower, Oregon Grape Root, Gentian Root, Fennel Seed, Oregano Oil",
+    "ingredients": "Usnea Lichen, Pau D’Arco Bark, Fresh Black Walnut Hull, Fresh Spilanthes Flower, Oregon Grape Root, Gentian Root, Fennel Seed, Oregano Oil",
     "status": "active",
     "variants": [
       {
@@ -6221,7 +6508,8 @@
         "price": 7.55,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "T-19-2"
   },
   {
     "rhlId": 488,
@@ -6241,7 +6529,8 @@
         "price": 7.55,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "U-19-3"
   },
   {
     "rhlId": 489,
@@ -6250,7 +6539,7 @@
     "category": "HERBAL FORMULA LIQUID EXTRACTS (Alcohol & Alcohol-Free)",
     "type": "Liquid- Formula",
     "description": "Supports daily wellness & balanced body function.",
-    "ingredients": "Fresh Milky Wild Oat Seed, Fresh St. John\u2019s Wort Flower, Fresh Skullcap Herb, Passion Flower Herb, Hops Strobiles, Fresh Lobelia Herb, Fresh Pulsatilla Herb",
+    "ingredients": "Fresh Milky Wild Oat Seed, Fresh St. John’s Wort Flower, Fresh Skullcap Herb, Passion Flower Herb, Hops Strobiles, Fresh Lobelia Herb, Fresh Pulsatilla Herb",
     "status": "active",
     "variants": [
       {
@@ -6261,7 +6550,8 @@
         "price": 7.55,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "V-19-1"
   },
   {
     "rhlId": 490,
@@ -6270,7 +6560,7 @@
     "category": "HERBAL FORMULA LIQUID EXTRACTS (Alcohol & Alcohol-Free)",
     "type": "Liquid- Formula Alcohol-Free",
     "description": "Supports daily wellness & balanced body function.",
-    "ingredients": "Fresh Milky Wild Oat Seed, Fresh St. John\u2019s Wort Flower, Fresh Skullcap Herb, Passion Flower Herb, Hops Strobiles, Fresh Lobelia Herb, Fresh Pulsatilla Herb",
+    "ingredients": "Fresh Milky Wild Oat Seed, Fresh St. John’s Wort Flower, Fresh Skullcap Herb, Passion Flower Herb, Hops Strobiles, Fresh Lobelia Herb, Fresh Pulsatilla Herb",
     "status": "active",
     "variants": [
       {
@@ -6281,7 +6571,8 @@
         "price": 7.95,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "W-19-2"
   },
   {
     "rhlId": 491,
@@ -6298,10 +6589,11 @@
         "itemNumber": "4022941",
         "rhlUpc": null,
         "manufacturerUpc": "788332229411",
-        "price": 15.0,
+        "price": 15,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "X-19-3"
   },
   {
     "rhlId": 492,
@@ -6318,10 +6610,11 @@
         "itemNumber": "4022961",
         "rhlUpc": null,
         "manufacturerUpc": "788332229619",
-        "price": 21.0,
+        "price": 21,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "Y-19-1"
   },
   {
     "rhlId": 493,
@@ -6338,10 +6631,11 @@
         "itemNumber": "4022971",
         "rhlUpc": null,
         "manufacturerUpc": "788332229718",
-        "price": 26.0,
+        "price": 26,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "Z-19-2"
   },
   {
     "rhlId": 494,
@@ -6358,10 +6652,11 @@
         "itemNumber": "4022901",
         "rhlUpc": null,
         "manufacturerUpc": "788332229015",
-        "price": 13.0,
+        "price": 13,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "A-20-3"
   },
   {
     "rhlId": 495,
@@ -6370,7 +6665,7 @@
     "category": "CBD",
     "type": "CBD Topical",
     "description": "Supports joint comfort & a healthy inflammatory response.",
-    "ingredients": "Organic Caprylic/Capric Triglyceride (MCT Oil), DMSO, Ole Europaea (Olive) Fruit Oil, Broad and Full Spectrum Cannabis sativa (Hemp) Flower and Aerial Parts Extract, Arnica montana Flower, Hypericum perforatum (St. John\u2019s Wort) Flowering Herb, Menthol, Capsicum annuum Resin",
+    "ingredients": "Organic Caprylic/Capric Triglyceride (MCT Oil), DMSO, Ole Europaea (Olive) Fruit Oil, Broad and Full Spectrum Cannabis sativa (Hemp) Flower and Aerial Parts Extract, Arnica montana Flower, Hypericum perforatum (St. John’s Wort) Flowering Herb, Menthol, Capsicum annuum Resin",
     "status": "active",
     "variants": [
       {
@@ -6378,10 +6673,11 @@
         "itemNumber": "4023191",
         "rhlUpc": null,
         "manufacturerUpc": "788332231919",
-        "price": 16.0,
+        "price": 16,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "B-20-1"
   },
   {
     "rhlId": 496,
@@ -6398,10 +6694,11 @@
         "itemNumber": "4023110",
         "rhlUpc": null,
         "manufacturerUpc": "788332231100",
-        "price": 22.0,
+        "price": 22,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "C-20-2"
   },
   {
     "rhlId": 497,
@@ -6418,10 +6715,11 @@
         "itemNumber": "4023120",
         "rhlUpc": null,
         "manufacturerUpc": "788332231209",
-        "price": 22.0,
+        "price": 22,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "D-20-3"
   },
   {
     "rhlId": 498,
@@ -6430,7 +6728,7 @@
     "category": "VITAMINS & MINERALS  (Alcohol Free)",
     "type": "Liquid- Vitamins and Minerals ",
     "description": "Supports healthy hair, skin & nails.",
-    "ingredients": "1.5 mg Thiamin (Thiamin HCl), 1.7 mg Riboflavin (Riboflavin 5\u2019 Phosphate), 20 mg Niacin (Niacinamide), 2 mg Vitamin B6 (Pyridoxine HCl), 1,000 mcg Vitamin B12 (Cyanocobalamin), 25 mcg Biotin, 30 mg Pantothenic Acid, 2.2 mg Stevia Leaf Extract",
+    "ingredients": "1.5 mg Thiamin (Thiamin HCl), 1.7 mg Riboflavin (Riboflavin 5’ Phosphate), 20 mg Niacin (Niacinamide), 2 mg Vitamin B6 (Pyridoxine HCl), 1,000 mcg Vitamin B12 (Cyanocobalamin), 25 mcg Biotin, 30 mg Pantothenic Acid, 2.2 mg Stevia Leaf Extract",
     "status": "active",
     "variants": [
       {
@@ -6449,7 +6747,8 @@
         "price": 12.85,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "E-20-1"
   },
   {
     "rhlId": 499,
@@ -6469,7 +6768,8 @@
         "price": 6.25,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "F-20-2"
   },
   {
     "rhlId": 500,
@@ -6489,7 +6789,8 @@
         "price": 11.65,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "G-20-3"
   },
   {
     "rhlId": 501,
@@ -6509,7 +6810,8 @@
         "price": 10.45,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "H-20-1"
   },
   {
     "rhlId": 502,
@@ -6529,7 +6831,8 @@
         "price": 8.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "I-20-2"
   },
   {
     "rhlId": 503,
@@ -6549,7 +6852,8 @@
         "price": 6.6,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "J-20-3"
   },
   {
     "rhlId": 504,
@@ -6569,7 +6873,8 @@
         "price": 6.2,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "K-20-1"
   },
   {
     "rhlId": 505,
@@ -6589,7 +6894,8 @@
         "price": 5.75,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "L-20-2"
   },
   {
     "rhlId": 506,
@@ -6609,7 +6915,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "M-20-3"
   },
   {
     "rhlId": 507,
@@ -6629,7 +6936,8 @@
         "price": 5.75,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "N-20-1"
   },
   {
     "rhlId": 508,
@@ -6649,7 +6957,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "O-20-2"
   },
   {
     "rhlId": 509,
@@ -6669,7 +6978,8 @@
         "price": 5.75,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "P-20-3"
   },
   {
     "rhlId": 510,
@@ -6689,7 +6999,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "Q-20-1"
   },
   {
     "rhlId": 511,
@@ -6709,7 +7020,8 @@
         "price": 11.5,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "R-20-2"
   },
   {
     "rhlId": 512,
@@ -6729,7 +7041,8 @@
         "price": 8.4,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "S-20-3"
   },
   {
     "rhlId": 513,
@@ -6749,7 +7062,8 @@
         "price": 5.4,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "T-20-1"
   },
   {
     "rhlId": 514,
@@ -6769,7 +7083,8 @@
         "price": 5.55,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "U-20-2"
   },
   {
     "rhlId": 515,
@@ -6789,7 +7104,8 @@
         "price": 7.9,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "V-20-3"
   },
   {
     "rhlId": 516,
@@ -6809,7 +7125,8 @@
         "price": 5.95,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "W-20-1"
   },
   {
     "rhlId": 517,
@@ -6829,7 +7146,8 @@
         "price": 7.7,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "X-20-2"
   },
   {
     "rhlId": 518,
@@ -6849,7 +7167,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "Y-20-3"
   },
   {
     "rhlId": 519,
@@ -6869,7 +7188,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "Z-20-1"
   },
   {
     "rhlId": 520,
@@ -6889,7 +7209,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "A-21-2"
   },
   {
     "rhlId": 521,
@@ -6909,7 +7230,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "B-21-3"
   },
   {
     "rhlId": 522,
@@ -6929,7 +7251,8 @@
         "price": 5.75,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "C-21-1"
   },
   {
     "rhlId": 523,
@@ -6949,7 +7272,8 @@
         "price": 7.55,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "D-21-2"
   },
   {
     "rhlId": 524,
@@ -6969,7 +7293,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "E-21-3"
   },
   {
     "rhlId": 525,
@@ -6989,7 +7314,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "F-21-1"
   },
   {
     "rhlId": 526,
@@ -7009,7 +7335,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "G-21-2"
   },
   {
     "rhlId": 527,
@@ -7026,7 +7353,7 @@
         "itemNumber": "4007751",
         "rhlUpc": "810078423492",
         "manufacturerUpc": "788332077517",
-        "price": 5.0,
+        "price": 5,
         "status": "active"
       },
       {
@@ -7042,10 +7369,11 @@
         "itemNumber": "4007754",
         "rhlUpc": "810078423515",
         "manufacturerUpc": "788332077548",
-        "price": 13.0,
+        "price": 13,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "H-21-3"
   },
   {
     "rhlId": 528,
@@ -7078,10 +7406,11 @@
         "itemNumber": "4021634",
         "rhlUpc": "810078423478",
         "manufacturerUpc": "788332216343",
-        "price": 15.0,
+        "price": 15,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "I-21-1"
   },
   {
     "rhlId": 529,
@@ -7101,7 +7430,8 @@
         "price": 7.7,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "J-21-2"
   },
   {
     "rhlId": 530,
@@ -7121,7 +7451,8 @@
         "price": 7.7,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "K-21-3"
   },
   {
     "rhlId": 531,
@@ -7141,7 +7472,8 @@
         "price": 7.7,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "L-21-1"
   },
   {
     "rhlId": 532,
@@ -7161,7 +7493,8 @@
         "price": 7.7,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "M-21-2"
   },
   {
     "rhlId": 533,
@@ -7181,7 +7514,8 @@
         "price": 7.7,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "N-21-3"
   },
   {
     "rhlId": 534,
@@ -7201,7 +7535,8 @@
         "price": 7.7,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "O-21-1"
   },
   {
     "rhlId": 535,
@@ -7221,7 +7556,8 @@
         "price": 7.7,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "P-21-2"
   },
   {
     "rhlId": 536,
@@ -7238,10 +7574,11 @@
         "itemNumber": "4022294",
         "rhlUpc": "810078424369",
         "manufacturerUpc": "788332222948",
-        "price": 7.0,
+        "price": 7,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "Q-21-3"
   },
   {
     "rhlId": 537,
@@ -7261,7 +7598,8 @@
         "price": 11.5,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "R-21-1"
   },
   {
     "rhlId": 538,
@@ -7278,10 +7616,11 @@
         "itemNumber": "4022314",
         "rhlUpc": "810078424383",
         "manufacturerUpc": "788332223143",
-        "price": 7.0,
+        "price": 7,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "S-21-2"
   },
   {
     "rhlId": 539,
@@ -7301,7 +7640,8 @@
         "price": 6.5,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "T-21-3"
   },
   {
     "rhlId": 540,
@@ -7321,7 +7661,8 @@
         "price": 6.5,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "U-21-1"
   },
   {
     "rhlId": 541,
@@ -7341,7 +7682,8 @@
         "price": 10.25,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "V-21-2"
   },
   {
     "rhlId": 542,
@@ -7358,10 +7700,11 @@
         "itemNumber": "4022551",
         "rhlUpc": "810078423904",
         "manufacturerUpc": "788332225512",
-        "price": 12.0,
+        "price": 12,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "W-21-3"
   },
   {
     "rhlId": 543,
@@ -7381,7 +7724,8 @@
         "price": 8.8,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "X-21-1"
   },
   {
     "rhlId": 544,
@@ -7401,7 +7745,8 @@
         "price": 5.5,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "Y-21-2"
   },
   {
     "rhlId": 545,
@@ -7421,7 +7766,8 @@
         "price": 5.8,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "Z-21-3"
   },
   {
     "rhlId": 546,
@@ -7441,7 +7787,8 @@
         "price": 5.6,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "A-22-1"
   },
   {
     "rhlId": 547,
@@ -7461,7 +7808,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "B-22-2"
   },
   {
     "rhlId": 548,
@@ -7481,7 +7829,8 @@
         "price": 8.4,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "C-22-3"
   },
   {
     "rhlId": 549,
@@ -7498,10 +7847,11 @@
         "itemNumber": "4021221",
         "rhlUpc": "810078423973",
         "manufacturerUpc": "788332212215",
-        "price": 13.0,
+        "price": 13,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "D-22-1"
   },
   {
     "rhlId": 550,
@@ -7521,7 +7871,8 @@
         "price": 8.4,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "E-22-2"
   },
   {
     "rhlId": 551,
@@ -7538,7 +7889,7 @@
         "itemNumber": "4018311",
         "rhlUpc": "810078423997",
         "manufacturerUpc": "788332183119",
-        "price": 5.0,
+        "price": 5,
         "status": "active"
       },
       {
@@ -7549,7 +7900,8 @@
         "price": 9.45,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "F-22-3"
   },
   {
     "rhlId": 552,
@@ -7569,7 +7921,8 @@
         "price": 9.65,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "G-22-1"
   },
   {
     "rhlId": 553,
@@ -7589,7 +7942,8 @@
         "price": 6.8,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "H-22-2"
   },
   {
     "rhlId": 554,
@@ -7609,7 +7963,8 @@
         "price": 8.4,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "I-22-3"
   },
   {
     "rhlId": 555,
@@ -7629,7 +7984,8 @@
         "price": 22.5,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "J-22-1"
   },
   {
     "rhlId": 556,
@@ -7646,7 +8002,7 @@
         "itemNumber": "4018331",
         "rhlUpc": "810078424062",
         "manufacturerUpc": "788332183317",
-        "price": 7.0,
+        "price": 7,
         "status": "active"
       },
       {
@@ -7657,7 +8013,8 @@
         "price": 18.05,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "K-22-2"
   },
   {
     "rhlId": 557,
@@ -7674,10 +8031,11 @@
         "itemNumber": "4018341",
         "rhlUpc": "810078424055",
         "manufacturerUpc": "788332183416",
-        "price": 10.0,
+        "price": 10,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "L-22-3"
   },
   {
     "rhlId": 558,
@@ -7697,7 +8055,8 @@
         "price": 6.05,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "M-22-1"
   },
   {
     "rhlId": 559,
@@ -7717,7 +8076,8 @@
         "price": 5.8,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "N-22-2"
   },
   {
     "rhlId": 560,
@@ -7737,7 +8097,8 @@
         "price": 5.5,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "O-22-3"
   },
   {
     "rhlId": 561,
@@ -7757,7 +8118,8 @@
         "price": 7.3,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "P-22-1"
   },
   {
     "rhlId": 562,
@@ -7774,10 +8136,11 @@
         "itemNumber": "4022521",
         "rhlUpc": "810078424123",
         "manufacturerUpc": "788332225215",
-        "price": 15.0,
+        "price": 15,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "Q-22-2"
   },
   {
     "rhlId": 563,
@@ -7797,7 +8160,8 @@
         "price": 5.2,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "R-22-3"
   },
   {
     "rhlId": 564,
@@ -7817,7 +8181,8 @@
         "price": 15.75,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "S-22-1"
   },
   {
     "rhlId": 565,
@@ -7834,10 +8199,11 @@
         "itemNumber": "4018381",
         "rhlUpc": "810078424154",
         "manufacturerUpc": "788332183812",
-        "price": 15.0,
+        "price": 15,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "T-22-2"
   },
   {
     "rhlId": 566,
@@ -7862,10 +8228,11 @@
         "itemNumber": "4018394",
         "rhlUpc": "810078424178",
         "manufacturerUpc": "788332183942",
-        "price": 24.0,
+        "price": 24,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "U-22-3"
   },
   {
     "rhlId": 567,
@@ -7885,7 +8252,8 @@
         "price": 16.3,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "V-22-1"
   },
   {
     "rhlId": 568,
@@ -7902,10 +8270,11 @@
         "itemNumber": "4021121",
         "rhlUpc": "810078424192",
         "manufacturerUpc": "788332211218",
-        "price": 12.0,
+        "price": 12,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "W-22-2"
   },
   {
     "rhlId": 569,
@@ -7925,7 +8294,8 @@
         "price": 8.75,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "X-22-3"
   },
   {
     "rhlId": 570,
@@ -7945,7 +8315,8 @@
         "price": 9.6,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "Y-22-1"
   },
   {
     "rhlId": 571,
@@ -7965,7 +8336,8 @@
         "price": 27.3,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "Z-22-2"
   },
   {
     "rhlId": 572,
@@ -7985,7 +8357,8 @@
         "price": 8.8,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "A-23-3"
   },
   {
     "rhlId": 573,
@@ -8005,7 +8378,8 @@
         "price": 7.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "B-23-1"
   },
   {
     "rhlId": 574,
@@ -8022,10 +8396,11 @@
         "itemNumber": "4022501",
         "rhlUpc": "810078424253",
         "manufacturerUpc": "788332225017",
-        "price": 6.0,
+        "price": 6,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "C-23-2"
   },
   {
     "rhlId": 575,
@@ -8053,7 +8428,8 @@
         "price": 18.4,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "D-23-3"
   },
   {
     "rhlId": 576,
@@ -8070,10 +8446,11 @@
         "itemNumber": "4018421",
         "rhlUpc": "810078424284",
         "manufacturerUpc": "788332184215",
-        "price": 13.0,
+        "price": 13,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "E-23-1"
   },
   {
     "rhlId": 577,
@@ -8090,10 +8467,11 @@
         "itemNumber": "4022231",
         "rhlUpc": "810078424291",
         "manufacturerUpc": "788332222313",
-        "price": 7.0,
+        "price": 7,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "F-23-2"
   },
   {
     "rhlId": 578,
@@ -8113,7 +8491,8 @@
         "price": 12.5,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "G-23-3"
   },
   {
     "rhlId": 579,
@@ -8133,7 +8512,8 @@
         "price": 7.5,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "H-23-1"
   },
   {
     "rhlId": 580,
@@ -8153,7 +8533,8 @@
         "price": 5.9,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "I-23-2"
   },
   {
     "rhlId": 581,
@@ -8173,7 +8554,8 @@
         "price": 9.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "J-23-3"
   },
   {
     "rhlId": 582,
@@ -8190,10 +8572,11 @@
         "itemNumber": "4022561",
         "rhlUpc": "810078424345",
         "manufacturerUpc": "788332225611",
-        "price": 10.0,
+        "price": 10,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "K-23-1"
   },
   {
     "rhlId": 583,
@@ -8213,7 +8596,8 @@
         "price": 9.6,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "L-23-2"
   },
   {
     "rhlId": 584,
@@ -8230,10 +8614,11 @@
         "itemNumber": "4005631",
         "rhlUpc": "810078423812",
         "manufacturerUpc": "788332056314",
-        "price": 10.0,
+        "price": 10,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "M-23-3"
   },
   {
     "rhlId": 585,
@@ -8250,7 +8635,7 @@
         "itemNumber": "4022454",
         "rhlUpc": "810078423829",
         "manufacturerUpc": "788332224546",
-        "price": 12.0,
+        "price": 12,
         "status": "active"
       },
       {
@@ -8261,7 +8646,8 @@
         "price": 20.25,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "N-23-1"
   },
   {
     "rhlId": 586,
@@ -8281,7 +8667,8 @@
         "price": 9.35,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "O-23-2"
   },
   {
     "rhlId": 587,
@@ -8301,7 +8688,8 @@
         "price": 7.55,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "P-23-3"
   },
   {
     "rhlId": 588,
@@ -8318,10 +8706,11 @@
         "itemNumber": "4020131",
         "rhlUpc": "810078423867",
         "manufacturerUpc": "788332201318",
-        "price": 11.0,
+        "price": 11,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "Q-23-1"
   },
   {
     "rhlId": 589,
@@ -8341,7 +8730,8 @@
         "price": 8.8,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "R-23-2"
   },
   {
     "rhlId": 590,
@@ -8358,10 +8748,11 @@
         "itemNumber": "4020151",
         "rhlUpc": "810078423881",
         "manufacturerUpc": "788332201516",
-        "price": 11.0,
+        "price": 11,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "S-23-3"
   },
   {
     "rhlId": 591,
@@ -8381,7 +8772,8 @@
         "price": 6.95,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "T-23-1"
   },
   {
     "rhlId": 592,
@@ -8398,10 +8790,11 @@
         "itemNumber": "4023734",
         "rhlUpc": null,
         "manufacturerUpc": "788332236648",
-        "price": 12.0,
+        "price": 12,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "U-23-2"
   },
   {
     "rhlId": 593,
@@ -8418,10 +8811,11 @@
         "itemNumber": "4023644",
         "rhlUpc": null,
         "manufacturerUpc": "788332236440",
-        "price": 12.0,
+        "price": 12,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "V-23-3"
   },
   {
     "rhlId": 594,
@@ -8441,7 +8835,8 @@
         "price": 11.5,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "W-23-1"
   },
   {
     "rhlId": 595,
@@ -8450,7 +8845,7 @@
     "category": "HERBAL POWDERS",
     "type": "Herbal Powder",
     "description": "Supports memory, focus & cognitive wellness.",
-    "ingredients": "Organic Lion\u2019s Mane (Hericium erinaceus) Mycelia and Fruiting Body, Full Spectrum",
+    "ingredients": "Organic Lion’s Mane (Hericium erinaceus) Mycelia and Fruiting Body, Full Spectrum",
     "status": "active",
     "variants": [
       {
@@ -8458,10 +8853,11 @@
         "itemNumber": "4023624",
         "rhlUpc": null,
         "manufacturerUpc": "788332236242",
-        "price": 12.0,
+        "price": 12,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "X-23-2"
   },
   {
     "rhlId": 596,
@@ -8481,7 +8877,8 @@
         "price": 8.75,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "Y-23-3"
   },
   {
     "rhlId": 597,
@@ -8498,10 +8895,11 @@
         "itemNumber": "4023654",
         "rhlUpc": null,
         "manufacturerUpc": "788332236549",
-        "price": 12.0,
+        "price": 12,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "Z-23-1"
   },
   {
     "rhlId": 598,
@@ -8518,10 +8916,11 @@
         "itemNumber": "4023634",
         "rhlUpc": null,
         "manufacturerUpc": "788332236341",
-        "price": 12.0,
+        "price": 12,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "A-24-2"
   },
   {
     "rhlId": 599,
@@ -8541,7 +8940,8 @@
         "price": 6.5,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "B-24-3"
   },
   {
     "rhlId": 600,
@@ -8566,7 +8966,7 @@
         "itemNumber": "9909862",
         "rhlUpc": null,
         "manufacturerUpc": "788332098628",
-        "price": 2.0,
+        "price": 2,
         "status": "active"
       },
       {
@@ -8577,7 +8977,8 @@
         "price": 2.45,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "C-24-1"
   },
   {
     "rhlId": 601,
@@ -8610,10 +9011,11 @@
         "itemNumber": "9909874",
         "rhlUpc": "810078424482",
         "manufacturerUpc": "788332098741",
-        "price": 3.0,
+        "price": 3,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "D-24-2"
   },
   {
     "rhlId": 602,
@@ -8649,7 +9051,8 @@
         "price": 2.65,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "E-24-3"
   },
   {
     "rhlId": 603,
@@ -8685,7 +9088,8 @@
         "price": 3.3,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "F-24-1"
   },
   {
     "rhlId": 604,
@@ -8705,7 +9109,8 @@
         "price": 2.75,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "G-24-2"
   },
   {
     "rhlId": 605,
@@ -8725,7 +9130,8 @@
         "price": 3.1,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "H-24-3"
   },
   {
     "rhlId": 606,
@@ -8745,7 +9151,8 @@
         "price": 2.75,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "I-24-1"
   },
   {
     "rhlId": 607,
@@ -8765,6 +9172,7 @@
         "price": null,
         "status": "active"
       }
-    ]
+    ],
+    "bin_location": "J-24-2"
   }
 ]
