@@ -17,17 +17,31 @@ router.post('/run-all', async (req, res) => {
   try {
     console.log('🔔 Migration endpoint called');
     
-    // Get seed file
-    const seedFile = path.join(__dirname, '../rhl-product-catalog-seed.json');
-    if (!fs.existsSync(seedFile)) {
+    // Get seed file - try multiple paths
+    let seedFilePath;
+    const possiblePaths = [
+      path.join(__dirname, '../rhl-product-catalog-seed.json'),
+      path.join(__dirname, '../../rhl-product-catalog-seed.json'),
+      path.join(process.cwd(), 'rhl-product-catalog-seed.json')
+    ];
+
+    for (const tryPath of possiblePaths) {
+      if (fs.existsSync(tryPath)) {
+        seedFilePath = tryPath;
+        break;
+      }
+    }
+
+    if (!seedFilePath) {
       return res.status(404).json({ 
         message: 'Seed file not found',
-        seedPath: seedFile
+        attempted: possiblePaths,
+        cwd: process.cwd()
       });
     }
 
-    console.log('📖 Reading seed file...');
-    const seedData = JSON.parse(fs.readFileSync(seedFile, 'utf8'));
+    console.log(`📖 Reading seed file from: ${seedFilePath}`);
+    const seedData = JSON.parse(fs.readFileSync(seedFilePath, 'utf8'));
     const seedProducts = Array.isArray(seedData) ? seedData : seedData.products || [];
 
     console.log(`📦 Found ${seedProducts.length} products in seed file`);
