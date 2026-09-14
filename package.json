@@ -10,6 +10,7 @@
     "migrate": "node migrate-to-new-product-schema.js",
     "import-seed": "node import-seed-data.js",
     "update-names": "node update-product-names.js",
+    "bulk-update-names": "node bulk-update-product-names.js",
     "deploy-migrate": "node deploy-migrate.js"
   },
   "keywords": [],
