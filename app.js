@@ -223,6 +223,7 @@ app.use("/api/bulk", require("./Routes/bulkRoute"));
 app.use("/api/wholesaler-form", require("./Routes/wholesalerFormRoute"));
 app.use("/api/chat", require("./Routes/chatRoute"));
 app.use("/api/supplier-orders", require("./Routes/supplierOrderRoute"));
+app.use("/api/migration", require("./Routes/migrationRoute"));
 
 // ✅ Shipment Tracking Endpoint
 const trackShipment = async (carrierCode, trackingNumber) => {
