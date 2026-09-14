@@ -127,6 +127,7 @@ async function importSeedData() {
             price: v.wholesalePrice, // Map wholesalePrice to price
             rhlUpc: v.rhlUpc,
             manufacturerUpc: v.manufacturerUpc,
+            binLocation: v.binLocation,
             status: 'active'
           }))
         };

@@ -9,6 +9,7 @@
     "dev": "nodemon app.js",
     "migrate": "node migrate-to-new-product-schema.js",
     "import-seed": "node import-seed-data.js",
+    "update-names": "node update-product-names.js",
     "deploy-migrate": "node deploy-migrate.js"
   },
   "keywords": [],
