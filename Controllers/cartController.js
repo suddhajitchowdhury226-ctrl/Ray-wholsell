@@ -79,19 +79,20 @@ exports.getCart = async (req, res) => {
             product: {
               _id: item.product._id,
               name: item.product.name || 'Unnamed Product',
-              buyPrice: item.product.buyPrice || 0,
-              sellPrice: item.product.sellPrice || 0,
+              buyPrice: item.product.variants?.[0]?.price || item.product.buyPrice || 0,
+              sellPrice: item.product.variants?.[0]?.price || item.product.sellPrice || 0,
               stock: item.product.stock || 0,
               images: item.product.images || [],
               weight: item.product.weight || 0.016,
               dimensions: item.product.dimensions || { length: 10, width: 5, height: 2 },
               description: item.product.description || 'No description available',
               createdBy: item.product.createdBy,
-              variants: item.product.variants || [],  // Add variants array so frontend can get price
+              variants: item.product.variants || [],
             },
             quantity: item.quantity,
             websiteRole: item.websiteRole,
             variantId: item.variantId,
+            price: item.product.variants?.[0]?.price || 0,  // Direct price for convenience
             variantDetails: variantDetails ? {
               variantName: variantDetails.variantName,
               price: variantDetails.price,
