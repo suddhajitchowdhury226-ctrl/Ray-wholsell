@@ -466,12 +466,12 @@ exports.createOrderFromCart = async (req, res) => {
 
     // Send notification email to ADMIN
     try {
-      console.log('📧 Attempting to send admin notification email to:', process.env.EMAIL_USER);
+      console.log('📧 Attempting to send admin notification email to:', process.env.EMAIL_ADMIN);
       const transporter = createTransporter();
       
       const adminMailOptions = {
         from: process.env.EMAIL_USER,
-        to: process.env.EMAIL_USER,
+        to: process.env.EMAIL_ADMIN || process.env.EMAIL_USER,
         subject: `🔔 NEW ORDER NOTIFICATION - ${populatedOrder.orderNumber} - Ray Healthy Living`,
         html: generateAdminOrderNotificationEmail(populatedOrder, user, deliveryAddress),
       };
