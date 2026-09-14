@@ -527,6 +527,16 @@ exports.createOrderFromCart = async (req, res) => {
       name: error.name,
       code: error.code
     });
+    
+    // Log the exact problematic line
+    if (error.message.includes('price')) {
+      console.error('❌ PRICE ISSUE - Product missing price data');
+    }
+    if (error.message.includes('undefined')) {
+      console.error('❌ UNDEFINED ISSUE - Missing required field');
+      console.error('❌ Check if item.price is being passed correctly');
+    }
+    
     res.status(500).json({
       message: 'Failed to create order',
       error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
