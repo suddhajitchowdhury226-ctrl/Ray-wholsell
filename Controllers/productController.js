@@ -2373,6 +2373,53 @@ const getCatalogProductDetail = async (req, res) => {
   }
 };
 
+// GET /api/warehouse/by-bin/:binLocation - Warehouse staff reverse lookup by bin location
+const getProductsByBinLocation = async (req, res) => {
+  try {
+    const { binLocation } = req.params;
+
+    if (!binLocation || binLocation.trim() === '') {
+      return res.status(400).json({ success: false, message: 'Bin location is required' });
+    }
+
+    // Find all products that have a variant in this bin location
+    const products = await productModel
+      .find({
+        'variants.binLocation': binLocation,
+        status: 'active'
+      })
+      .select('rhlId name category type variants')
+      .lean();
+
+    if (products.length === 0) {
+      return res.status(404).json({ 
+        success: false, 
+        message: `No products found in bin location: ${binLocation}` 
+      });
+    }
+
+    // Extract only the variants in this bin location for each product
+    const productsWithVariantsInBin = products.map(product => ({
+      rhlId: product.rhlId,
+      name: product.name,
+      category: product.category,
+      type: product.type,
+      variantsInBin: product.variants.filter(v => v.binLocation === binLocation)
+    }));
+
+    res.status(200).json({
+      success: true,
+      binLocation,
+      productsInBin: productsWithVariantsInBin,
+      totalVariants: productsWithVariantsInBin.reduce((sum, p) => sum + p.variantsInBin.length, 0)
+    });
+
+  } catch (error) {
+    console.error('Error fetching products by bin location:', error);
+    res.status(500).json({ success: false, message: 'Server error. Please try again later.' });
+  }
+};
+
 module.exports = {
   adjustInventory,
   createProduct,
@@ -2402,7 +2449,8 @@ module.exports = {
   // NEW ENDPOINTS
   getCatalogProducts,
   getCatalogCategories,
-  getCatalogProductDetail
+  getCatalogProductDetail,
+  getProductsByBinLocation
 };
 
 

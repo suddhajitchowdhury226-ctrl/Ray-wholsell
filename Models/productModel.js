@@ -29,6 +29,11 @@ const variantSchema = new mongoose.Schema({
     default: null,
     description: 'Wholesale price in USD for this variant'
   },
+  binLocation: {
+    type: String,
+    default: null,
+    description: 'Warehouse bin location for this specific variant (e.g., "6/4 >*", "15/3 >*")'
+  },
   status: {
     type: String,
     default: 'active',

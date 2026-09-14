@@ -1,7 +1,7 @@
 const express = require('express');
 const { getUsersWithForms, deleteUser, createUser, updateWholesalerApproval, updateUser } = require('../Controllers/userController');
 const { getRetailerPurchases, getCategories, getBrands, getRetailerCategories, getDepartmentsWithCategories } = require('../Controllers/categoryController');
-const { getWholesalerProducts, filterProducts, getProductCount, getSingleProduct, filterProductsByUser, getCatalogProducts, getCatalogCategories, getCatalogProductDetail } = require('../Controllers/productController');
+const { getWholesalerProducts, filterProducts, getProductCount, getSingleProduct, filterProductsByUser, getCatalogProducts, getCatalogCategories, getCatalogProductDetail, getProductsByBinLocation } = require('../Controllers/productController');
 const { applyCoupon, createCoupon, getCoupons, getCoupon, updateCoupon, deleteCoupon, submitFeedback, createCounseling, getCounselings, deleteCounseling } = require('../Controllers/authController');
 const { protect, restrictTo } = require('../Middleware/tokenVerify');
 const { getAllPurchases, purchaseSummary, createCheckoutSession, deleteCartItem, getCart, updateCartItem, addToCart, checkPayment, calculateShippingRates, createShippingLabel, createCheckoutAndShipment, getPurchaseByIds } = require('../Controllers/cartController');
@@ -392,6 +392,9 @@ router.get('/filter-products', filterProducts);
 router.get('/catalog/products', getCatalogProducts);
 router.get('/catalog/categories', getCatalogCategories);
 router.get('/catalog/products/:rhlId', getCatalogProductDetail);
+
+// NEW: Warehouse bin location lookup endpoint
+router.get('/warehouse/by-bin/:binLocation', getProductsByBinLocation);
 
 // NEW: Product Image management routes
 const productImageRoutes = require('./productImageRoutes');
