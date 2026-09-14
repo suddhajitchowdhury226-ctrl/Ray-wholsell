@@ -87,6 +87,7 @@ exports.getCart = async (req, res) => {
               dimensions: item.product.dimensions || { length: 10, width: 5, height: 2 },
               description: item.product.description || 'No description available',
               createdBy: item.product.createdBy,
+              variants: item.product.variants || [],  // Add variants array so frontend can get price
             },
             quantity: item.quantity,
             websiteRole: item.websiteRole,
@@ -96,7 +97,7 @@ exports.getCart = async (req, res) => {
               price: variantDetails.price,
               stock: variantDetails.stock,
               sku: variantDetails.sku,
-              bin_location: variantDetails.bin_location
+              binLocation: variantDetails.binLocation
             } : null,
             flavour: item.flavour || null,
             bulkOrderNumber
