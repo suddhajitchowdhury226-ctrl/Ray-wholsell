@@ -119,9 +119,11 @@ exports.registerUser = async (req, res) => {
 
     try {
       await transporter.sendMail(mailOptions);
+      console.log(`✅ OTP email sent successfully to ${email}`);
     } catch (emailError) {
-      console.error('Email sending failed:', emailError);
-      // We still return success as user is created, but they might need to resend OTP
+      console.error('❌ Email sending failed for user:', email);
+      console.error('Email error details:', emailError.message);
+      // Continue anyway - user is created and can request resend OTP
     }
 
     res.status(201).json({
