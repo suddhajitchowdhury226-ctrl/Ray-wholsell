@@ -106,7 +106,7 @@ app.use(cors({
 }));
 
 // ✅ Handle preflight requests explicitly
-app.options('*', cors({
+app.use(cors({
   origin: function (origin, callback) {
     if (!origin) return callback(null, true);
     if (allowedOrigins.includes(origin)) {
