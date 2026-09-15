@@ -3,6 +3,9 @@ const User = require('../Models/user');
 const Cart = require('../Models/cartModel');
 const Product = require('../Models/productModel');
 const nodemailer = require('nodemailer');
+const PDFDocument = require('pdfkit');
+const fs = require('fs');
+const path = require('path');
 require('dotenv').config();
 
 // Create nodemailer transporter
@@ -568,8 +571,9 @@ exports.getUserOrders = async (req, res) => {
   }
 };
 
-// Send Manufacturer inquiry Email
+// Send Manufacturer inquiry Email with PDF attachment
 exports.sendManufacturerInquiry = async (req, res) => {
+  let pdfPath = null;
   try {
     const { orderId, manufacturerEmail, merchantEmail } = req.body;
     
@@ -588,6 +592,159 @@ exports.sendManufacturerInquiry = async (req, res) => {
     if (!order) {
       return res.status(404).json({ message: 'Order not found' });
     }
+
+    // Generate PDF
+    const generatePDF = () => {
+      return new Promise((resolve, reject) => {
+        try {
+          const doc = new PDFDocument({ margin: 40 });
+          const fileName = `manufacturer-inquiry-${orderId}-${Date.now()}.pdf`;
+          const tempDir = path.join(process.cwd(), 'temp-pdfs');
+          
+          // Create temp directory if it doesn't exist
+          if (!fs.existsSync(tempDir)) {
+            fs.mkdirSync(tempDir, { recursive: true });
+          }
+          
+          pdfPath = path.join(tempDir, fileName);
+          const stream = fs.createWriteStream(pdfPath);
+          
+          doc.pipe(stream);
+
+          // Add logo if available
+          const logoPath = path.join(process.cwd(), '../Ray-Wholsell/src/assets/images/logos/WholesaleLogo.png');
+          if (fs.existsSync(logoPath)) {
+            doc.image(logoPath, 40, 20, { width: 80 });
+          }
+
+          // Header
+          doc.fontSize(20).font('Helvetica-Bold').text('Product Availability Inquiry', 150, 30);
+          doc.fontSize(10).font('Helvetica').text('From: Ray Healthy Living', 150, 60);
+          
+          doc.moveTo(40, 90).lineTo(555, 90).stroke();
+          doc.moveDown();
+
+          // Order Information
+          doc.fontSize(12).font('Helvetica-Bold').text('Order Information', 40, 100);
+          doc.fontSize(10).font('Helvetica');
+          doc.text(`Order Number: #${order.orderNumber || order._id}`, 40, 120);
+          doc.text(`Order Date: ${new Date(order.createdAt).toLocaleDateString()}`, 40, 135);
+          doc.text(`Customer: ${order.user?.name || 'N/A'}`, 40, 150);
+          doc.text(`Email: ${order.user?.email || 'N/A'}`, 40, 165);
+          
+          doc.moveDown(2);
+          doc.moveTo(40, doc.y).lineTo(555, doc.y).stroke();
+          doc.moveDown();
+
+          // Products Table Header
+          doc.fontSize(12).font('Helvetica-Bold').text('Inquired Products', 40, doc.y);
+          doc.moveDown(0.5);
+
+          // Table headers
+          const startY = doc.y;
+          const col1X = 40, col2X = 280, col3X = 450;
+          
+          doc.fontSize(10).font('Helvetica-Bold');
+          doc.text('Product Name', col1X, startY);
+          doc.text('SKU', col2X, startY);
+          doc.text('Qty', col3X, startY);
+          
+          doc.moveTo(40, startY + 15).lineTo(555, startY + 15).stroke();
+          
+          // Table rows
+          let currentY = startY + 25;
+          doc.font('Helvetica').fontSize(9);
+          
+          order.items.forEach((item, idx) => {
+            const productName = item.product?.name || item.name || 'N/A';
+            const sku = item.product?.sku || 'N/A';
+            const qty = item.quantity;
+            
+            // Wrap text if needed
+            if (currentY > 700) {
+              doc.addPage();
+              currentY = 40;
+            }
+            
+            doc.text(productName.substring(0, 35), col1X, currentY, { width: 200 });
+            doc.text(sku, col2X, currentY);
+            doc.text(qty.toString(), col3X, currentY);
+            
+            currentY += 20;
+          });
+
+          doc.moveTo(40, currentY).lineTo(555, currentY).stroke();
+          currentY += 15;
+
+          // Delivery Address
+          doc.fontSize(11).font('Helvetica-Bold').text('Delivery Address', 40, currentY);
+          currentY += 20;
+          doc.fontSize(9).font('Helvetica');
+          
+          const addr = order.deliveryAddress || {};
+          doc.text(`${addr.name || 'N/A'}`, 40, currentY);
+          currentY += 12;
+          doc.text(`${addr.addressLine1 || ''}`, 40, currentY);
+          currentY += 12;
+          if (addr.addressLine2) {
+            doc.text(`${addr.addressLine2}`, 40, currentY);
+            currentY += 12;
+          }
+          doc.text(`${addr.city || ''}, ${addr.state || ''} ${addr.zipcode || ''}`, 40, currentY);
+          currentY += 12;
+          doc.text(`${addr.country || ''}`, 40, currentY);
+          if (addr.contactNumber) {
+            currentY += 12;
+            doc.text(`Phone: ${addr.contactNumber}`, 40, currentY);
+          }
+
+          currentY += 20;
+          doc.moveTo(40, currentY).lineTo(555, currentY).stroke();
+          currentY += 15;
+
+          // Please Confirm Section
+          doc.fontSize(11).font('Helvetica-Bold').text('Please Confirm:', 40, currentY);
+          currentY += 15;
+          doc.fontSize(9).font('Helvetica');
+          doc.text('• Availability of each product', 50, currentY);
+          currentY += 12;
+          doc.text('• Current pricing (if available)', 50, currentY);
+          currentY += 12;
+          doc.text('• Delivery timeline', 50, currentY);
+          currentY += 12;
+          doc.text('• Any minimum order quantities', 50, currentY);
+
+          currentY += 20;
+          doc.fontSize(10).font('Helvetica').text(
+            'Please reply to this email with your response at your earliest convenience.',
+            40, currentY, { width: 500, align: 'left' }
+          );
+
+          // Footer
+          doc.fontSize(8).font('Helvetica').text(
+            `© ${new Date().getFullYear()} Ray Healthy Living. All rights reserved.`,
+            40, doc.page.height - 40,
+            { align: 'center' }
+          );
+
+          doc.end();
+
+          stream.on('finish', () => {
+            resolve(pdfPath);
+          });
+
+          stream.on('error', (err) => {
+            reject(err);
+          });
+
+        } catch (error) {
+          reject(error);
+        }
+      });
+    };
+
+    // Generate PDF
+    const generatedPdfPath = await generatePDF();
 
     // Create email template with product details (NO PRICE)
     const generateManufacturerInquiryEmail = () => {
@@ -684,7 +841,7 @@ exports.sendManufacturerInquiry = async (req, res) => {
       `;
     };
 
-    // Send email
+    // Send email with PDF attachment
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
@@ -698,20 +855,40 @@ exports.sendManufacturerInquiry = async (req, res) => {
       to: email,
       subject: `Product Availability inquiry - Order #${order.orderNumber || order._id} - Ray Healthy Living`,
       html: generateManufacturerInquiryEmail(),
+      attachments: [
+        {
+          filename: `manufacturer-inquiry-${order.orderNumber || orderId}.pdf`,
+          path: generatedPdfPath
+        }
+      ]
     };
 
     await transporter.sendMail(mailOptions);
 
-    console.log('📧 Manufacturer inquiry email sent to:', email);
+    console.log('📧 Manufacturer inquiry email with PDF sent to:', email);
+    console.log('📄 PDF saved at:', generatedPdfPath);
+
+    // Clean up PDF after sending (optional - keep for records)
+    // setTimeout(() => {
+    //   if (fs.existsSync(generatedPdfPath)) {
+    //     fs.unlinkSync(generatedPdfPath);
+    //   }
+    // }, 5000);
 
     res.status(200).json({
-      message: 'Manufacturer inquiry sent successfully',
+      message: 'Manufacturer inquiry sent successfully with PDF attachment',
       manufacturerEmail: email,
       orderId,
     });
 
   } catch (error) {
     console.error('❌ Error sending Manufacturer inquiry:', error);
+    
+    // Clean up on error
+    if (pdfPath && fs.existsSync(pdfPath)) {
+      fs.unlinkSync(pdfPath);
+    }
+    
     res.status(500).json({
       message: 'Failed to send Manufacturer inquiry',
       error: error.message,
