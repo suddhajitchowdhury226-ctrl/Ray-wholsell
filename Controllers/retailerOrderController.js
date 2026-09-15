@@ -4,9 +4,9 @@
  */
 
 const nodemailer = require('nodemailer');
-const Order = require('../Models/Order');
+const Order = require('../Models/orderModel');
 const User = require('../Models/user');
-const Product = require('../Models/Product');
+const Product = require('../Models/productModel');
 
 // Create Retailer Order Request (Pending Admin Confirmation)
 exports.createRetailerOrder = async (req, res) => {

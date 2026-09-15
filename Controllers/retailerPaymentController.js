@@ -4,7 +4,7 @@
  */
 
 const Stripe = require('stripe');
-const Order = require('../Models/Order');
+const Order = require('../Models/orderModel');
 const User = require('../Models/user');
 const nodemailer = require('nodemailer');
 
