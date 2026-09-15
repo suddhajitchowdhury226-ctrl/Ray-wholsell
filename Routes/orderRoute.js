@@ -43,7 +43,8 @@ const {
 
 router.post('/process-retailer-payment', protect, restrictTo('retailer'), processRetailerPayment);
 router.get('/payment-history', protect, restrictTo('retailer'), getPaymentHistory);
-router.post('/stripe-webhook', express.raw({type: 'application/json'}), handleStripeWebhook);
+// Note: Stripe webhook handled separately in main app.js due to raw body requirement
+// router.post('/stripe-webhook', express.raw({type: 'application/json'}), handleStripeWebhook);
 
 // Admin routes
 router.get('/all-orders', protect, restrictTo('admin'), getAllOrders);
