@@ -196,11 +196,12 @@ if (process.env.NODE_ENV === 'production') {
   }));
 }
 
-// ✅ Stripe Webhook Handler (MUST be before express.json())
-const { handleStripeWebhook } = require('./Controllers/retailerPaymentController');
-app.post('/api/orders/stripe-webhook', express.raw({type: 'application/json'}), handleStripeWebhook);
+// ✅ Stripe Webhook Handler - Commented out temporarily
+// TODO: Re-enable after payment system is tested
+// const { handleStripeWebhook } = require('./Controllers/retailerPaymentController');
+// app.post('/api/orders/stripe-webhook', express.raw({type: 'application/json'}), handleStripeWebhook);
 
-// ✅ JSON parser after webhook
+// ✅ JSON parser
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
 
