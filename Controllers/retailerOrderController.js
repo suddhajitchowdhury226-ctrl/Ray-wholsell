@@ -35,54 +35,41 @@ exports.createRetailerOrder = async (req, res) => {
       return res.status(403).json({ message: "Only retailers can create retailer orders" });
     }
 
-    // Validate products - use data from frontend since backend may not have exact product records
-    const validatedItems = [];
-    for (const item of items) {
-      // For now, trust the frontend product data (it comes from our API anyway)
-      // In production, you might want to validate against actual inventory
-      validatedItems.push({
-        productId: item.productId,
-        productName: item.productName,
-        quantity: item.quantity,
-        wholesalePrice: item.wholesalePrice,
-        retailPrice: item.retailPrice,
-        lineTotal: item.lineTotal,
-      });
-    }
-
     // Generate Order ID
     const orderId = `RO-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
 
-    // Create order document
+    // Map items to Order schema format
+    const validatedItems = items.map((item) => ({
+      name: item.productName,
+      quantity: item.quantity,
+      price: item.retailPrice,
+      websiteRole: 'retailer',
+      rhlProductId: item.productId,
+    }));
+
+    // Create order using existing Order model
     const order = new Order({
-      orderId,
       user: userId,
-      email: email,
-      phone: phone,
-      shippingAddress: {
-        firstName: shippingAddress.firstName,
-        lastName: shippingAddress.lastName,
-        street: shippingAddress.street,
+      orderNumber: orderId,
+      items: validatedItems,
+      deliveryAddress: {
+        name: `${shippingAddress.firstName} ${shippingAddress.lastName}`,
+        contactNumber: shippingAddress.phone,
+        email: email,
+        addressLine1: shippingAddress.street,
         city: shippingAddress.city,
         state: shippingAddress.state,
-        zip: shippingAddress.zip,
+        zipCode: shippingAddress.zip,
         country: shippingAddress.country || "United States",
-        phone: shippingAddress.phone,
       },
-      items: validatedItems,
-      pricing: {
-        subtotal: parseFloat(pricing.subtotal),
-        markupAmount: parseFloat(pricing.markupAmount),
-        markupPercentage: pricing.markupPercentage,
-        subtotalWithMarkup: parseFloat(pricing.subtotal),
-        shippingCost: 0, // Will be added by admin
-        tax: 0,
-        total: parseFloat(pricing.total),
-        finalTotal: parseFloat(pricing.total), // Will be updated when admin adds shipping
-      },
-      status: "pending_confirmation", // Waiting for admin review
-      orderType: "retailer",
-      notes: notes || "",
+      userEmail: email,
+      userContactNumber: phone,
+      subtotal: parseFloat(pricing.subtotal),
+      total: parseFloat(pricing.total),
+      status: 'processing', // Use valid enum value
+      paymentStatus: 'pending',
+      notes: `Retailer Order - ${notes || 'No additional notes'}`,
+      website: 'retailer', // Mark as retailer order
       createdAt: new Date(),
     });
 
@@ -101,11 +88,16 @@ exports.createRetailerOrder = async (req, res) => {
       message: "Order submitted successfully. Awaiting admin confirmation.",
       orderId: orderId,
       _id: order._id,
-      status: "pending_confirmation",
+      status: "processing",
     });
 
   } catch (error) {
     console.error("❌ Error creating retailer order:", error);
+    res.status(500).json({
+      message: error.message || "Failed to create retailer order"
+    });
+  }
+};
     res.status(500).json({
       message: error.message || "Failed to create order"
     });
