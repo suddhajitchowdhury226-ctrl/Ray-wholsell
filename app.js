@@ -31,6 +31,7 @@ const io = socketIo(server, {
     origin: [
       "https://user-wholesaler.netlify.app",
       "https://ray-wholsell.vercel.app", // ✅ Fix: removed trailing slash
+      "https://ray-retailer.vercel.app",  // Vercel retailer site
       "https://admin-wholesaler.netlify.app",
       "https://ray-admin-eight.vercel.app",  // Vercel admin panel
       "http://localhost:5173",
@@ -72,6 +73,7 @@ const allowedOrigins = [
   "https://user-wholesaler.netlify.app", 
   "https://ray-wholsell.vercel.app",
   "https://ray-admin-eight.vercel.app",  // Vercel admin panel
+  "https://ray-retailer.vercel.app",  // Vercel retailer site
   "https://rayonewholesale.com",
   "https://www.rayonewholesale.com",
   "http://localhost:5173",
