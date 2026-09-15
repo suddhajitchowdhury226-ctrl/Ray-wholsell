@@ -11,18 +11,17 @@ const Product = require('../Models/productModel');
 // Create Retailer Order Request (Pending Admin Confirmation)
 exports.createRetailerOrder = async (req, res) => {
   try {
-    const { userId, email, phone, shippingAddress, items, pricing, notes } = req.body;
+    const { orderNumber, userEmail, userContactNumber, subtotal, total, items, deliveryAddress, status, paymentStatus, website } = req.body;
+    const userId = req.user._id;
 
     // Validate required fields
-    if (!userId || !email || !shippingAddress || !items || items.length === 0) {
+    if (!orderNumber || !userEmail || !items || items.length === 0) {
       return res.status(400).json({
-        message: "Missing required fields: userId, email, shippingAddress, items"
+        message: "Missing required fields"
       });
     }
 
-    console.log(`📦 Creating retailer order for user: ${userId}`);
-    console.log(`📍 Shipping address: ${shippingAddress.city}, ${shippingAddress.state}`);
-    console.log(`🛍️  Items: ${items.length}`);
+    console.log(`📦 Creating retailer order: ${orderNumber}`);
 
     // Get user
     const user = await User.findById(userId);
@@ -30,63 +29,35 @@ exports.createRetailerOrder = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Verify user is retailer
-    if (user.role !== 'retailer') {
-      return res.status(403).json({ message: "Only retailers can create retailer orders" });
-    }
-
-    // Generate Order ID
-    const orderId = `RO-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
-
-    // Map items to Order schema format
-    const validatedItems = items.map((item) => ({
-      name: item.productName,
-      quantity: item.quantity,
-      price: item.retailPrice,
-      websiteRole: 'retailer',
-      rhlProductId: item.productId,
-    }));
-
-    // Create order using existing Order model
+    // Create order using Order model with correct schema
     const order = new Order({
       user: userId,
-      orderNumber: orderId,
-      items: validatedItems,
-      deliveryAddress: {
-        name: `${shippingAddress.firstName} ${shippingAddress.lastName}`,
-        contactNumber: shippingAddress.phone,
-        email: email,
-        addressLine1: shippingAddress.street,
-        city: shippingAddress.city,
-        state: shippingAddress.state,
-        zipCode: shippingAddress.zip,
-        country: shippingAddress.country || "United States",
-      },
-      userEmail: email,
-      userContactNumber: phone,
-      subtotal: parseFloat(pricing.subtotal),
-      total: parseFloat(pricing.total),
-      status: 'processing', // Use valid enum value
-      paymentStatus: 'pending',
-      notes: `Retailer Order - ${notes || 'No additional notes'}`,
-      website: 'retailer', // Mark as retailer order
+      orderNumber: orderNumber,
+      items: items,
+      deliveryAddress: deliveryAddress,
+      userEmail: userEmail,
+      userContactNumber: userContactNumber,
+      subtotal: subtotal,
+      total: total,
+      status: status || "processing",
+      paymentStatus: paymentStatus || "pending",
+      website: website || "retailer",
       createdAt: new Date(),
     });
 
     await order.save();
+    console.log(`✅ Order created: ${orderNumber}`);
 
-    console.log(`✅ Order created: ${orderId}`);
-
-    // Send email to admin with order details
+    // Send email to admin
     await sendAdminOrderNotification(order);
-
-    // Send confirmation email to user
+    
+    // Send confirmation to user
     await sendUserOrderConfirmation(user, order);
 
     res.status(201).json({
       success: true,
-      message: "Order submitted successfully. Awaiting admin confirmation.",
-      orderId: orderId,
+      message: "Order submitted successfully",
+      orderId: orderNumber,
       _id: order._id,
       status: "processing",
     });
