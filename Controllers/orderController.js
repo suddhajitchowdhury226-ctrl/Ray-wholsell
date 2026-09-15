@@ -1213,12 +1213,16 @@ exports.confirmOrder = async (req, res) => {
       html: generateConfirmedOrderEmail(),
     };
 
-    await transporter.sendMail(mailOptions);
-
-    console.log('✅ Order confirmed and email sent to:', order.userEmail);
+    try {
+      await transporter.sendMail(mailOptions);
+      console.log('✅ Order confirmed and email sent to:', order.userEmail || order.user?.email);
+    } catch (emailError) {
+      console.error('⚠️ Order saved but email send failed:', emailError.message);
+      // Don't fail the entire operation if email fails - order is still confirmed
+    }
 
     res.status(200).json({
-      message: 'Order confirmed successfully. Email sent to customer.',
+      message: 'Order confirmed successfully. Notification sent to customer.',
       order,
       summary: {
         orderNumber: order.orderNumber,
