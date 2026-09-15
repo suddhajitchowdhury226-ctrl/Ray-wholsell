@@ -825,6 +825,12 @@ exports.confirmOrder = async (req, res) => {
     console.log('📋 Confirm Order Request:');
     console.log('   Body:', JSON.stringify(req.body, null, 2));
 
+    // Convert shippingCost to number if it's a string
+    let numericShippingCost = parseFloat(shippingCost);
+    if (isNaN(numericShippingCost)) {
+      numericShippingCost = 0;
+    }
+
     // Validation
     if (!orderId || !confirmedItems || !Array.isArray(confirmedItems)) {
       console.error('❌ Validation failed:');
@@ -836,8 +842,8 @@ exports.confirmOrder = async (req, res) => {
       });
     }
 
-    if (typeof shippingCost !== 'number' || shippingCost < 0) {
-      console.error('❌ Shipping cost validation failed:', shippingCost);
+    if (typeof numericShippingCost !== 'number' || numericShippingCost < 0) {
+      console.error('❌ Shipping cost validation failed:', numericShippingCost);
       return res.status(400).json({ 
         message: 'Valid shipping cost (non-negative number) is required' 
       });
@@ -901,16 +907,16 @@ exports.confirmOrder = async (req, res) => {
     });
 
     // Calculate new total: subtotal + shipping - discount
-    const newTotal = newSubtotal + shippingCost - (order.discount || 0);
+    const newTotal = newSubtotal + numericShippingCost - (order.discount || 0);
 
     // Update order
     order.confirmedItems = processedItems;
     order.subtotal = newSubtotal;
-    order.shippingCost = shippingCost;
+    order.shippingCost = numericShippingCost;
     order.total = newTotal;
     order.adminNotes = adminNotes || '';
     order.shippingCostSet = {
-      amount: shippingCost,
+      amount: numericShippingCost,
       setBy: adminId,
       setAt: new Date()
     };
@@ -1039,7 +1045,7 @@ exports.confirmOrder = async (req, res) => {
         availableItems: processedItems.length,
         unavailableItems: unavailableItems.length,
         subtotal: newSubtotal,
-        shippingCost,
+        shippingCost: numericShippingCost,
         discount: order.discount,
         total: newTotal,
         status: 'confirmed'
