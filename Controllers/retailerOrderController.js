@@ -69,11 +69,6 @@ exports.createRetailerOrder = async (req, res) => {
     });
   }
 };
-    res.status(500).json({
-      message: error.message || "Failed to create order"
-    });
-  }
-};
 
 // Get Retailer Orders
 exports.getRetailerOrders = async (req, res) => {
