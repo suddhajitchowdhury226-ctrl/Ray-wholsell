@@ -6,7 +6,8 @@ const {
   getAllOrders,
   updateOrderStatus,
   sendManufacturerInquiry,
-  confirmOrder
+  confirmOrder,
+  processAdminConfirmedOrderPayment
 } = require('../Controllers/orderController');
 const { protect, restrictTo } = require('../Middleware/tokenVerify');
 
@@ -14,6 +15,7 @@ const router = express.Router();
 
 // User routes (require authentication)
 router.post('/checkout', protect, restrictTo('user'), createOrderFromCart);
+router.post('/payment/admin-confirmed', protect, restrictTo('user'), processAdminConfirmedOrderPayment);
 router.get('/my-orders', protect, restrictTo('user'), getUserOrders);
 router.get('/details/:orderId', protect, restrictTo('user'), getOrderDetails);
 

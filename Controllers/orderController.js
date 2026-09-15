@@ -1286,5 +1286,111 @@ exports.confirmOrder = async (req, res) => {
   }
 };
 
-// Additional helpers and middleware can be added here
+// Process payment for admin-confirmed order
+exports.processAdminConfirmedOrderPayment = async (req, res) => {
+  try {
+    const { orderId } = req.body;
+    const userId = req.user._id;
+
+    if (!orderId) {
+      return res.status(400).json({ message: 'Order ID is required' });
+    }
+
+    // Fetch the admin-confirmed order
+    const order = await Order.findById(orderId)
+      .populate('items.product', 'name images')
+      .populate('user', 'name email');
+
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+
+    // Verify the order belongs to this user
+    if (order.user._id.toString() !== userId.toString()) {
+      return res.status(403).json({ message: 'Unauthorized: Order does not belong to this user' });
+    }
+
+    // Verify order is in correct status for payment
+    if (order.status !== 'order_confirmation_sent') {
+      return res.status(400).json({ 
+        message: `Order cannot be paid. Current status: ${order.status}. Expected: order_confirmation_sent` 
+      });
+    }
+
+    console.log('💳 Processing payment for admin-confirmed order:', order.orderNumber);
+    console.log('   Order total:', order.total);
+
+    // Create Stripe checkout session
+    const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+
+    const lineItems = (order.confirmedItems || order.items).map(item => ({
+      price_data: {
+        currency: 'usd',
+        product_data: {
+          name: item.name || item.product?.name || 'Product',
+          images: item.product?.images ? [item.product.images[0]] : []
+        },
+        unit_amount: Math.round((item.price || 0) * 100) // Convert to cents
+      },
+      quantity: item.quantity || 1
+    }));
+
+    // Add shipping cost as a line item if applicable
+    if (order.shippingCost && order.shippingCost > 0) {
+      lineItems.push({
+        price_data: {
+          currency: 'usd',
+          product_data: {
+            name: 'Shipping Cost'
+          },
+          unit_amount: Math.round(order.shippingCost * 100)
+        },
+        quantity: 1
+      });
+    }
+
+    // Add discount if applicable
+    let discounts = [];
+    if (order.discount && order.discount > 0) {
+      // Create a coupon for the discount
+      const coupon = await stripe.coupons.create({
+        percent_off: Math.min((order.discount / order.subtotal) * 100, 100),
+        duration: 'once'
+      });
+      discounts.push({ coupon: coupon.id });
+    }
+
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items: lineItems,
+      discounts: discounts.length > 0 ? discounts : undefined,
+      mode: 'payment',
+      success_url: `${process.env.FRONTEND_URL}/order-success?orderId=${orderId}&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.FRONTEND_URL}/checkout?orderId=${orderId}`,
+      customer_email: order.userEmail || order.user?.email,
+      metadata: {
+        orderId: orderId.toString(),
+        orderNumber: order.orderNumber,
+        isAdminConfirmed: 'true'
+      }
+    });
+
+    console.log('✅ Stripe session created:', session.id);
+
+    res.status(200).json({
+      message: 'Payment session created successfully',
+      sessionId: session.id,
+      url: session.url,
+      orderId: orderId
+    });
+
+  } catch (error) {
+    console.error('❌ Error processing admin-confirmed order payment:', error);
+    res.status(500).json({
+      message: 'Failed to process payment',
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+    });
+  }
+};
+
 
