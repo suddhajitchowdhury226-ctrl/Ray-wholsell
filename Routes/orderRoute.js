@@ -34,6 +34,17 @@ router.get('/retailer-orders', protect, restrictTo('retailer'), getRetailerOrder
 router.get('/retailer-order/:orderId', protect, restrictTo('retailer'), getRetailerOrderDetails);
 router.get('/retailer-invoice/:orderId', protect, restrictTo('retailer'), getOrderInvoice);
 
+// Retailer Payment routes
+const { 
+  processRetailerPayment, 
+  getPaymentHistory,
+  handleStripeWebhook 
+} = require('../Controllers/retailerPaymentController');
+
+router.post('/process-retailer-payment', protect, restrictTo('retailer'), processRetailerPayment);
+router.get('/payment-history', protect, restrictTo('retailer'), getPaymentHistory);
+router.post('/stripe-webhook', express.raw({type: 'application/json'}), handleStripeWebhook);
+
 // Admin routes
 router.get('/all-orders', protect, restrictTo('admin'), getAllOrders);
 router.get('/pending-retailer-orders', protect, restrictTo('admin'), getPendingRetailerOrders);
