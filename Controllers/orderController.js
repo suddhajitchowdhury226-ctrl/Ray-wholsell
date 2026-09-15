@@ -1134,12 +1134,12 @@ exports.confirmOrder = async (req, res) => {
       setBy: adminId,
       setAt: new Date()
     };
-    order.status = 'confirmed';
+    order.status = 'order_confirmation_sent';
     order.confirmedAt = new Date();
     order.confirmedBy = adminId;
 
     await order.save();
-    console.log('✓ Order saved with status: confirmed');
+    console.log('✓ Order saved with status: order_confirmation_sent');
 
     // ============ SEND EMAIL ============
     try {
@@ -1269,7 +1269,7 @@ exports.confirmOrder = async (req, res) => {
         shippingCost: numericShippingCost,
         discount: discount,
         total: newTotal,
-        status: 'confirmed'
+        status: 'order_confirmation_sent'
       }
     });
 
