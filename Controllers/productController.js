@@ -2244,14 +2244,25 @@ const getCatalogProducts = async (req, res) => {
       query.category = category;
     }
 
-    // Search by name or ingredients
+    // Search by RHL ID, RHL UPC, or Product Title
     if (search) {
       const escapedSearch = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      query.$or = [
-        { name: { $regex: escapedSearch, $options: 'i' } },
-        { ingredients: { $regex: escapedSearch, $options: 'i' } },
-        { description: { $regex: escapedSearch, $options: 'i' } }
+      
+      // Check if search is a number (for RHL ID)
+      const searchAsNumber = parseInt(search);
+      const isNumericSearch = !isNaN(searchAsNumber);
+      
+      const orConditions = [
+        { name: { $regex: escapedSearch, $options: 'i' } },  // Product Title
+        { 'variants.rhlUpc': { $regex: escapedSearch, $options: 'i' } }  // RHL UPC
       ];
+      
+      // If numeric, also search by rhlId
+      if (isNumericSearch) {
+        orConditions.push({ rhlId: searchAsNumber });
+      }
+      
+      query.$or = orConditions;
     }
 
     // Get total count
