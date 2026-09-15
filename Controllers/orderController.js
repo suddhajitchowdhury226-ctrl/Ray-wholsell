@@ -1003,115 +1003,153 @@ exports.confirmOrder = async (req, res) => {
     const adminId = req.user._id;
 
     console.log('📋 Confirm Order Request:');
-    console.log('   Body:', JSON.stringify(req.body, null, 2));
+    console.log('   orderId:', orderId);
+    console.log('   confirmedItems:', confirmedItems?.length, 'items');
+    console.log('   shippingCost:', shippingCost);
 
-    // Convert shippingCost to number if it's a string
-    let numericShippingCost = parseFloat(shippingCost);
-    if (isNaN(numericShippingCost)) {
-      numericShippingCost = 0;
-    }
-
-    // Validation
+    // ============ VALIDATION ============
     if (!orderId || !confirmedItems || !Array.isArray(confirmedItems)) {
-      console.error('❌ Validation failed:');
-      console.error('   orderId:', orderId);
-      console.error('   confirmedItems:', confirmedItems);
-      console.error('   isArray:', Array.isArray(confirmedItems));
+      console.error('❌ Validation failed - missing or invalid params');
       return res.status(400).json({ 
         message: 'Order ID and confirmedItems array are required' 
       });
     }
 
-    if (typeof numericShippingCost !== 'number' || numericShippingCost < 0) {
-      console.error('❌ Shipping cost validation failed:', numericShippingCost);
-      return res.status(400).json({ 
-        message: 'Valid shipping cost (non-negative number) is required' 
-      });
+    // Convert shippingCost to number safely
+    let numericShippingCost = 0;
+    if (shippingCost !== undefined && shippingCost !== null) {
+      numericShippingCost = parseFloat(shippingCost);
+      if (isNaN(numericShippingCost) || numericShippingCost < 0) {
+        console.error('❌ Invalid shipping cost:', shippingCost);
+        return res.status(400).json({ 
+          message: 'Shipping cost must be a valid non-negative number' 
+        });
+      }
     }
 
-    // Fetch order
+    // ============ FETCH ORDER ============
     const order = await Order.findById(orderId)
       .populate('user', 'name email')
-      .populate('items.product', 'name images');
+      .populate('items.product', 'name images price');
 
     if (!order) {
+      console.error('❌ Order not found:', orderId);
       return res.status(404).json({ message: 'Order not found' });
     }
 
-    console.log('🔍 Order details for confirmation:');
-    console.log('   Order ID:', orderId);
-    console.log('   Current status:', order.status);
-    
-    // Allow confirmation from draft, requested, or pending_payment
+    console.log('✓ Order found:', order.orderNumber, 'Status:', order.status);
+
+    // ============ CHECK STATUS ============
     const allowedStatuses = ['draft', 'requested', 'pending_payment'];
     if (!allowedStatuses.includes(order.status)) {
       console.error('❌ Order status not allowed for confirmation:', order.status);
       return res.status(400).json({ 
-        message: `Order cannot be confirmed. Current status: ${order.status}. Allowed statuses: ${allowedStatuses.join(', ')}` 
+        message: `Order status "${order.status}" cannot be confirmed. Allowed: ${allowedStatuses.join(', ')}` 
       });
     }
 
-    // Process confirmed items
+    // ============ VALIDATE CUSTOMER EMAIL ============
+    const customerEmail = order.userEmail || (order.user?.email);
+    if (!customerEmail) {
+      console.error('❌ No customer email found for order');
+      return res.status(400).json({ message: 'Order has no customer email address' });
+    }
+    console.log('✓ Customer email:', customerEmail);
+
+    // ============ PROCESS ITEMS ============
     const itemsMap = {};
     confirmedItems.forEach(item => {
       itemsMap[item.productId] = item;
     });
 
-    // Calculate new subtotal based on available items only
     let newSubtotal = 0;
     const processedItems = [];
     const unavailableItems = [];
 
-    order.items.forEach(item => {
-      const confirmation = itemsMap[item.product._id.toString()] || { isAvailable: false };
-      
-      if (confirmation.isAvailable) {
-        const confirmedQty = confirmation.quantity || item.quantity;
-        const itemTotal = item.price * confirmedQty;
-        newSubtotal += itemTotal;
+    // Safety check: ensure all order items have required fields
+    order.items.forEach((item, idx) => {
+      try {
+        // Validate product exists and has required fields
+        if (!item.product) {
+          console.warn(`⚠️ Item ${idx} has no product reference`);
+          unavailableItems.push({
+            name: item.name || `Item ${idx}`,
+            quantity: item.quantity
+          });
+          return;
+        }
+
+        const productId = item.product._id.toString();
+        const confirmation = itemsMap[productId] || { isAvailable: false };
         
-        processedItems.push({
-          productId: item.product._id,
-          name: item.name || item.product.name,
-          quantity: confirmedQty,
-          price: item.price,
-          isAvailable: true,
-          originalQuantity: item.quantity
-        });
-      } else {
+        if (confirmation.isAvailable) {
+          // Ensure price is a number
+          const price = parseFloat(item.price) || 0;
+          const quantity = parseInt(confirmation.quantity) || item.quantity;
+          const itemTotal = price * quantity;
+          
+          newSubtotal += itemTotal;
+          
+          processedItems.push({
+            productId: item.product._id,
+            name: item.name || item.product.name,
+            quantity: quantity,
+            price: price,
+            isAvailable: true,
+            originalQuantity: item.quantity
+          });
+        } else {
+          unavailableItems.push({
+            name: item.name || item.product.name,
+            quantity: item.quantity
+          });
+        }
+      } catch (itemError) {
+        console.error(`⚠️ Error processing item ${idx}:`, itemError.message);
         unavailableItems.push({
-          name: item.name || item.product.name,
+          name: item.name || `Item ${idx}`,
           quantity: item.quantity
         });
       }
     });
 
-    // Calculate new total: subtotal + shipping - discount
-    const newTotal = newSubtotal + numericShippingCost - (order.discount || 0);
+    console.log('✓ Processed items:', processedItems.length, 'Available');
+    console.log('✓ Unavailable items:', unavailableItems.length);
 
-    // Update order
+    // ============ CALCULATE TOTALS ============
+    // Ensure discount is a number
+    const discount = parseFloat(order.discount) || 0;
+    const newTotal = newSubtotal + numericShippingCost - discount;
+
+    console.log('✓ Subtotal:', newSubtotal, 'Shipping:', numericShippingCost, 'Discount:', discount, 'Total:', newTotal);
+
+    // ============ UPDATE ORDER ============
     order.confirmedItems = processedItems;
     order.subtotal = newSubtotal;
     order.shippingCost = numericShippingCost;
     order.total = newTotal;
-    order.adminNotes = adminNotes || '';
+    order.adminNotes = adminNotes ? adminNotes.trim() : '';
     order.shippingCostSet = {
       amount: numericShippingCost,
       setBy: adminId,
       setAt: new Date()
     };
-    order.status = 'confirmed'; // Awaiting payment
+    order.status = 'confirmed';
     order.confirmedAt = new Date();
     order.confirmedBy = adminId;
 
     await order.save();
+    console.log('✓ Order saved with status: confirmed');
 
-    // Send confirmation email to customer
-    const transporter = createTransporter();
-    
-    const generateConfirmedOrderEmail = () => {
-      const baseUrl = process.env.BACKEND_URL || 'https://ray-wholsell.onrender.com';
+    // ============ SEND EMAIL ============
+    try {
+      const transporter = createTransporter();
       
+      // Verify transporter has credentials
+      if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+        throw new Error('Email credentials not configured');
+      }
+
       const availableItemsHtml = processedItems.map(item => `
         <tr style="border-bottom: 1px solid #eee;">
           <td style="padding: 12px; color: #333;"><strong>${item.name}</strong></td>
@@ -1127,11 +1165,11 @@ exports.confirmOrder = async (req, res) => {
           <ul style="margin: 5px 0; color: #555; padding-left: 20px;">
             ${unavailableItems.map(item => `<li>${item.name} (Qty: ${item.quantity})</li>`).join('')}
           </ul>
-          ${adminNotes ? `<p style="margin: 10px 0 0 0; color: #555; font-style: italic;">Reason: ${adminNotes}</p>` : ''}
+          ${order.adminNotes ? `<p style="margin: 10px 0 0 0; color: #555; font-style: italic;">Reason: ${order.adminNotes}</p>` : ''}
         </div>
       ` : '';
 
-      return `
+      const emailHtml = `
         <div style="font-family: Arial, sans-serif; max-width: 700px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
           <div style="background: linear-gradient(135deg, #77a13d, #e97717); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
             <h1 style="color: white; margin: 0; font-size: 28px;">Order Confirmed! ✓</h1>
@@ -1177,12 +1215,12 @@ exports.confirmOrder = async (req, res) => {
               </div>
               <div style="display: flex; justify-content: space-between; margin: 8px 0; color: #555;">
                 <span>Shipping Cost:</span>
-                <strong>$${shippingCost.toFixed(2)}</strong>
+                <strong>$${numericShippingCost.toFixed(2)}</strong>
               </div>
-              ${order.discount > 0 ? `
+              ${discount > 0 ? `
                 <div style="display: flex; justify-content: space-between; margin: 8px 0; color: #555;">
                   <span>Discount:</span>
-                  <strong style="color: #4caf50;">-$${order.discount.toFixed(2)}</strong>
+                  <strong style="color: #4caf50;">-$${discount.toFixed(2)}</strong>
                 </div>
               ` : ''}
               <div style="display: flex; justify-content: space-between; margin: 12px 0 0 0; padding-top: 12px; border-top: 2px solid #ddd; color: #333; font-size: 18px; font-weight: 700;">
@@ -1204,23 +1242,22 @@ exports.confirmOrder = async (req, res) => {
           </div>
         </div>
       `;
-    };
 
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: order.userEmail || order.user?.email,
-      subject: `Order Confirmed #${order.orderNumber} - Awaiting Payment`,
-      html: generateConfirmedOrderEmail(),
-    };
+      const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: customerEmail,
+        subject: `Order Confirmed #${order.orderNumber} - Awaiting Payment`,
+        html: emailHtml,
+      };
 
-    try {
       await transporter.sendMail(mailOptions);
-      console.log('✅ Order confirmed and email sent to:', order.userEmail || order.user?.email);
+      console.log('✅ Confirmation email sent to:', customerEmail);
     } catch (emailError) {
-      console.error('⚠️ Order saved but email send failed:', emailError.message);
-      // Don't fail the entire operation if email fails - order is still confirmed
+      console.error('⚠️ Email sending failed (non-fatal):', emailError.message);
+      // Don't fail the entire operation - order is already confirmed and saved
     }
 
+    // ============ SUCCESS RESPONSE ============
     res.status(200).json({
       message: 'Order confirmed successfully. Notification sent to customer.',
       order,
@@ -1230,17 +1267,24 @@ exports.confirmOrder = async (req, res) => {
         unavailableItems: unavailableItems.length,
         subtotal: newSubtotal,
         shippingCost: numericShippingCost,
-        discount: order.discount,
+        discount: discount,
         total: newTotal,
         status: 'confirmed'
       }
     });
 
   } catch (error) {
-    console.error('❌ Error confirming order:', error);
+    console.error('❌ ERROR in confirmOrder:');
+    console.error('   Message:', error.message);
+    console.error('   Stack:', error.stack);
+    
     res.status(500).json({
       message: 'Failed to confirm order',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
+      details: error.message
     });
   }
 };
+
+// Additional helpers and middleware can be added here
+
