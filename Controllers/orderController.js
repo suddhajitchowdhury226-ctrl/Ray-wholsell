@@ -571,9 +571,12 @@ exports.getUserOrders = async (req, res) => {
 // Send Manufacturer inquiry Email
 exports.sendManufacturerInquiry = async (req, res) => {
   try {
-    const { orderId, manufacturerEmail } = req.body;
+    const { orderId, manufacturerEmail, merchantEmail } = req.body;
+    
+    // Accept both manufacturerEmail and merchantEmail
+    const email = manufacturerEmail || merchantEmail;
 
-    if (!orderId || !manufacturerEmail) {
+    if (!orderId || !email) {
       return res.status(400).json({ message: 'Order ID and Manufacturer email are required' });
     }
 
@@ -692,18 +695,18 @@ exports.sendManufacturerInquiry = async (req, res) => {
 
     const mailOptions = {
       from: process.env.EMAIL_USER,
-      to: manufacturerEmail,
+      to: email,
       subject: `Product Availability inquiry - Order #${order.orderNumber || order._id} - Ray Healthy Living`,
       html: generateManufacturerInquiryEmail(),
     };
 
     await transporter.sendMail(mailOptions);
 
-    console.log('📧 Manufacturer inquiry email sent to:', manufacturerEmail);
+    console.log('📧 Manufacturer inquiry email sent to:', email);
 
     res.status(200).json({
       message: 'Manufacturer inquiry sent successfully',
-      manufacturerEmail,
+      manufacturerEmail: email,
       orderId,
     });
 
