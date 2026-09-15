@@ -102,19 +102,51 @@ exports.registerUser = async (req, res) => {
     const mailOptions = {
       from: '"Ray Healthy Living" <' + process.env.EMAIL_USER + '>',
       to: email,
-      subject: 'Verify Your Email Address',
+      subject: 'Verify Your Email Address - Ray Healthy Living',
       html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-          <h2 style="color: #77a13d; text-align: center;">Welcome to Ray Healthy Living!</h2>
-          <p>Hi ${name},</p>
-          <p>Thank you for registering. Please verify your email address to complete your signup.</p>
-          <p>Your Verification OTP is:</p>
-          <div style="background: #f4f4f4; padding: 15px; text-align: center; font-size: 24px; font-weight: bold; letter-spacing: 5px; color: #333; margin: 20px 0;">
-            ${otp}
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px;">
+          <div style="text-align: center; margin-bottom: 30px;">
+            <h2 style="color: #16a34a; margin: 0; font-size: 28px;">Ray's Healthy Living</h2>
+            <p style="color: #666; margin: 5px 0 0 0; font-size: 14px;">Natural Health & Wellness</p>
           </div>
-          <p>This OTP is valid for 10 minutes.</p>
+          
+          <h3 style="color: #1f2937; margin-top: 0;">Welcome to Ray's Healthy Living!</h3>
+          <p style="color: #4b5563; line-height: 1.6;">Hi <strong>${name}</strong>,</p>
+          
+          <p style="color: #4b5563; line-height: 1.6;">Thank you for creating your account with us. To complete your registration and secure your account, please verify your email address by entering the code below:</p>
+          
+          <div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); padding: 25px; text-align: center; border-radius: 8px; margin: 30px 0; border: 2px solid #16a34a;">
+            <p style="margin: 0 0 10px 0; color: #666; font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">Your verification code</p>
+            <div style="font-size: 36px; font-weight: bold; letter-spacing: 8px; color: #16a34a; font-family: 'Courier New', monospace;">
+              ${otp}
+            </div>
+          </div>
+          
+          <p style="color: #4b5563; line-height: 1.6; font-size: 14px;">
+            <strong>This code will expire in 10 minutes.</strong> If you didn't request this code, please disregard this email.
+          </p>
+          
+          <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
+          
+          <div style="background: #f9fafb; padding: 15px; border-radius: 6px; margin: 20px 0;">
+            <p style="color: #666; font-size: 12px; margin: 0;">
+              <strong>Need help?</strong><br>
+              If you didn't create this account or have any questions, please contact our support team at 
+              <a href="mailto:info@rayshealthyliving.com" style="color: #16a34a; text-decoration: none;">info@rayshealthyliving.com</a>
+            </p>
+          </div>
+          
+          <p style="color: #999; font-size: 11px; text-align: center; margin-top: 20px;">
+            © ${new Date().getFullYear()} Ray's Healthy Living. All rights reserved.<br>
+            70 Solomons Island Rd S, Prince Frederick, MD 20678, United States
+          </p>
         </div>
-      `
+      `,
+      headers: {
+        'X-Priority': '3',
+        'X-Mailer': 'Ray Healthy Living',
+        'List-Unsubscribe': '<mailto:info@rayshealthyliving.com>'
+      }
     };
 
     try {
@@ -231,21 +263,60 @@ exports.resendVerificationOTP = async (req, res) => {
     const mailOptions = {
       from: '"Ray Healthy Living" <' + process.env.EMAIL_USER + '>',
       to: email,
-      subject: 'Resend Verification OTP',
+      subject: 'Your Verification Code - Ray Healthy Living',
       html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-          <h2 style="color: #ed8936; text-align: center;">New Verification OTP</h2>
-          <p>Hi ${user.name},</p>
-          <p>You requested a new OTP.</p>
-          <div style="background: #f4f4f4; padding: 15px; text-align: center; font-size: 24px; font-weight: bold; letter-spacing: 5px; color: #333; margin: 20px 0;">
-            ${otp}
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px;">
+          <div style="text-align: center; margin-bottom: 30px;">
+            <h2 style="color: #16a34a; margin: 0; font-size: 28px;">Ray's Healthy Living</h2>
+            <p style="color: #666; margin: 5px 0 0 0; font-size: 14px;">Natural Health & Wellness</p>
           </div>
-          <p>Valid for 10 minutes.</p>
+          
+          <h3 style="color: #1f2937; margin-top: 0;">New Verification Code</h3>
+          <p style="color: #4b5563; line-height: 1.6;">Hi <strong>${user.name}</strong>,</p>
+          
+          <p style="color: #4b5563; line-height: 1.6;">You requested a new verification code. Please use the code below to verify your email:</p>
+          
+          <div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); padding: 25px; text-align: center; border-radius: 8px; margin: 30px 0; border: 2px solid #16a34a;">
+            <p style="margin: 0 0 10px 0; color: #666; font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">Your verification code</p>
+            <div style="font-size: 36px; font-weight: bold; letter-spacing: 8px; color: #16a34a; font-family: 'Courier New', monospace;">
+              ${otp}
+            </div>
+          </div>
+          
+          <p style="color: #4b5563; line-height: 1.6; font-size: 14px;">
+            <strong>This code will expire in 10 minutes.</strong> If you didn't request this, please ignore this email.
+          </p>
+          
+          <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
+          
+          <div style="background: #f9fafb; padding: 15px; border-radius: 6px; margin: 20px 0;">
+            <p style="color: #666; font-size: 12px; margin: 0;">
+              <strong>Questions?</strong><br>
+              Contact our support team at 
+              <a href="mailto:info@rayshealthyliving.com" style="color: #16a34a; text-decoration: none;">info@rayshealthyliving.com</a>
+            </p>
+          </div>
+          
+          <p style="color: #999; font-size: 11px; text-align: center; margin-top: 20px;">
+            © ${new Date().getFullYear()} Ray's Healthy Living. All rights reserved.<br>
+            70 Solomons Island Rd S, Prince Frederick, MD 20678, United States
+          </p>
         </div>
-      `
+      `,
+      headers: {
+        'X-Priority': '3',
+        'X-Mailer': 'Ray Healthy Living',
+        'List-Unsubscribe': '<mailto:info@rayshealthyliving.com>'
+      }
     };
 
-    await transporter.sendMail(mailOptions);
+    try {
+      await transporter.sendMail(mailOptions);
+      console.log(`✅ Resend OTP email sent successfully to ${email}`);
+    } catch (emailError) {
+      console.error(`❌ Failed to resend OTP email to ${email}`);
+      console.error('Email error details:', emailError.message);
+    }
 
     res.status(200).json({ message: "OTP sent successfully" });
 
