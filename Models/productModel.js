@@ -71,7 +71,13 @@ const productSchema = new mongoose.Schema({
     type: String,
     required: true,
     trim: true,
-    description: 'Display/branded product name (customer-facing)'
+    description: 'Manufacturer PRODUCT NAME (internal/authoritative identifier)'
+  },
+  rhlProductTitle: {
+    type: String,
+    default: null,
+    trim: true,
+    description: 'RHL Marketing Title — shown as the product title on the website'
   },
   manufacturerName: {
     type: String,
