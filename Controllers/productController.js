@@ -2241,7 +2241,38 @@ const getCatalogProducts = async (req, res) => {
 
     // Filter by category if provided
     if (category) {
-      query.category = category;
+      // Products store category as string name, not ObjectId
+      // So if category ID is passed, lookup the category name first
+      try {
+        const mongoose = require('mongoose');
+        const categoryModel = require('../Models/categoryModel');
+        
+        // Check if category is an ObjectId
+        if (mongoose.Types.ObjectId.isValid(category) && category.length === 24) {
+          const categoryDoc = await categoryModel.findById(category);
+          if (categoryDoc) {
+            // Use regex for case-insensitive partial match
+            // This handles variations like "Single Herbal..." vs "SINGLE HERBAL... (details)"
+            const categoryPattern = categoryDoc.name
+              .replace(/[.*+?^${}()|[\]\\]/g, '\\$&') // Escape regex special chars
+              .split(' ')
+              .join('\\s+'); // Allow flexible whitespace
+            
+            query.category = { $regex: categoryPattern, $options: 'i' };
+            console.log(`✅ Category filter regex: /${categoryPattern}/i (from ID: ${category}, name: ${categoryDoc.name})`);
+          } else {
+            console.log(`⚠️ Category ID ${category} not found, using as-is`);
+            query.category = category;
+          }
+        } else {
+          // It's already a category name string
+          query.category = category;
+          console.log(`✅ Category filter: ${category} (direct name)`);
+        }
+      } catch (err) {
+        console.error('Error resolving category:', err);
+        query.category = category; // Fallback to original value
+      }
     }
 
     // Search by RHL ID, RHL UPC, or Product Title
