@@ -955,7 +955,12 @@ exports.getWishlist = async (req, res) => {
       return res.status(200).json({ wishlist: [] });
     }
 
-    const user = await User.findById(req.user.id).populate('wishlist');
+    const user = await User.findById(req.user.id).populate({
+      path: 'wishlist',
+      // Only fetch fields the wishlist card actually displays
+      select: 'name rhlProductTitle description category type status rhlId variants.price variants.size variants.status variants.itemNumber',
+    });
+
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
