@@ -82,9 +82,16 @@ exports.submitOrderRequest = async (req, res) => {
 
     console.log('💵 Order totals:', { subtotal, itemCount: processedItems.length });
 
+    // Generate unique order number
+    const timestamp = Date.now();
+    const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+    const orderNumber = `RET-${timestamp}-${random}`;
+    console.log('🔢 Generated orderNumber:', orderNumber);
+
     // Create order with pending status
     const order = new RetailerOrder({
       retailer: retailerId,
+      orderNumber: orderNumber,  // ✅ Add orderNumber here!
       items: processedItems,
       subtotal: Number(subtotal.toFixed(2)),
       total: Number(subtotal.toFixed(2)), // Will be updated when admin adds shipping

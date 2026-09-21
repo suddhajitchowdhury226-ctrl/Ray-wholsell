@@ -75,6 +75,8 @@ const retailerOrderSchema = new mongoose.Schema(
 
 // Generate order number before saving
 retailerOrderSchema.pre('save', async function (next) {
+  console.log('🎯 Pre-save hook triggered! orderNumber before:', this.orderNumber);
+  
   if (!this.orderNumber) {
     try {
       // Use current timestamp for uniqueness instead of count
@@ -89,6 +91,8 @@ retailerOrderSchema.pre('save', async function (next) {
       this.orderNumber = `RET-${Date.now()}`;
     }
   }
+  
+  console.log('🎯 Pre-save hook completed! orderNumber after:', this.orderNumber);
   next();
 });
 
