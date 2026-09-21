@@ -8,6 +8,12 @@ exports.submitOrderRequest = async (req, res) => {
     const { items, shippingAddress } = req.body;
     const retailerId = req.user._id;
 
+    console.log('📝 Submitting retailer order:', { 
+      retailerId, 
+      itemCount: items?.length,
+      shippingAddress 
+    });
+
     if (!items || items.length === 0) {
       return res.status(400).json({ 
         success: false, 
@@ -23,6 +29,7 @@ exports.submitOrderRequest = async (req, res) => {
       const product = await Product.findById(item.productId);
       
       if (!product) {
+        console.error('❌ Product not found:', item.productId);
         return res.status(404).json({ 
           success: false, 
           message: `Product not found: ${item.productId}` 
@@ -36,9 +43,34 @@ exports.submitOrderRequest = async (req, res) => {
         });
       }
 
-      const retailPrice = product.wholesalePrice * 1.2; // 20% markup
+      // Use sellPrice if wholesalePrice doesn't exist
+      const basePrice = product.wholesalePrice || product.sellPrice || product.price || 0;
+      
+      if (!basePrice || basePrice === 0) {
+        console.error('❌ Invalid price for product:', { 
+          productId: product._id, 
+          name: product.name,
+          wholesalePrice: product.wholesalePrice,
+          sellPrice: product.sellPrice,
+          price: product.price
+        });
+        return res.status(400).json({ 
+          success: false, 
+          message: `Invalid price for product: ${product.name}` 
+        });
+      }
+
+      const retailPrice = basePrice * 1.2; // 20% markup
       const lineTotal = retailPrice * item.quantity;
       subtotal += lineTotal;
+
+      console.log('💰 Product pricing:', {
+        name: product.name,
+        basePrice,
+        retailPrice,
+        quantity: item.quantity,
+        lineTotal
+      });
 
       processedItems.push({
         product: product._id,
@@ -48,17 +80,21 @@ exports.submitOrderRequest = async (req, res) => {
       });
     }
 
+    console.log('💵 Order totals:', { subtotal, itemCount: processedItems.length });
+
     // Create order with pending status
     const order = new RetailerOrder({
       retailer: retailerId,
       items: processedItems,
-      subtotal,
-      total: subtotal, // Will be updated when admin adds shipping
+      subtotal: Number(subtotal.toFixed(2)),
+      total: Number(subtotal.toFixed(2)), // Will be updated when admin adds shipping
       shippingAddress,
       status: 'pending'
     });
 
+    console.log('💾 Saving order...');
     await order.save();
+    console.log('✅ Order saved:', order.orderNumber);
 
     // Populate product details for response
     await order.populate('items.product');
@@ -69,7 +105,7 @@ exports.submitOrderRequest = async (req, res) => {
       order
     });
   } catch (error) {
-    console.error('Error submitting order request:', error);
+    console.error('❌ Error submitting order request:', error);
     res.status(500).json({ 
       success: false, 
       message: 'Failed to submit order request',
