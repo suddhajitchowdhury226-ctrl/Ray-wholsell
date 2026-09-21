@@ -151,6 +151,20 @@ const productSchema = new mongoose.Schema({
     description: 'Warehouse bin location for fulfillment (e.g., "A-1-1")'
   },
   
+  // === Pricing ===
+  wholesalePrice: {
+    type: Number,
+    min: [0, 'Wholesale price cannot be negative'],
+    default: 0,
+    description: 'Wholesale price for wholesalers'
+  },
+  retailPrice: {
+    type: Number,
+    min: [0, 'Retail price cannot be negative'],
+    default: 0,
+    description: 'Suggested retail price for retailers'
+  },
+  
   // === Status ===
   status: {
     type: String,
