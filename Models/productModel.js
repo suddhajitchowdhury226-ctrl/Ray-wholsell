@@ -54,6 +54,12 @@ const productSchema = new mongoose.Schema({
   },
   
   // === NEW: Category & Classification ===
+  department: {
+    type: String,
+    default: null,
+    index: true,
+    description: 'Product department (e.g., "VITAMINS A - Z", "JOINT SUPPORT")'
+  },
   category: {
     type: String,
     required: true,
@@ -213,12 +219,5 @@ const productSchema = new mongoose.Schema({
   },
   
 }, { timestamps: true });
-
-// === Indexes for Performance ===
-productSchema.index({ rhlId: 1 });
-productSchema.index({ category: 1 });
-productSchema.index({ 'variants.itemNumber': 1 });
-productSchema.index({ 'variants.rhlUpc': 1 });
-productSchema.index({ 'variants.manufacturerUpc': 1 });
 
 module.exports = mongoose.model('Product', productSchema);
