@@ -76,8 +76,18 @@ const retailerOrderSchema = new mongoose.Schema(
 // Generate order number before saving
 retailerOrderSchema.pre('save', async function (next) {
   if (!this.orderNumber) {
-    const count = await mongoose.model('RetailerOrder').countDocuments();
-    this.orderNumber = `RET-${String(count + 1).padStart(6, '0')}`;
+    try {
+      // Use current timestamp for uniqueness instead of count
+      const timestamp = Date.now();
+      const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+      this.orderNumber = `RET-${timestamp}-${random}`;
+      
+      console.log('🔢 Generated orderNumber:', this.orderNumber);
+    } catch (error) {
+      console.error('❌ Error generating orderNumber:', error);
+      // Fallback to simple timestamp if there's any error
+      this.orderNumber = `RET-${Date.now()}`;
+    }
   }
   next();
 });
