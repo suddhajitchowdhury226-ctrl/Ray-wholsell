@@ -83,6 +83,7 @@ const allowedOrigins = [
   "http://localhost:5180",  // Admin panel
   "http://localhost:5181",  // Frontend dev server
   "http://localhost:8080",  // Ray-Retailer dev server
+  "http://localhost:8081",  // Ray-Retailer dev server (alternate port)
   "https://retailer-wholesaler-website.netlify.app",
   "http://rayonesystem.com",
   "https://rayshealthyliving.com",
@@ -251,6 +252,7 @@ app.use("/api/wholesaler-form", require("./Routes/wholesalerFormRoute"));
 app.use("/api/chat", require("./Routes/chatRoute"));
 app.use("/api/supplier-orders", require("./Routes/supplierOrderRoute"));
 app.use("/api/migration", require("./Routes/migrationRoute"));
+app.use("/api/retailer-orders", require("./Routes/retailerOrderRoute"));
 
 // ✅ Shipment Tracking Endpoint (v3 - ready for orders)
 const trackShipment = async (carrierCode, trackingNumber) => {

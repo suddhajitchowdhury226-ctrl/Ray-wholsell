@@ -1,538 +1,360 @@
-/**
- * Retailer Order Management Controller
- * Handles orders from Ray-Retailer with admin confirmation flow
- */
-
-const nodemailer = require('nodemailer');
-const Order = require('../Models/orderModel');
-const User = require('../Models/user');
+const RetailerOrder = require('../Models/retailerOrderModel');
 const Product = require('../Models/productModel');
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
-// Create Retailer Order Request (Pending Admin Confirmation)
-exports.createRetailerOrder = async (req, res) => {
+// Submit order request (user action)
+exports.submitOrderRequest = async (req, res) => {
   try {
-    const { orderNumber, userEmail, userContactNumber, subtotal, total, items, deliveryAddress, status, paymentStatus, website } = req.body;
-    const userId = req.user._id;
+    const { items, shippingAddress } = req.body;
+    const retailerId = req.user._id;
 
-    // Validate required fields
-    if (!orderNumber || !userEmail || !items || items.length === 0) {
-      return res.status(400).json({
-        message: "Missing required fields"
+    if (!items || items.length === 0) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'No items in order' 
       });
     }
 
-    console.log(`📦 Creating retailer order: ${orderNumber}`);
+    // Validate and calculate prices
+    let subtotal = 0;
+    const processedItems = [];
 
-    // Get user
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
+    for (const item of items) {
+      const product = await Product.findById(item.productId);
+      
+      if (!product) {
+        return res.status(404).json({ 
+          success: false, 
+          message: `Product not found: ${item.productId}` 
+        });
+      }
+
+      if (product.stock < item.quantity) {
+        return res.status(400).json({ 
+          success: false, 
+          message: `Insufficient stock for ${product.name}` 
+        });
+      }
+
+      const retailPrice = product.wholesalePrice * 1.2; // 20% markup
+      const lineTotal = retailPrice * item.quantity;
+      subtotal += lineTotal;
+
+      processedItems.push({
+        product: product._id,
+        variantLabel: item.variantLabel || '',
+        quantity: item.quantity,
+        priceAtOrder: retailPrice
+      });
     }
 
-    // Create order using Order model with correct schema
-    const order = new Order({
-      user: userId,
-      orderNumber: orderNumber,
-      items: items,
-      deliveryAddress: deliveryAddress,
-      userEmail: userEmail,
-      userContactNumber: userContactNumber,
-      subtotal: subtotal,
-      total: total,
-      status: status || "processing",
-      paymentStatus: paymentStatus || "pending",
-      website: website || "retailer",
-      createdAt: new Date(),
+    // Create order with pending status
+    const order = new RetailerOrder({
+      retailer: retailerId,
+      items: processedItems,
+      subtotal,
+      total: subtotal, // Will be updated when admin adds shipping
+      shippingAddress,
+      status: 'pending'
     });
 
     await order.save();
-    console.log(`✅ Order created: ${orderNumber}`);
 
-    // Send email to admin
-    await sendAdminOrderNotification(order);
-    
-    // Send confirmation to user
-    await sendUserOrderConfirmation(user, order);
+    // Populate product details for response
+    await order.populate('items.product');
 
     res.status(201).json({
       success: true,
-      message: "Order submitted successfully",
-      orderId: orderNumber,
-      _id: order._id,
-      status: "processing",
+      message: 'Order request submitted successfully',
+      order
     });
-
   } catch (error) {
-    console.error("❌ Error creating retailer order:", error);
-    res.status(500).json({
-      message: error.message || "Failed to create retailer order"
+    console.error('Error submitting order request:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Failed to submit order request',
+      error: error.message 
     });
   }
 };
 
-// Get Retailer Orders
-exports.getRetailerOrders = async (req, res) => {
+// Get retailer's orders
+exports.getMyOrders = async (req, res) => {
   try {
-    const userId = req.user._id;
-
-    const orders = await Order.find({ user: userId, orderType: "retailer" })
-      .sort({ createdAt: -1 })
-      .lean();
+    const retailerId = req.user._id;
+    
+    const orders = await RetailerOrder.find({ retailer: retailerId })
+      .populate('items.product')
+      .sort({ createdAt: -1 });
 
     res.status(200).json({
       success: true,
-      count: orders.length,
-      orders,
+      orders
     });
-
   } catch (error) {
-    console.error("Error fetching retailer orders:", error);
-    res.status(500).json({
-      message: error.message || "Failed to fetch orders"
+    console.error('Error fetching orders:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Failed to fetch orders',
+      error: error.message 
     });
   }
 };
 
-// Get Order Details
-exports.getRetailerOrderDetails = async (req, res) => {
+// Get all pending orders (admin)
+exports.getPendingOrders = async (req, res) => {
+  try {
+    const orders = await RetailerOrder.find({ status: 'pending' })
+      .populate('retailer', 'name email phone')
+      .populate('items.product')
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      orders
+    });
+  } catch (error) {
+    console.error('Error fetching pending orders:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Failed to fetch pending orders',
+      error: error.message 
+    });
+  }
+};
+
+// Get all orders (admin)
+exports.getAllRetailerOrders = async (req, res) => {
+  try {
+    const { status } = req.query;
+    
+    const query = status ? { status } : {};
+    
+    const orders = await RetailerOrder.find(query)
+      .populate('retailer', 'name email phone')
+      .populate('items.product')
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      orders
+    });
+  } catch (error) {
+    console.error('Error fetching all orders:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Failed to fetch orders',
+      error: error.message 
+    });
+  }
+};
+
+// Confirm order with shipping (admin action)
+exports.confirmOrder = async (req, res) => {
   try {
     const { orderId } = req.params;
-    const userId = req.user._id;
+    const { shippingCost, adminNotes } = req.body;
 
-    const order = await Order.findOne({
-      _id: orderId,
-      user: userId,
-      orderType: "retailer"
-    }).lean();
+    const order = await RetailerOrder.findById(orderId)
+      .populate('retailer', 'name email')
+      .populate('items.product');
 
     if (!order) {
-      return res.status(404).json({ message: "Order not found" });
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Order not found' 
+      });
     }
 
-    res.status(200).json({
-      success: true,
-      order,
-    });
-
-  } catch (error) {
-    console.error("Error fetching order details:", error);
-    res.status(500).json({
-      message: error.message || "Failed to fetch order details"
-    });
-  }
-};
-
-// Admin: Get All Pending Retailer Orders
-exports.getPendingRetailerOrders = async (req, res) => {
-  try {
-    const orders = await Order.find({
-      orderType: "retailer",
-      status: "pending_confirmation"
-    })
-      .populate('user', 'name email phone')
-      .sort({ createdAt: -1 })
-      .lean();
-
-    res.status(200).json({
-      success: true,
-      count: orders.length,
-      orders,
-    });
-
-  } catch (error) {
-    console.error("Error fetching pending orders:", error);
-    res.status(500).json({
-      message: error.message || "Failed to fetch pending orders"
-    });
-  }
-};
-
-// Admin: Confirm and Modify Order
-exports.confirmRetailerOrder = async (req, res) => {
-  try {
-    const { orderId } = req.params;
-    const { items, shippingCost, notes, taxAmount } = req.body;
-
-    const order = await Order.findById(orderId);
-    if (!order) {
-      return res.status(404).json({ message: "Order not found" });
+    if (order.status !== 'pending') {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Only pending orders can be confirmed' 
+      });
     }
 
-    // Update items if modifications were made
-    if (items && items.length > 0) {
-      order.items = items;
-    }
-
-    // Add shipping cost and recalculate total
-    const shippingAmount = parseFloat(shippingCost || 0);
-    const taxAmt = parseFloat(taxAmount || 0);
-
-    order.pricing.shippingCost = shippingAmount;
-    order.pricing.tax = taxAmt;
-    order.pricing.finalTotal = order.pricing.subtotalWithMarkup + shippingAmount + taxAmt;
-
-    // Update status to confirmed
-    order.status = "confirmed";
-    order.adminNotes = notes || "";
+    // Update order with shipping and confirm
+    order.shippingCost = shippingCost || 0;
+    order.total = order.subtotal + order.shippingCost;
+    order.adminNotes = adminNotes || '';
+    order.status = 'confirmed';
     order.confirmedAt = new Date();
 
     await order.save();
 
-    console.log(`✅ Order ${orderId} confirmed with shipping: $${shippingAmount}`);
-
-    // Send confirmation email to user with final total
-    await sendUserOrderConfirmedEmail(order);
+    // TODO: Send invoice email to retailer
 
     res.status(200).json({
       success: true,
-      message: "Order confirmed successfully",
-      order,
+      message: 'Order confirmed successfully',
+      order
     });
-
   } catch (error) {
-    console.error("Error confirming order:", error);
-    res.status(500).json({
-      message: error.message || "Failed to confirm order"
+    console.error('Error confirming order:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Failed to confirm order',
+      error: error.message 
     });
   }
 };
 
-// Admin: Reject Order
-exports.rejectRetailerOrder = async (req, res) => {
+// Create payment intent (user action after confirmation)
+exports.createPaymentIntent = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const retailerId = req.user._id;
+
+    const order = await RetailerOrder.findById(orderId);
+
+    if (!order) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Order not found' 
+      });
+    }
+
+    if (order.retailer.toString() !== retailerId.toString()) {
+      return res.status(403).json({ 
+        success: false, 
+        message: 'Unauthorized' 
+      });
+    }
+
+    if (order.status !== 'confirmed') {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Order must be confirmed before payment' 
+      });
+    }
+
+    // Create Stripe payment intent
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: Math.round(order.total * 100), // Convert to cents
+      currency: 'usd',
+      metadata: {
+        orderId: order._id.toString(),
+        orderNumber: order.orderNumber,
+        retailerId: retailerId.toString()
+      }
+    });
+
+    order.paymentIntentId = paymentIntent.id;
+    await order.save();
+
+    res.status(200).json({
+      success: true,
+      clientSecret: paymentIntent.client_secret,
+      amount: order.total
+    });
+  } catch (error) {
+    console.error('Error creating payment intent:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Failed to create payment intent',
+      error: error.message 
+    });
+  }
+};
+
+// Confirm payment (webhook or manual confirmation)
+exports.confirmPayment = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const { paymentIntentId } = req.body;
+
+    const order = await RetailerOrder.findById(orderId)
+      .populate('items.product');
+
+    if (!order) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Order not found' 
+      });
+    }
+
+    if (order.status !== 'confirmed') {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Order must be confirmed before payment' 
+      });
+    }
+
+    // Verify payment with Stripe
+    const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+
+    if (paymentIntent.status !== 'succeeded') {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Payment not completed' 
+      });
+    }
+
+    // Update order status and reduce stock
+    order.status = 'paid';
+    order.paidAt = new Date();
+    await order.save();
+
+    // Reduce product stock
+    for (const item of order.items) {
+      await Product.findByIdAndUpdate(
+        item.product._id,
+        { $inc: { stock: -item.quantity } }
+      );
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Payment confirmed successfully',
+      order
+    });
+  } catch (error) {
+    console.error('Error confirming payment:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Failed to confirm payment',
+      error: error.message 
+    });
+  }
+};
+
+// Cancel order (admin or user)
+exports.cancelOrder = async (req, res) => {
   try {
     const { orderId } = req.params;
     const { reason } = req.body;
 
-    const order = await Order.findById(orderId);
-    if (!order) {
-      return res.status(404).json({ message: "Order not found" });
-    }
-
-    order.status = "rejected";
-    order.rejectionReason = reason || "No reason provided";
-    await order.save();
-
-    // Send rejection email to user
-    await sendUserOrderRejectedEmail(order);
-
-    res.status(200).json({
-      success: true,
-      message: "Order rejected",
-      order,
-    });
-
-  } catch (error) {
-    console.error("Error rejecting order:", error);
-    res.status(500).json({
-      message: error.message || "Failed to reject order"
-    });
-  }
-};
-
-// Get Order Invoice (only if confirmed)
-exports.getOrderInvoice = async (req, res) => {
-  try {
-    const { orderId } = req.params;
-    const userId = req.user._id;
-
-    const order = await Order.findOne({
-      _id: orderId,
-      user: userId,
-      orderType: "retailer",
-    }).lean();
+    const order = await RetailerOrder.findById(orderId);
 
     if (!order) {
-      return res.status(404).json({ message: "Order not found" });
-    }
-
-    // Only allow viewing invoice if order is confirmed or paid
-    if (!["confirmed", "paid", "shipped", "delivered"].includes(order.status)) {
-      return res.status(403).json({
-        message: "Invoice not available. Awaiting admin confirmation."
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Order not found' 
       });
     }
 
+    if (order.status === 'paid' || order.status === 'shipped' || order.status === 'delivered') {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Cannot cancel order at this stage' 
+      });
+    }
+
+    order.status = 'cancelled';
+    order.adminNotes = reason || order.adminNotes;
+    await order.save();
+
     res.status(200).json({
       success: true,
-      invoice: generateInvoiceData(order),
+      message: 'Order cancelled successfully',
+      order
     });
-
   } catch (error) {
-    console.error("Error fetching invoice:", error);
-    res.status(500).json({
-      message: error.message || "Failed to fetch invoice"
+    console.error('Error cancelling order:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Failed to cancel order',
+      error: error.message 
     });
   }
 };
-
-// Helper: Send Admin Notification Email
-async function sendAdminOrderNotification(order) {
-  try {
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
-
-    const itemsList = order.items
-      .map(
-        (item) =>
-          `<tr>
-        <td style="padding: 8px; border: 1px solid #ddd;">${item.productName}</td>
-        <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${item.quantity}</td>
-        <td style="padding: 8px; border: 1px solid #ddd; text-align: right;">$${item.retailPrice.toFixed(2)}</td>
-        <td style="padding: 8px; border: 1px solid #ddd; text-align: right;">$${item.lineTotal.toFixed(2)}</td>
-      </tr>`
-      )
-      .join("");
-
-    const mailOptions = {
-      from: `"Ray Healthy Living" <${process.env.EMAIL_USER}>`,
-      to: process.env.EMAIL_ADMIN || "info@rayshealthyliving.com",
-      subject: `New Retailer Order Request - ${order.orderId}`,
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
-          <h2 style="color: #16a34a; text-align: center;">New Retailer Order Request</h2>
-          
-          <div style="background: #f9fafb; padding: 15px; border-radius: 6px; margin: 20px 0;">
-            <p><strong>Order ID:</strong> ${order.orderId}</p>
-            <p><strong>Retailer:</strong> ${order.user?.name || "N/A"}</p>
-            <p><strong>Email:</strong> ${order.email}</p>
-            <p><strong>Phone:</strong> ${order.phone}</p>
-          </div>
-
-          <h3 style="color: #1f2937; margin-top: 20px;">Shipping Address</h3>
-          <div style="background: #f9fafb; padding: 15px; border-radius: 6px;">
-            <p>${order.shippingAddress.firstName} ${order.shippingAddress.lastName}</p>
-            <p>${order.shippingAddress.street}</p>
-            <p>${order.shippingAddress.city}, ${order.shippingAddress.state} ${order.shippingAddress.zip}</p>
-          </div>
-
-          <h3 style="color: #1f2937; margin-top: 20px;">Order Items</h3>
-          <table style="width: 100%; border-collapse: collapse; margin: 15px 0;">
-            <thead>
-              <tr style="background: #f3f4f6;">
-                <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Product</th>
-                <th style="padding: 10px; border: 1px solid #ddd; text-align: center;">Qty</th>
-                <th style="padding: 10px; border: 1px solid #ddd; text-align: right;">Price</th>
-                <th style="padding: 10px; border: 1px solid #ddd; text-align: right;">Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${itemsList}
-            </tbody>
-          </table>
-
-          <h3 style="color: #1f2937; margin-top: 20px;">Pricing Summary</h3>
-          <div style="background: #f9fafb; padding: 15px; border-radius: 6px;">
-            <div style="display: flex; justify-content: space-between; margin: 10px 0;">
-              <span>Subtotal (with 20% markup):</span>
-              <span><strong>$${order.pricing.subtotal.toFixed(2)}</strong></span>
-            </div>
-            <div style="display: flex; justify-content: space-between; margin: 10px 0; padding: 10px; background: white; border-radius: 4px;">
-              <span>Shipping Cost (To be added):</span>
-              <span><strong>$0.00</strong></span>
-            </div>
-            <div style="display: flex; justify-content: space-between; margin: 10px 0; border-top: 2px solid #ddd; padding-top: 10px;">
-              <span style="font-weight: bold; font-size: 16px;">Current Total:</span>
-              <span style="font-weight: bold; font-size: 16px; color: #16a34a;">$${order.pricing.total.toFixed(2)}</span>
-            </div>
-          </div>
-
-          <div style="margin-top: 30px; text-align: center;">
-            <p><strong>Action Required:</strong> Review this order request and confirm or reject it in your admin panel.</p>
-            <p style="color: #666; font-size: 12px;">You can modify product quantities, availability, and add shipping costs.</p>
-          </div>
-        </div>
-      `,
-    };
-
-    await transporter.sendMail(mailOptions);
-    console.log(`✅ Admin notification sent for order ${order.orderId}`);
-  } catch (error) {
-    console.error("❌ Failed to send admin notification:", error);
-  }
-}
-
-// Helper: Send User Order Confirmation Email
-async function sendUserOrderConfirmation(user, order) {
-  try {
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
-
-    const mailOptions = {
-      from: `"Ray Healthy Living" <${process.env.EMAIL_USER}>`,
-      to: user.email,
-      subject: `Order Received - ${order.orderId}`,
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-          <h2 style="color: #16a34a; text-align: center;">Order Received!</h2>
-          
-          <p>Hello ${user.name},</p>
-          <p>Thank you for your order. We've received your request and our team is reviewing it.</p>
-
-          <div style="background: #f0fdf4; border: 2px solid #16a34a; padding: 15px; border-radius: 6px; margin: 20px 0;">
-            <p style="margin: 0;"><strong>Order ID:</strong> <span style="font-family: monospace; background: white; padding: 5px 10px; border-radius: 4px;">${order.orderId}</span></p>
-            <p style="margin: 10px 0 0 0;"><strong>Status:</strong> <span style="color: #ff9800;">Awaiting Admin Confirmation</span></p>
-          </div>
-
-          <p><strong>Order Summary:</strong></p>
-          <ul style="color: #666;">
-            <li>${order.items.length} product(s)</li>
-            <li>Subtotal: $${order.pricing.subtotal.toFixed(2)}</li>
-            <li>Shipping: To be determined</li>
-          </ul>
-
-          <div style="background: #f9fafb; padding: 15px; border-radius: 6px; margin: 20px 0;">
-            <p style="color: #666; font-size: 14px;">Our team will review your order and confirm availability within 24 hours. You'll receive another email with the final total and shipping details.</p>
-          </div>
-
-          <p style="color: #666; font-size: 12px; text-align: center; margin-top: 30px;">
-            © Ray's Healthy Living<br>
-            70 Solomons Island Rd S, Prince Frederick, MD 20678
-          </p>
-        </div>
-      `,
-    };
-
-    await transporter.sendMail(mailOptions);
-    console.log(`✅ Order confirmation sent to ${user.email}`);
-  } catch (error) {
-    console.error("❌ Failed to send user confirmation:", error);
-  }
-}
-
-// Helper: Send Order Confirmed Email
-async function sendUserOrderConfirmedEmail(order) {
-  try {
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
-
-    const mailOptions = {
-      from: `"Ray Healthy Living" <${process.env.EMAIL_USER}>`,
-      to: order.email,
-      subject: `Order Confirmed - ${order.orderId} - Ready for Payment`,
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-          <h2 style="color: #16a34a; text-align: center;">✓ Order Confirmed!</h2>
-          
-          <p>Hello,</p>
-          <p>Great news! Your order has been confirmed by our team. All items are in stock and ready to ship.</p>
-
-          <div style="background: #f0fdf4; border: 2px solid #16a34a; padding: 15px; border-radius: 6px; margin: 20px 0;">
-            <p style="margin: 0;"><strong>Order ID:</strong> <span style="font-family: monospace; background: white; padding: 5px 10px; border-radius: 4px;">${order.orderId}</span></p>
-            <p style="margin: 10px 0 0 0;"><strong>Status:</strong> <span style="color: #16a34a; font-weight: bold;">Confirmed</span></p>
-          </div>
-
-          <h3 style="color: #1f2937;">Final Invoice</h3>
-          <div style="background: #f9fafb; padding: 15px; border-radius: 6px;">
-            <div style="display: flex; justify-content: space-between; margin: 8px 0;">
-              <span>Subtotal:</span>
-              <span>$${order.pricing.subtotal.toFixed(2)}</span>
-            </div>
-            <div style="display: flex; justify-content: space-between; margin: 8px 0;">
-              <span>Shipping:</span>
-              <span>$${order.pricing.shippingCost.toFixed(2)}</span>
-            </div>
-            <div style="display: flex; justify-content: space-between; margin: 8px 0;">
-              <span>Tax:</span>
-              <span>$${order.pricing.tax.toFixed(2)}</span>
-            </div>
-            <div style="display: flex; justify-content: space-between; margin: 15px 0 0 0; padding-top: 10px; border-top: 2px solid #ddd; font-weight: bold; font-size: 16px;">
-              <span>Total Due:</span>
-              <span style="color: #16a34a;">$${order.pricing.finalTotal.toFixed(2)}</span>
-            </div>
-          </div>
-
-          <div style="margin: 20px 0; text-align: center;">
-            <a href="#" style="background: #16a34a; color: white; padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: bold; display: inline-block;">View & Pay Invoice</a>
-          </div>
-
-          <p style="color: #666; font-size: 12px; text-align: center; margin-top: 30px;">
-            © Ray's Healthy Living
-          </p>
-        </div>
-      `,
-    };
-
-    await transporter.sendMail(mailOptions);
-    console.log(`✅ Order confirmed email sent to ${order.email}`);
-  } catch (error) {
-    console.error("❌ Failed to send confirmed email:", error);
-  }
-}
-
-// Helper: Send Order Rejected Email
-async function sendUserOrderRejectedEmail(order) {
-  try {
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
-
-    const mailOptions = {
-      from: `"Ray Healthy Living" <${process.env.EMAIL_USER}>`,
-      to: order.email,
-      subject: `Order Cannot Be Fulfilled - ${order.orderId}`,
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-          <h2 style="color: #dc2626; text-align: center;">Order Cannot Be Fulfilled</h2>
-          
-          <p>Hello,</p>
-          <p>Unfortunately, we're unable to fulfill your order at this time.</p>
-
-          <div style="background: #fee2e2; border: 2px solid #dc2626; padding: 15px; border-radius: 6px; margin: 20px 0;">
-            <p style="margin: 0;"><strong>Order ID:</strong> <span style="font-family: monospace; background: white; padding: 5px 10px; border-radius: 4px;">${order.orderId}</span></p>
-            <p style="margin: 10px 0 0 0;"><strong>Reason:</strong> ${order.rejectionReason}</p>
-          </div>
-
-          <p>Please contact our support team if you have any questions or would like to discuss alternative options.</p>
-
-          <p style="color: #666; font-size: 12px; text-align: center; margin-top: 30px;">
-            © Ray's Healthy Living
-          </p>
-        </div>
-      `,
-    };
-
-    await transporter.sendMail(mailOptions);
-    console.log(`✅ Order rejected email sent to ${order.email}`);
-  } catch (error) {
-    console.error("❌ Failed to send rejected email:", error);
-  }
-}
-
-// Helper: Generate Invoice Data
-function generateInvoiceData(order) {
-  return {
-    orderId: order.orderId,
-    invoiceDate: new Date(order.confirmedAt || order.createdAt).toLocaleDateString(),
-    dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString(),
-    customer: {
-      name: order.user?.name,
-      email: order.email,
-      phone: order.phone,
-    },
-    shippingAddress: order.shippingAddress,
-    items: order.items,
-    pricing: order.pricing,
-    notes: order.notes,
-  };
-}
-
-module.exports = exports;
