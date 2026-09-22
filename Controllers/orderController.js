@@ -722,12 +722,14 @@ exports.sendManufacturerInquiry = async (req, res) => {
 
           // Table headers
           const startY = doc.y;
-          const col1X = 40, col2X = 280, col3X = 450;
+          const col1X = 40, col2X = 200, col3X = 290, col4X = 400, col5X = 490;
           
           doc.fontSize(10).font('Helvetica-Bold');
           doc.text('Product Name', col1X, startY);
-          doc.text('SKU', col2X, startY);
-          doc.text('Qty', col3X, startY);
+          doc.text('Item #', col2X, startY);
+          doc.text('Product ID', col3X, startY);
+          doc.text('Size', col4X, startY);
+          doc.text('Qty', col5X, startY);
           
           doc.moveTo(40, startY + 15).lineTo(555, startY + 15).stroke();
           
@@ -736,8 +738,36 @@ exports.sendManufacturerInquiry = async (req, res) => {
           doc.font('Helvetica').fontSize(9);
           
           order.items.forEach((item, idx) => {
-            const productName = item.product?.name || item.name || 'N/A';
-            const sku = item.product?.sku || 'N/A';
+            const product = item.product;
+            const productName = product?.rhlProductTitle || product?.name || item.name || 'N/A';
+            const rhlId = product?.rhlId || 'N/A';
+            
+            // Find matching variant for size and itemNumber
+            let size = item.size || 'Standard';
+            let itemNumber = 'N/A';
+            
+            if (product?.variants && product.variants.length > 0) {
+              // Try to match by variantId or price
+              let matchedVariant = null;
+              if (item.variantId) {
+                matchedVariant = product.variants.find(v => v._id && v._id.toString() === item.variantId.toString());
+              }
+              if (!matchedVariant && item.size) {
+                matchedVariant = product.variants.find(v => v.size === item.size);
+              }
+              if (!matchedVariant) {
+                matchedVariant = product.variants.find(v => Math.abs(v.price - item.price) < 0.01);
+              }
+              if (!matchedVariant) {
+                matchedVariant = product.variants[0];
+              }
+              
+              if (matchedVariant) {
+                if (matchedVariant.size) size = matchedVariant.size;
+                if (matchedVariant.itemNumber) itemNumber = matchedVariant.itemNumber;
+              }
+            }
+            
             const qty = item.quantity;
             
             // Wrap text if needed
@@ -746,9 +776,11 @@ exports.sendManufacturerInquiry = async (req, res) => {
               currentY = 40;
             }
             
-            doc.text(productName.substring(0, 35), col1X, currentY, { width: 200 });
-            doc.text(sku, col2X, currentY);
-            doc.text(qty.toString(), col3X, currentY);
+            doc.text(productName.substring(0, 22), col1X, currentY, { width: 150 });
+            doc.text(itemNumber, col2X, currentY); // Item Number from variant
+            doc.text(rhlId.toString(), col3X, currentY); // Product ID (RHL ID)
+            doc.text(size, col4X, currentY);
+            doc.text(qty.toString(), col5X, currentY);
             
             currentY += 20;
           });
@@ -829,18 +861,49 @@ exports.sendManufacturerInquiry = async (req, res) => {
     // Create email template with product details (NO PRICE)
     const generateManufacturerInquiryEmail = () => {
       const itemsHtml = order.items.map(item => {
-        const imageUrl = item.product?.images?.[0] 
-          ? (item.product.images[0].startsWith('http') 
-              ? item.product.images[0] 
-              : `${process.env.BACKEND_URL}/${item.product.images[0].replace(/\\/g, '/').replace(/^\/+/, '')}`)
+        const product = item.product;
+        const imageUrl = product?.images?.[0] 
+          ? (product.images[0].startsWith('http') 
+              ? product.images[0] 
+              : `${process.env.BACKEND_URL}/${product.images[0].replace(/\\/g, '/').replace(/^\/+/, '')}`)
           : '';
+
+        const productName = product?.rhlProductTitle || product?.name || item.name || 'N/A';
+        const rhlId = product?.rhlId || 'N/A';
+        
+        // Find matching variant for size and itemNumber
+        let size = item.size || 'Standard';
+        let itemNumber = 'N/A';
+        
+        if (product?.variants && product.variants.length > 0) {
+          let matchedVariant = null;
+          if (item.variantId) {
+            matchedVariant = product.variants.find(v => v._id && v._id.toString() === item.variantId.toString());
+          }
+          if (!matchedVariant && item.size) {
+            matchedVariant = product.variants.find(v => v.size === item.size);
+          }
+          if (!matchedVariant) {
+            matchedVariant = product.variants.find(v => Math.abs(v.price - item.price) < 0.01);
+          }
+          if (!matchedVariant) {
+            matchedVariant = product.variants[0];
+          }
+          
+          if (matchedVariant) {
+            if (matchedVariant.size) size = matchedVariant.size;
+            if (matchedVariant.itemNumber) itemNumber = matchedVariant.itemNumber;
+          }
+        }
 
         return `
           <tr style="border-bottom: 1px solid #eee;">
             <td style="padding: 12px;">
-              ${imageUrl ? `<img src="${imageUrl}" alt="${item.product.name}" style="width: 80px; height: 80px; object-fit: contain; border-radius: 4px;"><br/>` : ''}
-              <strong>${item.product.name}</strong><br/>
-              <small style="color: #666;">SKU: ${item.product.sku || 'N/A'}</small><br/>
+              ${imageUrl ? `<img src="${imageUrl}" alt="${productName}" style="width: 80px; height: 80px; object-fit: contain; border-radius: 4px;"><br/>` : ''}
+              <strong>${productName}</strong><br/>
+              <small style="color: #666;">Item Number: ${itemNumber}</small><br/>
+              <small style="color: #666;">Product ID: ${rhlId}</small><br/>
+              <small style="color: #666;">Size: ${size}</small><br/>
               <strong>Qty Requested: ${item.quantity}</strong>
             </td>
           </tr>
