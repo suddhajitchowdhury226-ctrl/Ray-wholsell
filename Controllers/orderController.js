@@ -1090,7 +1090,7 @@ exports.confirmOrder = async (req, res) => {
     // ============ FETCH ORDER ============
     const order = await Order.findById(orderId)
       .populate('user', 'name email')
-      .populate('items.product', 'name images price');
+      .populate('items.product', 'name rhlProductTitle rhlId variants sku images price');
 
     if (!order) {
       console.error('❌ Order not found:', orderId);
@@ -1210,14 +1210,56 @@ exports.confirmOrder = async (req, res) => {
         throw new Error('Email credentials not configured');
       }
 
-      const availableItemsHtml = processedItems.map(item => `
-        <tr style="border-bottom: 1px solid #eee;">
-          <td style="padding: 12px; color: #333;"><strong>${item.name}</strong></td>
-          <td style="padding: 12px; text-align: center; color: #666;">${item.quantity}</td>
-          <td style="padding: 12px; text-align: right; color: #333;">$${item.price.toFixed(2)}</td>
-          <td style="padding: 12px; text-align: right; font-weight: 600; color: #333;">$${(item.price * item.quantity).toFixed(2)}</td>
+      // First, populate the order with full product details
+      await order.populate('items.product', 'name rhlProductTitle rhlId variants sku images');
+
+      const availableItemsHtml = processedItems.map(item => {
+        // Get full product details
+        const orderItem = order.items.find(oi => oi.product._id.toString() === item.productId.toString());
+        const product = orderItem?.product;
+        
+        const productName = product?.rhlProductTitle || item.name;
+        const rhlId = product?.rhlId || 'N/A';
+        const rhlUpc = product?.variants?.[0]?.rhlUpc || product?.sku || 'N/A';
+        const size = product?.variants?.[0]?.size || 'Standard';
+        
+        return `
+        <tr style="border-bottom: 1px solid #ddd;">
+          <td style="padding: 12px;">
+            <table cellpadding="0" cellspacing="0" border="0" width="100%">
+              <tr>
+                <td valign="top">
+                  <div style="font-weight: 700; color: #333; font-size: 14px; margin-bottom: 6px;">${productName}</div>
+                  <table cellpadding="0" cellspacing="0" border="0" style="font-size: 11px; color: #666; line-height: 1.6;">
+                    <tr>
+                      <td style="padding: 1px 0;"><strong style="color: #555;">RHL ID:</strong></td>
+                      <td style="padding: 1px 0 1px 6px;"><span style="color: #77a13d; font-weight: 600;">${rhlId}</span></td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 1px 0;"><strong style="color: #555;">RHL UPC:</strong></td>
+                      <td style="padding: 1px 0 1px 6px;"><span style="font-family: 'Courier New', monospace; color: #333;">${rhlUpc}</span></td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 1px 0;"><strong style="color: #555;">Size:</strong></td>
+                      <td style="padding: 1px 0 1px 6px;">${size}</td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </td>
+          <td style="padding: 12px; text-align: center; vertical-align: middle;">
+            <span style="color: #333; font-size: 15px; font-weight: 600;">${item.quantity}</span>
+          </td>
+          <td style="padding: 12px; text-align: right; vertical-align: middle;">
+            <span style="color: #333; font-size: 14px; font-weight: 600;">$${item.price.toFixed(2)}</span>
+          </td>
+          <td style="padding: 12px; text-align: right; vertical-align: middle;">
+            <span style="color: #77a13d; font-size: 15px; font-weight: 700;">$${(item.price * item.quantity).toFixed(2)}</span>
+          </td>
         </tr>
-      `).join('');
+      `;
+      }).join('');
 
       const unavailableHtml = unavailableItems.length > 0 ? `
         <div style="background: #fee2e2; padding: 15px; border-left: 4px solid #dc2626; margin: 20px 0; border-radius: 4px;">
@@ -1252,13 +1294,13 @@ exports.confirmOrder = async (req, res) => {
 
             <div style="margin-bottom: 25px;">
               <h3 style="color: #333; margin: 0 0 15px 0; font-size: 18px;">Confirmed Products:</h3>
-              <table style="width: 100%; border-collapse: collapse; border: 1px solid #eee;">
+              <table style="width: 100%; border-collapse: collapse; border: 1px solid #ddd;">
                 <thead>
-                  <tr style="background-color: #f8f9fa;">
-                    <th style="padding: 15px 12px; text-align: left; color: #333; font-weight: 600;">Product</th>
-                    <th style="padding: 15px 12px; text-align: center; color: #333; font-weight: 600;">Qty</th>
-                    <th style="padding: 15px 12px; text-align: right; color: #333; font-weight: 600;">Unit Price</th>
-                    <th style="padding: 15px 12px; text-align: right; color: #333; font-weight: 600;">Total</th>
+                  <tr style="background-color: #77a13d;">
+                    <th style="padding: 12px; text-align: left; color: white; font-weight: 600; border-bottom: 2px solid #ddd;">Product Details</th>
+                    <th style="padding: 12px; text-align: center; color: white; font-weight: 600; border-bottom: 2px solid #ddd;">Quantity</th>
+                    <th style="padding: 12px; text-align: right; color: white; font-weight: 600; border-bottom: 2px solid #ddd;">Unit Price</th>
+                    <th style="padding: 12px; text-align: right; color: white; font-weight: 600; border-bottom: 2px solid #ddd;">Total</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1269,29 +1311,54 @@ exports.confirmOrder = async (req, res) => {
 
             <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 25px;">
               <h3 style="color: #333; margin: 0 0 15px 0; font-size: 18px;">Order Summary</h3>
-              <div style="display: flex; justify-content: space-between; margin: 8px 0; color: #555;">
-                <span>Subtotal:</span>
-                <strong>$${newSubtotal.toFixed(2)}</strong>
-              </div>
-              <div style="display: flex; justify-content: space-between; margin: 8px 0; color: #555;">
-                <span>Shipping Cost:</span>
-                <strong>$${numericShippingCost.toFixed(2)}</strong>
-              </div>
-              ${discount > 0 ? `
-                <div style="display: flex; justify-content: space-between; margin: 8px 0; color: #555;">
-                  <span>Discount:</span>
-                  <strong style="color: #4caf50;">-$${discount.toFixed(2)}</strong>
-                </div>
-              ` : ''}
-              <div style="display: flex; justify-content: space-between; margin: 12px 0 0 0; padding-top: 12px; border-top: 2px solid #ddd; color: #333; font-size: 18px; font-weight: 700;">
-                <span>Total Amount:</span>
-                <span style="color: #77a13d;">$${newTotal.toFixed(2)}</span>
-              </div>
+              <table style="width: 100%; border-collapse: collapse;">
+                <tr>
+                  <td style="padding: 8px 0; color: #555; font-size: 15px;">Subtotal:</td>
+                  <td style="padding: 8px 0; text-align: right; color: #555; font-size: 15px; font-weight: 600;">$${newSubtotal.toFixed(2)}</td>
+                </tr>
+                ${numericShippingCost > 0 ? `
+                <tr>
+                  <td style="padding: 8px 0; color: #555; font-size: 15px;">Shipping Cost:</td>
+                  <td style="padding: 8px 0; text-align: right; color: #555; font-size: 15px; font-weight: 600;">$${numericShippingCost.toFixed(2)}</td>
+                </tr>
+                ` : ''}
+                ${discount > 0 ? `
+                <tr>
+                  <td style="padding: 8px 0; color: #28a745; font-size: 15px;">Discount:</td>
+                  <td style="padding: 8px 0; text-align: right; color: #28a745; font-size: 15px; font-weight: 600;">-$${discount.toFixed(2)}</td>
+                </tr>
+                ` : ''}
+                <tr>
+                  <td colspan="2" style="padding: 10px 0;"><hr style="border: none; border-top: 2px solid #77a13d; margin: 0;"></td>
+                </tr>
+                <tr>
+                  <td style="padding: 10px 0; color: #333; font-size: 20px; font-weight: bold;">Total Amount:</td>
+                  <td style="padding: 10px 0; text-align: right; color: #77a13d; font-size: 22px; font-weight: bold;">$${newTotal.toFixed(2)}</td>
+                </tr>
+              </table>
             </div>
 
-            <div style="background: #e8f5e9; padding: 15px; border-left: 4px solid #4caf50; margin-bottom: 25px; border-radius: 4px;">
-              <p style="margin: 0; color: #333;"><strong>Next Step:</strong></p>
-              <p style="margin: 5px 0 0 0; color: #555;">Please proceed to payment to complete your order. You can view your order status and payment options in your account.</p>
+            <div style="background: linear-gradient(135deg, #e8f5e9, #c8e6c9); padding: 20px; border-left: 4px solid #4caf50; margin-bottom: 25px; border-radius: 8px;">
+              <h3 style="margin: 0 0 12px 0; color: #1b5e20; font-size: 18px;">✓ Order Confirmed - Payment Required</h3>
+              <p style="margin: 0 0 12px 0; color: #2e7d32; font-size: 15px; line-height: 1.6;">
+                <strong>Your order has been confirmed by our team!</strong> To complete your purchase, please proceed with payment.
+              </p>
+              <p style="margin: 0 0 15px 0; color: #2e7d32; font-size: 14px; line-height: 1.6;">
+                <strong>To make payment:</strong>
+              </p>
+              <ol style="margin: 0 0 15px 0; padding-left: 20px; color: #2e7d32; font-size: 14px; line-height: 1.8;">
+                <li>Visit our website and log in to your account</li>
+                <li>Go to <strong>"My Orders"</strong> section</li>
+                <li>Find Order #${order.orderNumber}</li>
+                <li>Click <strong>"Make Payment"</strong> button</li>
+                <li>Complete the secure checkout process</li>
+              </ol>
+              <div style="text-align: center; margin-top: 20px;">
+                <a href="${process.env.FRONTEND_URL || 'http://localhost:5173'}/my-orders" 
+                   style="background: #4caf50; color: white; padding: 14px 32px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block; font-size: 15px;">
+                  View My Orders →
+                </a>
+              </div>
             </div>
 
             <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
