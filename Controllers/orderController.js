@@ -1354,7 +1354,7 @@ exports.confirmOrder = async (req, res) => {
                 <li>Complete the secure checkout process</li>
               </ol>
               <div style="text-align: center; margin-top: 20px;">
-                <a href="${process.env.FRONTEND_URL || 'http://localhost:5173'}/my-orders" 
+                <a href="${process.env.FRONTEND_URL || 'http://localhost:5173'}/account/my-profile" 
                    style="background: #4caf50; color: white; padding: 14px 32px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block; font-size: 15px;">
                   View My Orders →
                 </a>
