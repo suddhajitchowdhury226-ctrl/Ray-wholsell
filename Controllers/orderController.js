@@ -33,15 +33,56 @@ const generateOrderConfirmationEmail = (order, userAddress) => {
         : `${baseUrl}/${imagePath.replace(/\\/g, '/').replace(/^\/+/, '')}`;
     }
     
+    // Get product details
+    const productName = item.product?.rhlProductTitle || item.name || 'Product';
+    const rhlId = item.product?.rhlId || 'N/A';
+    const rhlUpc = item.product?.variants?.[0]?.rhlUpc || item.product?.sku || 'N/A';
+    const size = item.product?.variants?.[0]?.size || item.size || 'Standard';
+    
     return `
-      <tr style="border-bottom: 1px solid #eee;">
-        <td style="padding: 12px; color: #333;">
-          ${imageUrl ? `<img src="${imageUrl}" alt="${item.name}" style="width: 80px; height: 80px; object-fit: contain; margin-bottom: 8px; border-radius: 4px;"><br/>` : ''}
-          <strong>${item.name}</strong>
+      <tr style="border-bottom: 1px solid #ddd;">
+        <td style="padding: 15px 12px;">
+          <table cellpadding="0" cellspacing="0" border="0" width="100%">
+            <tr>
+              <td width="90" valign="top" style="padding-right: 12px;">
+                ${imageUrl ? `
+                  <img src="${imageUrl}" alt="${productName}" 
+                       style="width: 80px; height: 80px; object-fit: contain; border-radius: 6px; border: 1px solid #e0e0e0; display: block;">
+                ` : `
+                  <div style="width: 80px; height: 80px; background: #f5f5f5; border-radius: 6px; display: flex; align-items: center; justify-content: center; text-align: center; border: 1px solid #ddd;">
+                    <span style="color: #999; font-size: 11px;">No Image</span>
+                  </div>
+                `}
+              </td>
+              <td valign="top">
+                <div style="font-weight: 700; color: #333; font-size: 15px; margin-bottom: 8px; line-height: 1.4;">${productName}</div>
+                <table cellpadding="0" cellspacing="0" border="0" style="font-size: 12px; color: #666; line-height: 1.8;">
+                  <tr>
+                    <td style="padding: 2px 0;"><strong style="color: #555;">RHL ID:</strong></td>
+                    <td style="padding: 2px 0 2px 8px;"><span style="color: #77a13d; font-weight: 600;">${rhlId}</span></td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 2px 0;"><strong style="color: #555;">RHL UPC:</strong></td>
+                    <td style="padding: 2px 0 2px 8px;"><span style="font-family: 'Courier New', monospace; color: #333;">${rhlUpc}</span></td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 2px 0;"><strong style="color: #555;">Size:</strong></td>
+                    <td style="padding: 2px 0 2px 8px;">${size}</td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
         </td>
-        <td style="padding: 12px; text-align: center; color: #666;">${item.quantity}</td>
-        <td style="padding: 12px; text-align: right; color: #333;">$${item.price.toFixed(2)}</td>
-        <td style="padding: 12px; text-align: right; font-weight: 600; color: #333;">$${(item.price * item.quantity).toFixed(2)}</td>
+        <td style="padding: 15px 12px; text-align: center; vertical-align: middle;">
+          <span style="color: #333; font-size: 16px; font-weight: 600;">${item.quantity}</span>
+        </td>
+        <td style="padding: 15px 12px; text-align: right; vertical-align: middle;">
+          <span style="color: #333; font-size: 15px; font-weight: 600;">$${item.price.toFixed(2)}</span>
+        </td>
+        <td style="padding: 15px 12px; text-align: right; vertical-align: middle;">
+          <span style="color: #77a13d; font-size: 17px; font-weight: 700;">$${(item.price * item.quantity).toFixed(2)}</span>
+        </td>
       </tr>
     `;
   }).join('');
@@ -82,13 +123,13 @@ const generateOrderConfirmationEmail = (order, userAddress) => {
         <!-- Order Items -->
         <div style="margin-bottom: 25px;">
           <h3 style="color: #333; margin: 0 0 15px 0; font-size: 18px;">Order Items</h3>
-          <table style="width: 100%; border-collapse: collapse; border: 1px solid #eee;">
+          <table style="width: 100%; border-collapse: collapse; border: 1px solid #ddd;">
             <thead>
-              <tr style="background-color: #f8f9fa;">
-                <th style="padding: 15px 12px; text-align: left; color: #333; font-weight: 600;">Product (Image)</th>
-                <th style="padding: 15px 12px; text-align: center; color: #333; font-weight: 600;">Qty</th>
-                <th style="padding: 15px 12px; text-align: right; color: #333; font-weight: 600;">Unit Price</th>
-                <th style="padding: 15px 12px; text-align: right; color: #333; font-weight: 600;">Total</th>
+              <tr style="background-color: #77a13d;">
+                <th style="padding: 12px; text-align: left; color: white; font-weight: 600; border-bottom: 2px solid #ddd;">Product Details</th>
+                <th style="padding: 12px; text-align: center; color: white; font-weight: 600; border-bottom: 2px solid #ddd;">Quantity</th>
+                <th style="padding: 12px; text-align: right; color: white; font-weight: 600; border-bottom: 2px solid #ddd;">Unit Price</th>
+                <th style="padding: 12px; text-align: right; color: white; font-weight: 600; border-bottom: 2px solid #ddd;">Total</th>
               </tr>
             </thead>
             <tbody>
@@ -98,27 +139,33 @@ const generateOrderConfirmationEmail = (order, userAddress) => {
         </div>
 
         <!-- Order Summary -->
-        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 25px;">
           <h3 style="color: #333; margin: 0 0 15px 0; font-size: 18px;">Order Summary</h3>
-          <div style="display: flex; justify-content: space-between; margin: 8px 0; color: #555;">
-            <span>Subtotal:</span>
-            <span>$${order.subtotal.toFixed(2)}</span>
-          </div>
-          ${order.discount > 0 ? `
-            <div style="display: flex; justify-content: space-between; margin: 8px 0; color: #28a745;">
-              <span>Discount ${order.couponCode ? `(${order.couponCode})` : ''}:</span>
-              <span>-$${order.discount.toFixed(2)}</span>
-            </div>
-          ` : ''}
-          <div style="display: flex; justify-content: space-between; margin: 8px 0; color: #555;">
-            <span>Shipping:</span>
-            <span>${order.shippingCost > 0 ? `$${order.shippingCost.toFixed(2)}` : 'FREE'}</span>
-          </div>
-          <hr style="border: none; border-top: 2px solid #77a13d; margin: 15px 0;">
-          <div style="display: flex; justify-content: space-between; margin: 8px 0; color: #333; font-size: 20px; font-weight: bold;">
-            <span>Total:</span>
-            <span style="color: #77a13d;">$${order.total.toFixed(2)}</span>
-          </div>
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+              <td style="padding: 8px 0; color: #555; font-size: 15px;">Subtotal:</td>
+              <td style="padding: 8px 0; text-align: right; color: #555; font-size: 15px; font-weight: 600;">$${order.subtotal.toFixed(2)}</td>
+            </tr>
+            ${order.discount > 0 ? `
+            <tr>
+              <td style="padding: 8px 0; color: #28a745; font-size: 15px;">Discount ${order.couponCode ? `(${order.couponCode})` : ''}:</td>
+              <td style="padding: 8px 0; text-align: right; color: #28a745; font-size: 15px; font-weight: 600;">-$${order.discount.toFixed(2)}</td>
+            </tr>
+            ` : ''}
+            <tr>
+              <td style="padding: 8px 0; color: #555; font-size: 15px;">Shipping:</td>
+              <td style="padding: 8px 0; text-align: right; color: #555; font-size: 15px; font-weight: 600;">
+                ${order.shippingCost > 0 ? `$${order.shippingCost.toFixed(2)}` : '<span style="color: #28a745; font-weight: 700;">FREE</span>'}
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2" style="padding: 10px 0;"><hr style="border: none; border-top: 2px solid #77a13d; margin: 0;"></td>
+            </tr>
+            <tr>
+              <td style="padding: 10px 0; color: #333; font-size: 20px; font-weight: bold;">Total:</td>
+              <td style="padding: 10px 0; text-align: right; color: #77a13d; font-size: 22px; font-weight: bold;">$${order.total.toFixed(2)}</td>
+            </tr>
+          </table>
         </div>
 
         <!-- Next Steps -->
@@ -149,12 +196,25 @@ const generateAdminOrderNotificationEmail = (order, user, userAddress) => {
   const baseUrl = process.env.BACKEND_URL || 'https://ray-wholsell.onrender.com';
   
   const itemsHtml = order.items.map(item => {
+    // Get product details
+    const productName = item.product?.rhlProductTitle || item.name || 'Product';
+    const rhlId = item.product?.rhlId || 'N/A';
+    const rhlUpc = item.product?.variants?.[0]?.rhlUpc || item.product?.sku || 'N/A';
+    const size = item.product?.variants?.[0]?.size || item.size || 'Standard';
+    
     return `
       <tr style="border-bottom: 1px solid #eee;">
-        <td style="padding: 12px; color: #333;"><strong>${item.name}</strong></td>
-        <td style="padding: 12px; text-align: center; color: #666;">${item.quantity}</td>
-        <td style="padding: 12px; text-align: right; color: #333;">$${item.price.toFixed(2)}</td>
-        <td style="padding: 12px; text-align: right; font-weight: 600; color: #333;">$${(item.price * item.quantity).toFixed(2)}</td>
+        <td style="padding: 12px; color: #333;">
+          <strong style="display: block; margin-bottom: 5px;">${productName}</strong>
+          <div style="font-size: 11px; color: #666;">
+            <div>RHL ID: <span style="color: #d9534f; font-weight: 600;">${rhlId}</span></div>
+            <div>RHL UPC: <span style="font-family: 'Courier New', monospace;">${rhlUpc}</span></div>
+            <div>Size: ${size}</div>
+          </div>
+        </td>
+        <td style="padding: 12px; text-align: center; color: #666; font-weight: 600;">${item.quantity}</td>
+        <td style="padding: 12px; text-align: right; color: #333; font-weight: 600;">$${item.price.toFixed(2)}</td>
+        <td style="padding: 12px; text-align: right; font-weight: 700; color: #d9534f;">$${(item.price * item.quantity).toFixed(2)}</td>
       </tr>
     `;
   }).join('');
