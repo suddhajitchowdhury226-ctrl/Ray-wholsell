@@ -152,12 +152,12 @@ const generateOrderConfirmationEmail = (order, userAddress) => {
               <td style="padding: 8px 0; text-align: right; color: #28a745; font-size: 15px; font-weight: 600;">-$${order.discount.toFixed(2)}</td>
             </tr>
             ` : ''}
+            ${order.shippingCost > 0 ? `
             <tr>
               <td style="padding: 8px 0; color: #555; font-size: 15px;">Shipping:</td>
-              <td style="padding: 8px 0; text-align: right; color: #555; font-size: 15px; font-weight: 600;">
-                ${order.shippingCost > 0 ? `$${order.shippingCost.toFixed(2)}` : '<span style="color: #28a745; font-weight: 700;">FREE</span>'}
-              </td>
+              <td style="padding: 8px 0; text-align: right; color: #555; font-size: 15px; font-weight: 600;">$${order.shippingCost.toFixed(2)}</td>
             </tr>
+            ` : ''}
             <tr>
               <td colspan="2" style="padding: 10px 0;"><hr style="border: none; border-top: 2px solid #77a13d; margin: 0;"></td>
             </tr>
@@ -487,8 +487,8 @@ exports.createOrderFromCart = async (req, res) => {
     await Cart.findOneAndUpdate({ user: userId }, { items: [] });
     console.log('🧹 Cart cleared for user:', userId);
 
-    // Populate product data with images for email
-    const populatedOrder = await Order.findById(order._id).populate('items.product', 'name images');
+    // Populate product data with all necessary fields for email
+    const populatedOrder = await Order.findById(order._id).populate('items.product', 'name rhlProductTitle rhlId variants sku images');
     console.log('📦 Order populated with product data for email');
 
     // Send confirmation email to USER
