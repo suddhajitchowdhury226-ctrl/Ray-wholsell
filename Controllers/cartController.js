@@ -565,7 +565,7 @@ exports.getAllPurchases = async (req, res) => {
     const purchases = await purchaseModel
       .find(query)
       .sort({ createdAt: -1 })
-      .populate('items.product', 'name buyPrice images createdBy')
+      .populate('items.product', 'name rhlProductTitle rhlId variants sku buyPrice images createdBy')
       .populate('user', 'name email')
       .populate('shipment', 'shipping status address productDetails trackingUrl createdAt')
       .lean();
@@ -3589,7 +3589,7 @@ exports.getPurchaseByIds = async (req, res) => {
         path: 'user',
         select: 'name email phone role profileImage' // exclude password
       })
-      .populate('items.product', 'name buyPrice images sku createdBy variants')
+      .populate('items.product', 'name rhlProductTitle rhlId variants sku buyPrice images createdBy')
       .populate('shipment')
       .lean();
 
