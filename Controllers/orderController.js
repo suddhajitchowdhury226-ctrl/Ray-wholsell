@@ -614,7 +614,7 @@ exports.getUserOrders = async (req, res) => {
     const userId = req.user._id;
     
     const orders = await Order.find({ user: userId })
-      .populate('items.product', 'name images')
+      .populate('items.product', 'name rhlProductTitle rhlId variants sku images price')
       .sort({ createdAt: -1 });
 
     res.status(200).json({
@@ -646,7 +646,7 @@ exports.sendManufacturerInquiry = async (req, res) => {
 
     // Fetch order with product details
     const order = await Order.findById(orderId)
-      .populate('items.product', 'name images sku')
+      .populate('items.product', 'name rhlProductTitle rhlId variants sku images')
       .populate('user', 'name email');
 
     if (!order) {
@@ -963,7 +963,7 @@ exports.getOrderDetails = async (req, res) => {
     const userId = req.user._id;
 
     const order = await Order.findOne({ _id: orderId, user: userId })
-      .populate('items.product', 'name images');
+      .populate('items.product', 'name rhlProductTitle rhlId variants sku images price');
 
     if (!order) {
       return res.status(404).json({ message: 'Order not found' });
@@ -999,7 +999,7 @@ exports.getAllOrders = async (req, res) => {
 
     const orders = await Order.find(filter)
       .populate('user', 'name email phone')
-      .populate('items.product', 'name images')
+      .populate('items.product', 'name rhlProductTitle rhlId variants sku images price')
       .sort({ createdAt: -1 })
       .limit(limit * 1)
       .skip((page - 1) * limit);
@@ -1425,7 +1425,7 @@ exports.processAdminConfirmedOrderPayment = async (req, res) => {
 
     // Fetch the admin-confirmed order
     const order = await Order.findById(orderId)
-      .populate('items.product', 'name images')
+      .populate('items.product', 'name rhlProductTitle rhlId variants sku images price')
       .populate('user', 'name email');
 
     if (!order) {
