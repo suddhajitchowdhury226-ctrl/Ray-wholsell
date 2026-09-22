@@ -47,6 +47,11 @@ const orderSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       required: false,
     },
+    size: {
+      type: String,
+      required: false,
+      description: 'Size from the product variant (e.g., "90 vcp", "180 vcp")'
+    },
     variantName: {
       type: String,
       required: false,

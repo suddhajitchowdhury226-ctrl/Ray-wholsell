@@ -375,6 +375,15 @@ exports.createOrderFromCart = async (req, res) => {
         
         console.log(`   ✓ Added ${quantity} x ${product.name} @ $${itemPrice} = $${itemTotal}`);
         
+        // Find the variant to get size information
+        let variantSize = null;
+        if (item.variantId && product.variants) {
+          const variant = product.variants.id(item.variantId);
+          if (variant) {
+            variantSize = variant.size;
+          }
+        }
+        
         orderItems.push({
           product: product._id,
           name: product.name,
@@ -382,6 +391,7 @@ exports.createOrderFromCart = async (req, res) => {
           price: itemPrice,
           websiteRole: item.websiteRole || 'wholesaler',
           variantId: item.variantId,
+          size: variantSize,  // Add size from variant
           flavour: item.flavour,
         });
       }
@@ -407,6 +417,15 @@ exports.createOrderFromCart = async (req, res) => {
         
         subtotal += itemTotal;
         
+        // Find the variant to get size information
+        let variantSize = null;
+        if (cartItem.variantId && product.variants) {
+          const variant = product.variants.id(cartItem.variantId);
+          if (variant) {
+            variantSize = variant.size;
+          }
+        }
+        
         orderItems.push({
           product: product._id,
           name: product.name,
@@ -414,6 +433,7 @@ exports.createOrderFromCart = async (req, res) => {
           price: itemPrice,
           websiteRole: cartItem.websiteRole,
           variantId: cartItem.variantId,
+          size: variantSize,  // Add size from variant
           flavour: cartItem.flavour,
         });
       }
