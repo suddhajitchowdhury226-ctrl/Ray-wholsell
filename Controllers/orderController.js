@@ -1314,6 +1314,7 @@ exports.confirmOrder = async (req, res) => {
 
     // ============ SEND EMAIL ============
     try {
+      console.log('📧 Starting email send to:', customerEmail);
       const transporter = createTransporter();
       
       // Verify transporter has credentials
@@ -1522,6 +1523,8 @@ exports.confirmOrder = async (req, res) => {
       console.log('✅ Confirmation email sent to:', customerEmail);
     } catch (emailError) {
       console.error('⚠️ Email sending failed (non-fatal):', emailError.message);
+      console.error('⚠️ Email error stack:', emailError.stack);
+      console.error('⚠️ Email error full:', JSON.stringify({ message: emailError.message, code: emailError.code, command: emailError.command }));
       // Don't fail the entire operation - order is already confirmed and saved
     }
 
