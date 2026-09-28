@@ -1327,7 +1327,16 @@ exports.confirmOrder = async (req, res) => {
       const availableItemsHtml = processedItems.map(item => {
         // Use data saved directly on the confirmed item first (rhlId, size, rhlUpc)
         // then fall back to the populated product object for legacy orders
-        const orderItem = order.items.find(oi => oi.product._id.toString() === item.productId.toString());
+        const orderItem = order.items.find(oi => {
+          // Guard: product may be null if it was deleted after ordering
+          if (!oi.product || !oi.product._id) return false;
+          if (!item.productId) return false;
+          try {
+            return oi.product._id.toString() === item.productId.toString();
+          } catch (e) {
+            return false;
+          }
+        });
         const product = orderItem?.product;
         
         const productName = item.name || product?.rhlProductTitle || product?.name || 'Product';
@@ -1371,10 +1380,10 @@ exports.confirmOrder = async (req, res) => {
             <span style="color: #333; font-size: 15px; font-weight: 600;">${item.quantity}</span>
           </td>
           <td style="padding: 12px; text-align: right; vertical-align: middle;">
-            <span style="color: #333; font-size: 14px; font-weight: 600;">$${item.price.toFixed(2)}</span>
+            <span style="color: #333; font-size: 14px; font-weight: 600;">$${(parseFloat(item.price) || 0).toFixed(2)}</span>
           </td>
           <td style="padding: 12px; text-align: right; vertical-align: middle;">
-            <span style="color: #77a13d; font-size: 15px; font-weight: 700;">$${(item.price * item.quantity).toFixed(2)}</span>
+            <span style="color: #77a13d; font-size: 15px; font-weight: 700;">$${((parseFloat(item.price) || 0) * (item.quantity || 0)).toFixed(2)}</span>
           </td>
         </tr>
       `;
