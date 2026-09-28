@@ -726,7 +726,7 @@ exports.sendManufacturerInquiry = async (req, res) => {
           
           doc.fontSize(10).font('Helvetica-Bold');
           doc.text('Product Name', col1X, startY);
-          doc.text('Item #', col2X, startY);
+          doc.text('Reorder #', col2X, startY);
           doc.text('Product ID', col3X, startY);
           doc.text('Size', col4X, startY);
           doc.text('Qty', col5X, startY);
@@ -777,7 +777,7 @@ exports.sendManufacturerInquiry = async (req, res) => {
             }
             
             doc.text(productName.substring(0, 22), col1X, currentY, { width: 150 });
-            doc.text(itemNumber, col2X, currentY); // Item Number from variant
+            doc.text(itemNumber, col2X, currentY); // Reorder Number from variant
             doc.text(rhlId.toString(), col3X, currentY); // Product ID (RHL ID)
             doc.text(size, col4X, currentY);
             doc.text(qty.toString(), col5X, currentY);
@@ -901,7 +901,7 @@ exports.sendManufacturerInquiry = async (req, res) => {
             <td style="padding: 12px;">
               ${imageUrl ? `<img src="${imageUrl}" alt="${productName}" style="width: 80px; height: 80px; object-fit: contain; border-radius: 4px;"><br/>` : ''}
               <strong>${productName}</strong><br/>
-              <small style="color: #666;">Item Number: ${itemNumber}</small><br/>
+              <small style="color: #666;">Reorder Number: ${itemNumber}</small><br/>
               <small style="color: #666;">Product ID: ${rhlId}</small><br/>
               <small style="color: #666;">Size: ${size}</small><br/>
               <strong>Qty Requested: ${item.quantity}</strong>
@@ -1232,10 +1232,38 @@ exports.confirmOrder = async (req, res) => {
           const itemTotal = price * quantity;
           
           newSubtotal += itemTotal;
+
+          // Resolve variant details for this item (size, rhlUpc, reorder number)
+          let itemSize = item.size || null;
+          let itemRhlUpc = null;
+          let itemReorderNumber = null;
+          const product = item.product;
+          if (product?.variants?.length > 0) {
+            let matchedVariant = null;
+            if (item.variantId) {
+              matchedVariant = product.variants.find(v => v._id && v._id.toString() === item.variantId.toString());
+            }
+            if (!matchedVariant && item.size) {
+              matchedVariant = product.variants.find(v => v.size === item.size);
+            }
+            if (!matchedVariant) {
+              matchedVariant = product.variants.find(v => Math.abs((v.price || 0) - (item.price || 0)) < 0.01);
+            }
+            if (!matchedVariant) matchedVariant = product.variants[0];
+            if (matchedVariant) {
+              itemSize = matchedVariant.size || itemSize;
+              itemRhlUpc = matchedVariant.rhlUpc || null;
+              itemReorderNumber = matchedVariant.itemNumber || null;
+            }
+          }
           
           processedItems.push({
             productId: item.product._id,
             name: item.name || item.product.name,
+            rhlId: item.product.rhlId || null,
+            size: itemSize,
+            rhlUpc: itemRhlUpc,
+            reorderNumber: itemReorderNumber,
             quantity: quantity,
             price: price,
             isAvailable: true,
@@ -1297,14 +1325,22 @@ exports.confirmOrder = async (req, res) => {
       await order.populate('items.product', 'name rhlProductTitle rhlId variants sku images');
 
       const availableItemsHtml = processedItems.map(item => {
-        // Get full product details
+        // Use data saved directly on the confirmed item first (rhlId, size, rhlUpc)
+        // then fall back to the populated product object for legacy orders
         const orderItem = order.items.find(oi => oi.product._id.toString() === item.productId.toString());
         const product = orderItem?.product;
         
-        const productName = product?.rhlProductTitle || item.name;
-        const rhlId = product?.rhlId || 'N/A';
-        const rhlUpc = product?.variants?.[0]?.rhlUpc || product?.sku || 'N/A';
-        const size = product?.variants?.[0]?.size || 'Standard';
+        const productName = item.name || product?.rhlProductTitle || product?.name || 'Product';
+        const rhlId = item.rhlId ?? product?.rhlId ?? 'N/A';
+        const size = item.size || 'Standard';
+
+        // For rhlUpc: use saved value, then try to match variant by size, then first variant
+        let rhlUpc = item.rhlUpc || null;
+        if (!rhlUpc && product?.variants?.length > 0) {
+          const matchedVariant = product.variants.find(v => v.size === size) || product.variants[0];
+          rhlUpc = matchedVariant?.rhlUpc || null;
+        }
+        const upcDisplay = rhlUpc || 'N/A';
         
         return `
         <tr style="border-bottom: 1px solid #ddd;">
@@ -1320,7 +1356,7 @@ exports.confirmOrder = async (req, res) => {
                     </tr>
                     <tr>
                       <td style="padding: 1px 0;"><strong style="color: #555;">RHL UPC:</strong></td>
-                      <td style="padding: 1px 0 1px 6px;"><span style="font-family: 'Courier New', monospace; color: #333;">${rhlUpc}</span></td>
+                      <td style="padding: 1px 0 1px 6px;"><span style="font-family: 'Courier New', monospace; color: #333;">${upcDisplay}</span></td>
                     </tr>
                     <tr>
                       <td style="padding: 1px 0;"><strong style="color: #555;">Size:</strong></td>
@@ -1401,7 +1437,7 @@ exports.confirmOrder = async (req, res) => {
                 </tr>
                 ${numericShippingCost > 0 ? `
                 <tr>
-                  <td style="padding: 8px 0; color: #555; font-size: 15px;">Shipping Cost:</td>
+                  <td style="padding: 8px 0; color: #555; font-size: 15px;">Shipping Cost <span style="font-size: 12px; color: #888;">(based on delivery address)</span>:</td>
                   <td style="padding: 8px 0; text-align: right; color: #555; font-size: 15px; font-weight: 600;">$${numericShippingCost.toFixed(2)}</td>
                 </tr>
                 ` : ''}
@@ -1420,6 +1456,19 @@ exports.confirmOrder = async (req, res) => {
                 </tr>
               </table>
             </div>
+
+            ${order.deliveryAddress ? `
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 25px; border-left: 4px solid #77a13d;">
+              <h3 style="color: #333; margin: 0 0 12px 0; font-size: 18px;">📦 Shipping Address</h3>
+              <p style="margin: 4px 0; color: #333; font-size: 15px; font-weight: 600;">${order.deliveryAddress.name || ''}</p>
+              <p style="margin: 4px 0; color: #555; font-size: 14px;">${order.deliveryAddress.addressLine1 || ''}</p>
+              ${order.deliveryAddress.addressLine2 ? `<p style="margin: 4px 0; color: #555; font-size: 14px;">${order.deliveryAddress.addressLine2}</p>` : ''}
+              <p style="margin: 4px 0; color: #555; font-size: 14px;">${order.deliveryAddress.city || ''}${order.deliveryAddress.state ? ', ' + order.deliveryAddress.state : ''} ${order.deliveryAddress.zipcode || ''}</p>
+              <p style="margin: 4px 0; color: #555; font-size: 14px;">${order.deliveryAddress.country || ''}</p>
+              ${order.deliveryAddress.contactNumber ? `<p style="margin: 8px 0 0 0; color: #555; font-size: 14px;">📞 ${order.deliveryAddress.contactNumber}</p>` : ''}
+              ${numericShippingCost > 0 ? `<p style="margin: 10px 0 0 0; color: #666; font-size: 13px; font-style: italic;">Shipping cost of $${numericShippingCost.toFixed(2)} has been calculated based on this delivery address.</p>` : ''}
+            </div>
+            ` : ''}
 
             <div style="background: linear-gradient(135deg, #e8f5e9, #c8e6c9); padding: 20px; border-left: 4px solid #4caf50; margin-bottom: 25px; border-radius: 8px;">
               <h3 style="margin: 0 0 12px 0; color: #1b5e20; font-size: 18px;">✓ Order Confirmed - Payment Required</h3>
