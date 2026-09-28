@@ -19,6 +19,17 @@ const createTransporter = () => {
   });
 };
 
+// Standard mail headers to improve deliverability and avoid spam filters
+const getMailHeaders = () => ({
+  'X-Mailer': "Ray's Healthy Living Order System",
+  'X-Priority': '3',
+  'Importance': 'Normal',
+  'List-Unsubscribe': `<mailto:${process.env.EMAIL_USER}?subject=unsubscribe>`,
+});
+
+// Sender display name — shows "Ray's Healthy Living" instead of raw email
+const FROM_ADDRESS = `"Ray's Healthy Living" <${process.env.EMAIL_USER}>`;
+
 // Generate order confirmation email HTML
 const generateOrderConfirmationEmail = (order, userAddress) => {
   const baseUrl = process.env.BACKEND_URL || 'https://ray-wholsell.onrender.com';
@@ -517,10 +528,13 @@ exports.createOrderFromCart = async (req, res) => {
       const transporter = createTransporter();
       
       const mailOptions = {
-        from: process.env.EMAIL_USER,
+        from: FROM_ADDRESS,
+        replyTo: FROM_ADDRESS,
         to: user.email,
-        subject: `Order Confirmation - ${populatedOrder.orderNumber} - Ray Healthy Living`,
+        subject: `Order Confirmation ${populatedOrder.orderNumber} - Ray's Healthy Living`,
         html: generateOrderConfirmationEmail(populatedOrder, deliveryAddress),
+        text: `Thank you for your order ${populatedOrder.orderNumber}. We have received your order and will process it shortly. Visit ${process.env.FRONTEND_URL || 'https://rayonewholesale.com'}/account/my-profile to view your order details.`,
+        headers: getMailHeaders(),
       };
 
       console.log('📧 Mail options:', {
@@ -553,10 +567,13 @@ exports.createOrderFromCart = async (req, res) => {
       const transporter = createTransporter();
       
       const adminMailOptions = {
-        from: process.env.EMAIL_USER,
+        from: FROM_ADDRESS,
+        replyTo: FROM_ADDRESS,
         to: process.env.EMAIL_ADMIN || process.env.EMAIL_USER,
-        subject: `🔔 NEW ORDER NOTIFICATION - ${populatedOrder.orderNumber} - Ray Healthy Living`,
+        subject: `NEW ORDER - ${populatedOrder.orderNumber} - Ray's Healthy Living`,
         html: generateAdminOrderNotificationEmail(populatedOrder, user, deliveryAddress),
+        text: `New order received: ${populatedOrder.orderNumber}. Log in to the admin panel to review.`,
+        headers: getMailHeaders(),
       };
 
       console.log('📧 Admin mail options:', {
@@ -985,19 +1002,16 @@ exports.sendManufacturerInquiry = async (req, res) => {
     };
 
     // Send email with PDF attachment
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
+    const transporter = createTransporter();
 
     const mailOptions = {
-      from: process.env.EMAIL_USER,
+      from: FROM_ADDRESS,
+      replyTo: FROM_ADDRESS,
       to: email,
-      subject: `Product Availability inquiry - Order #${order.orderNumber || order._id} - Ray Healthy Living`,
+      subject: `Product Availability Inquiry - Order ${order.orderNumber || order._id} - Ray's Healthy Living`,
       html: generateManufacturerInquiryEmail(),
+      text: `Product availability inquiry from Ray's Healthy Living for Order ${order.orderNumber || order._id}. Please see the attached PDF for product details.`,
+      headers: getMailHeaders(),
       attachments: [
         {
           filename: `manufacturer-inquiry-${order.orderNumber || orderId}.pdf`,
@@ -1495,10 +1509,13 @@ exports.confirmOrder = async (req, res) => {
       `;
 
       const mailOptions = {
-        from: process.env.EMAIL_USER,
+        from: FROM_ADDRESS,
+        replyTo: FROM_ADDRESS,
         to: customerEmail,
-        subject: `Order Confirmed #${order.orderNumber} - Awaiting Payment`,
+        subject: `Order Confirmed ${order.orderNumber} - Payment Required`,
         html: emailHtml,
+        text: `Your order ${order.orderNumber} has been confirmed. Total: $${newTotal.toFixed(2)}. Please log in to complete payment at ${process.env.FRONTEND_URL || 'https://rayonewholesale.com'}/account/my-profile`,
+        headers: getMailHeaders(),
       };
 
       await transporter.sendMail(mailOptions);
