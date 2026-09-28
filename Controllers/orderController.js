@@ -1314,7 +1314,6 @@ exports.confirmOrder = async (req, res) => {
 
     // ============ SEND EMAIL ============
     try {
-      console.log('📧 Starting email send to:', customerEmail);
       const transporter = createTransporter();
       
       // Verify transporter has credentials
@@ -1326,31 +1325,14 @@ exports.confirmOrder = async (req, res) => {
       await order.populate('items.product', 'name rhlProductTitle rhlId variants sku images');
 
       const availableItemsHtml = processedItems.map(item => {
-        // Use data saved directly on the confirmed item first (rhlId, size, rhlUpc)
-        // then fall back to the populated product object for legacy orders
-        const orderItem = order.items.find(oi => {
-          // Guard: product may be null if it was deleted after ordering
-          if (!oi.product || !oi.product._id) return false;
-          if (!item.productId) return false;
-          try {
-            return oi.product._id.toString() === item.productId.toString();
-          } catch (e) {
-            return false;
-          }
-        });
+        // Get full product details
+        const orderItem = order.items.find(oi => oi.product._id.toString() === item.productId.toString());
         const product = orderItem?.product;
         
-        const productName = item.name || product?.rhlProductTitle || product?.name || 'Product';
-        const rhlId = item.rhlId ?? product?.rhlId ?? 'N/A';
-        const size = item.size || 'Standard';
-
-        // For rhlUpc: use saved value, then try to match variant by size, then first variant
-        let rhlUpc = item.rhlUpc || null;
-        if (!rhlUpc && product?.variants?.length > 0) {
-          const matchedVariant = product.variants.find(v => v.size === size) || product.variants[0];
-          rhlUpc = matchedVariant?.rhlUpc || null;
-        }
-        const upcDisplay = rhlUpc || 'N/A';
+        const productName = product?.rhlProductTitle || item.name;
+        const rhlId = product?.rhlId || 'N/A';
+        const rhlUpc = product?.variants?.[0]?.rhlUpc || product?.sku || 'N/A';
+        const size = product?.variants?.[0]?.size || 'Standard';
         
         return `
         <tr style="border-bottom: 1px solid #ddd;">
@@ -1366,7 +1348,7 @@ exports.confirmOrder = async (req, res) => {
                     </tr>
                     <tr>
                       <td style="padding: 1px 0;"><strong style="color: #555;">RHL UPC:</strong></td>
-                      <td style="padding: 1px 0 1px 6px;"><span style="font-family: 'Courier New', monospace; color: #333;">${upcDisplay}</span></td>
+                      <td style="padding: 1px 0 1px 6px;"><span style="font-family: 'Courier New', monospace; color: #333;">${rhlUpc}</span></td>
                     </tr>
                     <tr>
                       <td style="padding: 1px 0;"><strong style="color: #555;">Size:</strong></td>
@@ -1381,10 +1363,10 @@ exports.confirmOrder = async (req, res) => {
             <span style="color: #333; font-size: 15px; font-weight: 600;">${item.quantity}</span>
           </td>
           <td style="padding: 12px; text-align: right; vertical-align: middle;">
-            <span style="color: #333; font-size: 14px; font-weight: 600;">$${(parseFloat(item.price) || 0).toFixed(2)}</span>
+            <span style="color: #333; font-size: 14px; font-weight: 600;">$${item.price.toFixed(2)}</span>
           </td>
           <td style="padding: 12px; text-align: right; vertical-align: middle;">
-            <span style="color: #77a13d; font-size: 15px; font-weight: 700;">$${((parseFloat(item.price) || 0) * (item.quantity || 0)).toFixed(2)}</span>
+            <span style="color: #77a13d; font-size: 15px; font-weight: 700;">$${(item.price * item.quantity).toFixed(2)}</span>
           </td>
         </tr>
       `;
@@ -1523,8 +1505,6 @@ exports.confirmOrder = async (req, res) => {
       console.log('✅ Confirmation email sent to:', customerEmail);
     } catch (emailError) {
       console.error('⚠️ Email sending failed (non-fatal):', emailError.message);
-      console.error('⚠️ Email error stack:', emailError.stack);
-      console.error('⚠️ Email error full:', JSON.stringify({ message: emailError.message, code: emailError.code, command: emailError.command }));
       // Don't fail the entire operation - order is already confirmed and saved
     }
 
