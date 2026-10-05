@@ -3,6 +3,8 @@ const { createProduct, getAddedProducts, updateProduct, deleteProduct, deleteWho
 const { uploadProduct, uploadCategory } = require('../multerConfig/multerConfig');
 const { createCategory, getCategories, updateCategory, deleteCategory, createRetailerCategory, getRetailerCategories, updateRetailerCategory, deleteRetailerCategory, createBrand, getBrands, updateBrand, deleteBrand , getDepartmentsWithCategories } = require('../Controllers/categoryController');
 const { protect, restrictTo } = require('../Middleware/tokenVerify');
+const { createBlog, getBlogs, getAllBlogs, updateBlog, deleteBlog } = require('../Controllers/categoryController');
+const { uploadBlog } = require('../multerConfig/multerConfig');
 const { getProductsWithReviews, getProductReviews } = require('../Controllers/adminReviewController');
 const { getInvoiceSettings, updateInvoiceSettings } = require('../Controllers/invoiceSettingsController');
 const { getAdminNewsletters, deleteAdminNewsletter, editAdminNewsletter, setDoNotEmail } = require('../Controllers/newsletterController');
@@ -107,6 +109,85 @@ adminRouter.post('/seed-categories', protect, restrictTo('admin'), async (req, r
     res.status(200).json({ success: true, message: 'Seed complete', created, updated, skipped });
   } catch (error) {
     console.error('[seed-categories]', error.message);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Admin blog management — admin can manage all retailer blogs
+adminRouter.post('/create-blog', protect, restrictTo('admin'), uploadBlog.array('images', 10), async (req, res, next) => {
+  // Admin creates retailer blogs
+  req.user.role = 'retailer';
+  next();
+}, createBlog);
+
+adminRouter.get('/get-blogs', protect, restrictTo('admin'), async (req, res) => {
+  try {
+    const Blog = require('../Models/blogSchema');
+    const { page = 1, limit = 50 } = req.query;
+    const blogs = await Blog.find({ websiteRole: 'retailer' })
+      .populate('author', 'name email')
+      .sort({ createdAt: -1 })
+      .limit(limit * 1)
+      .skip((page - 1) * limit);
+    const totalBlogs = await Blog.countDocuments({ websiteRole: 'retailer' });
+    res.status(200).json({ blogs, totalBlogs });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+adminRouter.get('/get-all-blogs', async (req, res) => {
+  try {
+    const Blog = require('../Models/blogSchema');
+    const blogs = await Blog.find({ websiteRole: 'retailer', published: true })
+      .populate('author', 'name')
+      .sort({ publishedAt: -1, createdAt: -1 });
+    res.status(200).json({ blogs });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+adminRouter.put('/update-blog/:id', protect, restrictTo('admin'), uploadBlog.array('images', 10), async (req, res) => {
+  try {
+    const Blog = require('../Models/blogSchema');
+    const { title, subtitle, excerpt, content, featureImageAlt, featureOverlayText,
+            category, categorySlug, tags, published, readTime, seoTitle, metaDescription,
+            existingImages, authorDisplayName, authorBrandLine, bottomLine, relatedSlugs } = req.body;
+    const newImages = req.files ? req.files.map(f => f.path) : [];
+    let parsedExisting = [];
+    if (existingImages) {
+      try { parsedExisting = typeof existingImages === 'string' ? JSON.parse(existingImages) : existingImages; } catch {}
+    }
+    const featureImage = newImages[0] || parsedExisting[0] || '';
+    const allImages = [...parsedExisting, ...newImages];
+
+    const publishedBool = published === 'true' || published === true;
+    const update = {
+      title, subtitle, excerpt, content, featureImageAlt, featureOverlayText,
+      category, categorySlug, published: publishedBool,
+      readTime, seoTitle, metaDescription, featureImage,
+      images: allImages, authorDisplayName, authorBrandLine, bottomLine,
+      tags: tags ? (typeof tags === 'string' ? tags.split(',').map(t => t.trim()).filter(Boolean) : tags) : [],
+      relatedSlugs: relatedSlugs ? (typeof relatedSlugs === 'string' ? relatedSlugs.split(',').map(s => s.trim()).filter(Boolean) : relatedSlugs) : [],
+      updatedAt: Date.now()
+    };
+    if (publishedBool) update.publishedAt = new Date();
+    const blog = await Blog.findByIdAndUpdate(req.params.id, update, { new: true });
+    if (!blog) return res.status(404).json({ message: 'Blog not found' });
+    res.status(200).json({ message: 'Blog updated successfully', blog });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+adminRouter.delete('/delete-blog/:id', protect, restrictTo('admin'), async (req, res) => {
+  try {
+    const Blog = require('../Models/blogSchema');
+    const blog = await Blog.findByIdAndDelete(req.params.id);
+    if (!blog) return res.status(404).json({ message: 'Blog not found' });
+    res.status(200).json({ message: 'Blog deleted successfully' });
+  } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
