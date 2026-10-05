@@ -3,7 +3,6 @@ const { createProduct, getAddedProducts, updateProduct, deleteProduct, deleteWho
 const { uploadProduct, uploadCategory } = require('../multerConfig/multerConfig');
 const { createCategory, getCategories, updateCategory, deleteCategory, createRetailerCategory, getRetailerCategories, updateRetailerCategory, deleteRetailerCategory, createBrand, getBrands, updateBrand, deleteBrand , getDepartmentsWithCategories } = require('../Controllers/categoryController');
 const { protect, restrictTo } = require('../Middleware/tokenVerify');
-const { createBlog, getBlogs, getAllBlogs, updateBlog, deleteBlog } = require('../Controllers/categoryController');
 const { uploadBlog } = require('../multerConfig/multerConfig');
 const { getProductsWithReviews, getProductReviews } = require('../Controllers/adminReviewController');
 const { getInvoiceSettings, updateInvoiceSettings } = require('../Controllers/invoiceSettingsController');
@@ -114,11 +113,52 @@ adminRouter.post('/seed-categories', protect, restrictTo('admin'), async (req, r
 });
 
 // Admin blog management — admin can manage all retailer blogs
-adminRouter.post('/create-blog', protect, restrictTo('admin'), uploadBlog.array('images', 10), async (req, res, next) => {
-  // Admin creates retailer blogs
-  req.user.role = 'retailer';
-  next();
-}, createBlog);
+adminRouter.post('/create-blog', protect, restrictTo('admin'), uploadBlog.array('images', 10), async (req, res) => {
+  try {
+    const Blog = require('../Models/blogSchema');
+    const { title, content, subtitle, excerpt, category, categorySlug,
+            authorDisplayName, authorBrandLine, readTime, tags, published,
+            featureImageAlt, featureOverlayText, bottomLine, seoTitle,
+            metaDescription, relatedSlugs } = req.body;
+
+    if (!title) return res.status(400).json({ message: 'Title is required' });
+    if (!content) return res.status(400).json({ message: 'Content is required' });
+
+    const images = req.files ? req.files.map(f => f.path) : [];
+    const featureImage = images[0] || '';
+    const publishedBool = published === 'true' || published === true;
+
+    const blog = await Blog.create({
+      title,
+      content,
+      subtitle: subtitle || '',
+      excerpt: excerpt || '',
+      category: category || 'General',
+      categorySlug: categorySlug || '',
+      authorDisplayName: authorDisplayName || "Ray's Healthy Living",
+      authorBrandLine: authorBrandLine || "Wellness Education Team",
+      readTime: readTime || '',
+      featureImage,
+      images,
+      featureImageAlt: featureImageAlt || '',
+      featureOverlayText: featureOverlayText || '',
+      bottomLine: bottomLine || '',
+      seoTitle: seoTitle || title,
+      metaDescription: metaDescription || excerpt || '',
+      published: publishedBool,
+      publishedAt: publishedBool ? new Date() : undefined,
+      tags: tags ? (typeof tags === 'string' ? tags.split(',').map(t => t.trim()).filter(Boolean) : tags) : [],
+      relatedSlugs: relatedSlugs ? (typeof relatedSlugs === 'string' ? relatedSlugs.split(',').map(s => s.trim()).filter(Boolean) : relatedSlugs) : [],
+      author: req.user._id,
+      websiteRole: 'retailer',
+    });
+
+    res.status(201).json({ message: 'Blog created successfully', blog });
+  } catch (error) {
+    console.error('[admin create-blog]', error.message);
+    res.status(400).json({ message: error.message });
+  }
+});
 
 adminRouter.get('/get-blogs', protect, restrictTo('admin'), async (req, res) => {
   try {
@@ -154,30 +194,60 @@ adminRouter.put('/update-blog/:id', protect, restrictTo('admin'), uploadBlog.arr
     const { title, subtitle, excerpt, content, featureImageAlt, featureOverlayText,
             category, categorySlug, tags, published, readTime, seoTitle, metaDescription,
             existingImages, authorDisplayName, authorBrandLine, bottomLine, relatedSlugs } = req.body;
-    const newImages = req.files ? req.files.map(f => f.path) : [];
+
+    // Parse existing images list (sent as JSON string)
     let parsedExisting = [];
     if (existingImages) {
-      try { parsedExisting = typeof existingImages === 'string' ? JSON.parse(existingImages) : existingImages; } catch {}
+      try {
+        parsedExisting = typeof existingImages === 'string' ? JSON.parse(existingImages) : existingImages;
+        if (!Array.isArray(parsedExisting)) parsedExisting = [];
+      } catch { parsedExisting = []; }
     }
-    const featureImage = newImages[0] || parsedExisting[0] || '';
-    const allImages = [...parsedExisting, ...newImages];
 
+    const newImages = req.files ? req.files.map(f => f.path) : [];
+    const allImages = [...parsedExisting, ...newImages];
+    const featureImage = allImages[0] || '';
     const publishedBool = published === 'true' || published === true;
-    const update = {
-      title, subtitle, excerpt, content, featureImageAlt, featureOverlayText,
-      category, categorySlug, published: publishedBool,
-      readTime, seoTitle, metaDescription, featureImage,
-      images: allImages, authorDisplayName, authorBrandLine, bottomLine,
-      tags: tags ? (typeof tags === 'string' ? tags.split(',').map(t => t.trim()).filter(Boolean) : tags) : [],
-      relatedSlugs: relatedSlugs ? (typeof relatedSlugs === 'string' ? relatedSlugs.split(',').map(s => s.trim()).filter(Boolean) : relatedSlugs) : [],
-      updatedAt: Date.now()
-    };
-    if (publishedBool) update.publishedAt = new Date();
-    const blog = await Blog.findByIdAndUpdate(req.params.id, update, { new: true });
+
+    // Build update with $set — only include fields that were actually sent
+    const $set = { updatedAt: Date.now() };
+    if (title !== undefined)              $set.title = title;
+    if (subtitle !== undefined)           $set.subtitle = subtitle;
+    if (excerpt !== undefined)            $set.excerpt = excerpt;
+    if (content !== undefined)            $set.content = content;
+    if (featureImageAlt !== undefined)    $set.featureImageAlt = featureImageAlt;
+    if (featureOverlayText !== undefined) $set.featureOverlayText = featureOverlayText;
+    if (category !== undefined)           $set.category = category;
+    if (categorySlug !== undefined)       $set.categorySlug = categorySlug;
+    if (published !== undefined)          $set.published = publishedBool;
+    if (readTime !== undefined)           $set.readTime = readTime;
+    if (seoTitle !== undefined)           $set.seoTitle = seoTitle;
+    if (metaDescription !== undefined)    $set.metaDescription = metaDescription;
+    if (authorDisplayName !== undefined)  $set.authorDisplayName = authorDisplayName;
+    if (authorBrandLine !== undefined)    $set.authorBrandLine = authorBrandLine;
+    if (bottomLine !== undefined)         $set.bottomLine = bottomLine;
+    if (allImages.length > 0 || existingImages !== undefined) {
+      $set.images = allImages;
+      $set.featureImage = featureImage;
+    }
+    if (tags !== undefined) {
+      $set.tags = typeof tags === 'string' ? tags.split(',').map(t => t.trim()).filter(Boolean) : (tags || []);
+    }
+    if (relatedSlugs !== undefined) {
+      $set.relatedSlugs = typeof relatedSlugs === 'string' ? relatedSlugs.split(',').map(s => s.trim()).filter(Boolean) : (relatedSlugs || []);
+    }
+    if (publishedBool) $set.publishedAt = new Date();
+
+    const blog = await Blog.findByIdAndUpdate(
+      req.params.id,
+      { $set },
+      { new: true, runValidators: false }
+    );
     if (!blog) return res.status(404).json({ message: 'Blog not found' });
     res.status(200).json({ message: 'Blog updated successfully', blog });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    console.error('[admin update-blog]', error.message);
+    res.status(500).json({ message: error.message });
   }
 });
 
